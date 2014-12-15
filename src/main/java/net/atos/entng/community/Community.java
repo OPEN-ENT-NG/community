@@ -1,8 +1,9 @@
 package net.atos.entng.community;
 
 import net.atos.entng.community.controllers.CommunityController;
+import net.atos.entng.community.filters.ManagerFilter;
+import net.atos.entng.community.services.impl.DefaultCommunityService;
 import org.entcore.common.http.BaseServer;
-import org.entcore.common.http.filter.ShareAndOwner;
 
 
 public class Community extends BaseServer {
@@ -10,8 +11,10 @@ public class Community extends BaseServer {
 	@Override
 	public void start() {
 		super.start();
-		setDefaultResourceFilter(new ShareAndOwner());
-		addController(new CommunityController());
+		setDefaultResourceFilter(new ManagerFilter());
+		CommunityController communityController = new CommunityController();
+		communityController.setCommunityService(new DefaultCommunityService());
+		addController(communityController);
 	}
 
 }
