@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{#i18n}}community.title{{/i18n}}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script src="{{#infra}}js/loader.js{{/infra}}" type="text/javascript" id="context"></script>
+	<script src="/community/public/js/model.js" type="text/javascript"></script>
+	<script src="/community/public/js/controller.js" type="text/javascript"></script>
+	<script type="text/ng-template" id="empty"></script>
+</head>
+<body ng-controller="CommunityController">
+<portal>
+	<wizard on-cancel="cancelWizard()" on-finish="finishWizard()">
+		<step>
+			<h1>Créer votre communauté</h1>
+			<p>Bienvenue dans l'assistant de création de votre communauté.</p>
+		</step>
+		<step on-next="step2OnNext()">
+			<h1>Configuration</h1>
+			<input type="text" placeholder="Nom de la communauté" />
+			<textarea i18n-placeholder="Description"></textarea>
+		</step>
+		<step on-previous="step3OnPrevious()">
+			<h1>Membres</h1>
+			<p>Rechercher et ajouter des membres</p>
+		</step>
+		<step>
+			<h1>Activer des services</h1>
+			<p>Sélectionner les services à activer.</p>
+		</step>
+	</wizard>
+
+</portal>
+</body>
+</html>
