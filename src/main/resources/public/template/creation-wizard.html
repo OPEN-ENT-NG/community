@@ -1,0 +1,26 @@
+<wizard on-cancel="cancelCreateWizard()" on-finish="finishCreateWizard()">
+	<step>
+		<h1><i18n>community.step.start</i18n></h1>
+		<p><i18n>community.step.start.message</i18n></p>
+	</step>
+	<step on-previous="setupPropertiesEditor()" on-next="dump()">
+		<h1><i18n>community.step.properties</i18n></h1>
+
+		<p><i18n>community.properties.directions</i18n></p>
+
+		<input type="text" ng-model="community.name" name="name" i18n-placeholder="community.community.name.placeholder" class="eight" required />
+		<textarea ng-model="community.description" name="description" i18n-placeholder="community.community.description.placeholder"></textarea>
+	</step>
+	<step on-previous="setupMembersEditor()" on-next="dump()">
+		<h1><i18n>community.step.members</i18n></h1>
+		<container template="step3"></container>
+
+		<p>Rechercher et ajouter des membres</p>
+	</step>
+	<step on-previous="setupServicesEditor()" on-next="dump()">
+		<h1><i18n>community.step.services</i18n></h1>
+		<container template="step4"></container>
+
+		<p>Sélectionner les services à activer.</p>
+	</step>
+</wizard>

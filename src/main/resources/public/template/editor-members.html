@@ -1,0 +1,12 @@
+<h2>[[community.name]]</h2>
+
+<p><i18n>community.members.directions</i18n></p>
+
+<ul>
+	<li ng-repeat="(role, members) in community.members">
+		<ul>
+			<h3>[[role]]</h3>
+			<li ng-repeat="member in members">[[member]]</li>
+		</ul>
+	</li>
+</ul>

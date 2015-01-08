@@ -22,19 +22,71 @@ function CommunityController($scope, template, model, date, route){
 		}
 	});
 
-	$scope.cancelWizard = function(){
-		console.log('wizard closed');
+	$scope.communities = model.communities;
+	template.open('main', 'list');
+
+	/* Navigation */
+	$scope.viewSite = function(community) {
+		// TODO : redirect to site
 	};
 
-	$scope.finishWizard = function(){
-		console.log('wizard finished')
+
+	/* Creation */
+	$scope.createCommunity = function(){
+		$scope.community = new Community();
+
+		template.open('main', 'creation-wizard');
+		//template.open('step2', 'editor-properties');
+		template.open('step3', 'editor-members');
+		template.open('step4', 'editor-services');
+
+		console.log($scope);
 	};
 
-	$scope.step2OnNext = function(){
-		console.log('step 2 next clicked');
+	$scope.setupPropertiesEditor = function(){
+		//$scope.properties = {};
+		console.log($scope);
 	};
 
-	$scope.step3OnPrevious = function(){
-		console.log('step 3 previous clicked');
+	$scope.setupMembersEditor = function(){
+		
 	};
+
+	$scope.setupServicesEditor = function(){
+		
+	};
+
+	$scope.cancelCreateWizard = function(){
+		template.open('main', 'list');
+	};
+
+	$scope.finishCreateWizard = function(){
+		$scope.community.create(function(){
+			template.open('main', 'list');	
+		});
+	};
+
+	/* Edition */
+	$scope.editCommunity = function(community) {
+		$scope.community = community;
+		template.open('main', 'editor');
+	};
+
+
+	/* Members */
+
+
+	/* Services */
+
+
+	/* Delete */
+	$scope.removeCommunity = function(community) {
+		// TODO : open delete lightbox
+	};
+
+
+	/* DEBUG */
+	$scope.dump = function() {
+		console.log($scope);
+	}
 }

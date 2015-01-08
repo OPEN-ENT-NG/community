@@ -1,0 +1,44 @@
+<div class="row">
+	<button ng-click="createCommunity()" workflow="community.create"><i18n>community.button.create</i18n></button>
+</div>
+
+<filters>
+	<li ng-class="{ selected: display.mineOnly }">
+		<label>
+			<i class="mine type" tooltip="filters.mine"></i>
+			<input type="checkbox" ng-model="display.mineOnly" />
+		</label>
+	</li>
+</filters>
+
+<div class="row">
+	<input type="search" class="twelve cell" i18n-placeholder="search" ng-model="display.search" />
+</div>
+
+<nav class="illustrated-links">
+	<ul>
+		<li ng-repeat="community in communities.all | filter:mine | filter:searchMatch">
+			<div class="illustration" ng-click="viewSite(community)">
+				<img ng-src="[[community.icon]]?thumbnail=150x150" alt="thumbnail" ng-if="community.icon" />
+				<img skin-src="/img/illustrations/pages-default.png" alt="thumbnail" ng-if="!community.icon" />
+			</div>
+			<div class="content">
+				<div class="row">
+					<h1 ng-click="viewSite(community)" class="eight cell">[[community.name]]</h1>
+					<div class="four cell right-magnet">
+						<resource-right name="update" resource="community" class="cell right-magnet">
+							<button ng-click="editCommunity(community)"><i18n>properties</i18n></button>
+						</resource-right>
+						<resource-right name="remove" resource="community" class="cell right-magnet">
+							<button ng-click="removeCommunity(community)"><i18n>remove</i18n></button>
+						</resource-right>
+					</div>
+				</div>
+				<div class="row">
+					<em>Par [[community.owner.displayName]]</em> - 
+					<p>[[community.description]]</p>
+				</div>
+			</div>
+		</li>
+	</ul>
+</nav>
