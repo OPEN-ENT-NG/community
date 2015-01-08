@@ -1,9 +1,19 @@
 function Community() {
+	this.services = [
+		{ name: 'home', mandatory: true, active: true },
+		{ name: 'blog' },
+		{ name: 'documents' },
+		{ name: 'forum' },
+		{ name: 'wiki' },
+		{ name: 'userbook' },
+		{ name: 'timeline' },
+		{ name: 'poll' },
+	];
 	this.members = {
 		read: [],
 		contrib: [],
 		manager: []
-	}
+	};
 }
 
 Community.prototype.create = function(callback) {
@@ -19,7 +29,7 @@ Community.prototype.create = function(callback) {
 };
 
 Community.prototype.update = function(callback) {
-	http().putJson('/community/' + this._id, this).done(function(data){
+	http().putJson('/community/' + this.id, this).done(function(data){
 		if(typeof callback === 'function'){
 			callback();
 		}
@@ -27,7 +37,7 @@ Community.prototype.update = function(callback) {
 };
 
 Community.prototype.delete = function(callback) {
-	http().delete('/community/' + this._id).done(function(data){
+	http().delete('/community/' + this.id).done(function(data){
 		if(typeof callback === 'function'){
 			callback();
 		}
@@ -43,8 +53,22 @@ Community.prototype.toJSON = function() {
 };
 
 Community.prototype.getMembers = function(callback) {
-	// TODO : API fecth possible members...
-	
+	var community = this;
+	http().get('/community/' + this.id + '/users').done(function(users){
+		if (users.manager) {
+			community.members.manager = _.filter(users.manager, function(user) { return user.id !== model.me.userId; });
+		}
+		if (users.contrib) {
+			community.members.contrib = _.filter(users.contrib, function(user) { return user.id !== model.me.userId; });
+		}
+		if (users.read) {
+			community.members.read = _.filter(users.read, function(user) { return user.id !== model.me.userId; });
+		}
+		// TODO : API should also fecth possible members...
+		if(typeof callback === 'function'){
+			callback();
+		}
+	});
 };
 
 Community.prototype.addMembers = function(roles, callback) {

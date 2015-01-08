@@ -36,24 +36,9 @@ function CommunityController($scope, template, model, date, route){
 		$scope.community = new Community();
 
 		template.open('main', 'creation-wizard');
-		//template.open('step2', 'editor-properties');
-		template.open('step3', 'editor-members');
-		template.open('step4', 'editor-services');
-
-		console.log($scope);
-	};
-
-	$scope.setupPropertiesEditor = function(){
-		//$scope.properties = {};
-		console.log($scope);
-	};
-
-	$scope.setupMembersEditor = function(){
-		
-	};
-
-	$scope.setupServicesEditor = function(){
-		
+		template.open('step2', 'editor-properties');
+		template.open('step3', 'editor-services');
+		template.open('step4', 'editor-members');
 	};
 
 	$scope.finishCreateWizard = function(){
@@ -64,28 +49,20 @@ function CommunityController($scope, template, model, date, route){
 
 	/* Edition */
 	$scope.editCommunity = function(community) {
-		if (community !== undefined) {
-			$scope.community = community;
-		}
-		else {
-			$scope.community = new Community();	
-		}
+		$scope.community = community;
 		template.open('main', 'editor');
-		template.open('editor2', 'editor-members');
-		template.open('editor3', 'editor-services');
+		template.open('editor1', 'editor-properties');
+		template.open('editor2', 'editor-services');
+		template.open('editor3', 'editor-members');
+
+		$scope.setupServicesEditor();
+		$scope.setupMembersEditor();
 	};
 
 	$scope.saveCommunity = function(){
-		if ($scope.community.id !== undefined) {
-			$scope.community.update(function(){
-				template.open('main', 'list');	
-			});
-		}
-		else {
-			$scope.community.create(function(){
-				template.open('main', 'list');	
-			});
-		}
+		$scope.community.update(function(){
+			template.open('main', 'list');	
+		});
 	};
 
 	$scope.cancelToList = function(){
@@ -93,20 +70,55 @@ function CommunityController($scope, template, model, date, route){
 	};
 
 
-	/* Members */
-
-
 	/* Services */
+	$scope.setupServicesEditor = function(){
+		if ($scope.community.servicesLoaded) {
+			return
+		}
+
+		Behaviours.loadBehaviours('pages', function(){
+			Behaviours.applicationsBehaviours.pages.model.register();
+			var pagesModel = Behaviours.applicationsBehaviours.pages.model;
+			$scope.community.website = new pagesModel.Website();
+			$scope.community.website._id = $scope.community.pageId;
+			$scope.community.website.sync(function(){
+				// Ensure the Pages do exists
+				_.each($scope.community.services, function(service){
+					if (! $scope.community.website.pages.find(function(page) { return page._id === service.pageId; })) {
+						delete service.pageId;
+					}
+				});
+				$scope.community.serviceLoaded = true;	
+			});
+		});
+	};
+
+	$scope.createPage_home = function() {
+		var pagesModel = Behaviours.applicationsBehaviours.pages.model;
+		var page = new pagesModel.Page();
+	};
+
+	/* Members */
+	$scope.setupMembersEditor = function(){
+		if ($scope.community.membersLoaded) {
+			return;
+		}
+
+		$scope.community.getMembers(function(){
+			$scope.members = _.union(
+				_.each($scope.community.members.manager, function(member) { member.role = 'manager'; }),
+				_.each($scope.community.members.contrib, function(member) { member.role = 'contrib'; }),
+				_.each($scope.community.members.read, function(member) { member.role = 'read'; })
+			);
+			$scope.community.membersLoaded = true;
+			// DEBUG
+			console.log($scope.members);
+		});
+	};
 
 
 	/* Delete */
 	$scope.removeCommunity = function(community) {
 		// TODO : open delete lightbox
 	};
-
-
-	/* DEBUG */
-	$scope.dump = function() {
-		console.log($scope);
-	}
 }

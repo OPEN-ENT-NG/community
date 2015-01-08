@@ -1,3 +1,35 @@
 {
-	"community.title": "Community"
+	"community.title": "Communautés",
+
+	"community.create": "Créer une communauté",
+
+	"community.step.start": "Créer votre communauté",
+	"community.step.start.message": "Bienvenu(e) dans l'assistant de création de votre communauté. Il vous permettra de renseigner les informations concernant votre communauté. Vous pourrez à tout moment éditer ces informations.",
+	"community.step.properties": "Configuration",
+	"community.properties.directions": "",
+	"community.step.services": "Services",
+	"community.services.directions": "Pour chaque service sélectionné une page dédiée sera créée dans votre communauté.",
+	"community.step.members": "Membres",
+	"community.members.directions": "Les 3 niveaux d'accès à la communauté entraîneront la création de 3 groupes qui pourront être réutilisés en dehors de la communauté.",
+
+	"community.name.label": "Nom",
+	"community.name.placeholder": "Entrez un nom pour la communauté",
+	"community.icon.change": "Changer l'image",
+	"community.icon.remove": "Supprimer l'image",
+	"community.description.label": "Description",
+	"community.description.placeholder": "Entrez une description",
+
+	"community.services.home.name": "Accueil",
+	"community.services.blog.name": "Blog",
+	"community.services.documents.name": "Documents",
+	"community.services.forum.name": "Forum",
+	"community.services.wiki.name": "Wiki",
+	"community.services.userbook.name": "Trombinoscope",
+	"community.services.timeline.name": "Frise chronologique",
+	"community.services.poll.name": "Sondage",
+
+	"community.roles.manager": "Gestionnaires",
+	"community.roles.contrib": "Contributeurs",
+	"community.roles.read": "Lecteurs",
+	"community.members.me": "Moi"
 }

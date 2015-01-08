@@ -1,6 +1,5 @@
 <div class="row">
-	<button ng-click="createCommunity()" workflow="community.create"><i18n>Create via Wizard</i18n></button>
-	<button ng-click="editCommunity()" workflow="community.create"><i18n>Create via Edition form (test)</i18n></button>
+	<button ng-click="createCommunity()" workflow="community.create"><i18n>community.create</i18n></button>
 </div>
 
 <filters>
@@ -27,12 +26,10 @@
 				<div class="row">
 					<h1 ng-click="viewSite(community)" class="eight cell">[[community.name]]</h1>
 					<div class="four cell right-magnet">
-						<resource-right name="update" resource="community" class="cell right-magnet">
+						<!--<resource-right name="manage" resource="community" class="cell right-magnet">-->
 							<button ng-click="editCommunity(community)"><i18n>properties</i18n></button>
-						</resource-right>
-						<resource-right name="remove" resource="community" class="cell right-magnet">
 							<button ng-click="removeCommunity(community)"><i18n>remove</i18n></button>
-						</resource-right>
+						<!--</resource-right>-->
 					</div>
 				</div>
 				<div class="row">

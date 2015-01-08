@@ -1,12 +1,24 @@
-<h2>[[community.name]]</h2>
-
-<p><i18n>community.members.directions</i18n></p>
-
-<ul>
-	<li ng-repeat="(role, members) in community.members">
-		<ul>
-			<h3>[[role]]</h3>
-			<li ng-repeat="member in members">[[member]]</li>
-		</ul>
-	</li>
-</ul>
+<table>
+	<thead>
+		<tr>
+			<th></th>
+			<th><i18n>community.roles.manager</i18n></th>
+			<th><i18n>community.roles.contrib</i18n></th>
+			<th><i18n>community.roles.read</i18n></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><i18n>community.members.me</i18n></td>
+			<td><input type="radio" group="[[me.userId]]" disabled class="disabled" checked="true"/></td>
+			<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
+			<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
+		</tr>
+		<tr ng-repeat="member in members">
+			<td>[[member.displayName]]</td>
+			<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="manager"/></td>
+			<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="contrib"/></td>
+			<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="read"/></td>
+		</tr>
+	</tbody>
+</table>
