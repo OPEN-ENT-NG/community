@@ -56,10 +56,6 @@ function CommunityController($scope, template, model, date, route){
 		
 	};
 
-	$scope.cancelCreateWizard = function(){
-		template.open('main', 'list');
-	};
-
 	$scope.finishCreateWizard = function(){
 		$scope.community.create(function(){
 			template.open('main', 'list');	
@@ -68,8 +64,32 @@ function CommunityController($scope, template, model, date, route){
 
 	/* Edition */
 	$scope.editCommunity = function(community) {
-		$scope.community = community;
+		if (community !== undefined) {
+			$scope.community = community;
+		}
+		else {
+			$scope.community = new Community();	
+		}
 		template.open('main', 'editor');
+		template.open('editor2', 'editor-members');
+		template.open('editor3', 'editor-services');
+	};
+
+	$scope.saveCommunity = function(){
+		if ($scope.community.id !== undefined) {
+			$scope.community.update(function(){
+				template.open('main', 'list');	
+			});
+		}
+		else {
+			$scope.community.create(function(){
+				template.open('main', 'list');	
+			});
+		}
+	};
+
+	$scope.cancelToList = function(){
+		template.open('main', 'list');
 	};
 
 

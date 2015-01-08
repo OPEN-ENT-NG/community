@@ -1,0 +1,23 @@
+<div class="row">
+	<h1><i18n>community.step.properties</i18n></h1>
+
+	<p><i18n>community.properties.directions</i18n></p>
+
+	<input type="text" ng-model="community.name" name="name" i18n-placeholder="community.community.name.placeholder" class="eight" required />
+	<textarea ng-model="community.description" name="description" i18n-placeholder="community.community.description.placeholder"></textarea>
+</div>
+
+<div class="row">
+	<h1><i18n>community.step.members</i18n></h1>
+	<container template="editor2"></container>
+</div>
+
+<div class="row">
+	<h1><i18n>community.step.services</i18n></h1>
+	<container template="editor3"></container>
+</div>
+
+<div class="row">
+	<button ng-click="saveCommunity()" class="right-magnet"><i18n>save</i18n></button>
+	<button ng-click="cancelToList()" class="right-magnet cancel"><i18n>cancel</i18n></button>
+</div>
