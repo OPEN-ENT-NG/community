@@ -1,5 +1,22 @@
 package net.atos.entng.community.controllers;
 
+import static org.entcore.common.http.response.DefaultResponseHandler.arrayResponseHandler;
+import static org.entcore.common.http.response.DefaultResponseHandler.defaultResponseHandler;
+import static org.entcore.common.http.response.DefaultResponseHandler.leftToResponse;
+import static org.entcore.common.http.response.DefaultResponseHandler.notEmptyResponseHandler;
+
+import java.util.List;
+
+import net.atos.entng.community.services.CommunityService;
+
+import org.entcore.common.user.UserInfos;
+import org.entcore.common.user.UserUtils;
+import org.vertx.java.core.Handler;
+import org.vertx.java.core.eventbus.Message;
+import org.vertx.java.core.http.HttpServerRequest;
+import org.vertx.java.core.json.JsonArray;
+import org.vertx.java.core.json.JsonObject;
+
 import fr.wseduc.rs.Delete;
 import fr.wseduc.rs.Get;
 import fr.wseduc.rs.Post;
@@ -9,18 +26,6 @@ import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.http.BaseController;
 import fr.wseduc.webutils.request.RequestUtils;
-import net.atos.entng.community.services.CommunityService;
-import org.entcore.common.user.UserInfos;
-import org.entcore.common.user.UserUtils;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.http.HttpServerRequest;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-
-import java.util.List;
-
-import static org.entcore.common.http.response.DefaultResponseHandler.*;
 
 public class CommunityController extends BaseController {
 
@@ -78,6 +83,7 @@ public class CommunityController extends BaseController {
 								public void handle(Either<String, JsonObject> r) {
 									if (r.isRight()) {
 										sharePage(pageId, user.getUserId(), r.right().getValue());
+										r.right().getValue().putString("pageId", pageId);
 										renderJson(request, r.right().getValue(), 201);
 									} else {
 										leftToResponse(request, r.left());

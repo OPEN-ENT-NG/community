@@ -25,6 +25,11 @@ function CommunityController($scope, template, model, date, route){
 	$scope.communities = model.communities;
 	template.open('main', 'list');
 
+	Behaviours.loadBehaviours('pages', function(){
+		Behaviours.applicationsBehaviours.pages.model.register();
+		model.pagesModel = Behaviours.applicationsBehaviours.pages.model;
+	});
+
 	/* Navigation */
 	$scope.viewSite = function(community) {
 		// TODO : redirect to site
@@ -43,7 +48,14 @@ function CommunityController($scope, template, model, date, route){
 
 	$scope.finishCreateWizard = function(){
 		$scope.community.create(function(){
-			template.open('main', 'list');	
+			$scope.getCommunityWebsite(function(){
+				$scope.processServicePages();
+				$scope.community.website.save(function(){
+					// Success
+					template.open('main', 'list');
+					// TODO : Manage error
+				});
+			});
 		});
 	};
 
@@ -73,29 +85,79 @@ function CommunityController($scope, template, model, date, route){
 	/* Services */
 	$scope.setupServicesEditor = function(){
 		if ($scope.community.servicesLoaded) {
-			return
+			return;
 		}
+		$scope.getCommunityWebsite(function(){
+			$scope.community.serviceLoaded = true;	
+		});		
+	};
 
-		Behaviours.loadBehaviours('pages', function(){
-			Behaviours.applicationsBehaviours.pages.model.register();
-			var pagesModel = Behaviours.applicationsBehaviours.pages.model;
-			$scope.community.website = new pagesModel.Website();
-			$scope.community.website._id = $scope.community.pageId;
-			$scope.community.website.sync(function(){
-				// Ensure the Pages do exists
-				_.each($scope.community.services, function(service){
-					if (! $scope.community.website.pages.find(function(page) { return page._id === service.pageId; })) {
-						delete service.pageId;
-					}
-				});
-				$scope.community.serviceLoaded = true;	
+	$scope.getCommunityWebsite = function(callback){
+		$scope.community.website = new model.pagesModel.Website();
+		$scope.community.website._id = $scope.community.pageId;
+		$scope.community.website.sync(function(){
+			// Ensure the Pages do exists
+			_.each($scope.community.services, function(service){
+				if (! $scope.community.website.pages.find(function(page) { return page._id === service.pageId; })) {
+					delete service.pageId;
+				}
 			});
+				if(typeof callback === 'function'){
+				callback();
+			}
 		});
 	};
 
+	$scope.processServicePages = function() {
+		_.each($scope.community.services, function(service){
+			if (service.active === true && service.pageId === undefined) {
+				// Create the Page
+				if ($scope['createPage_' + service.name] !== undefined) {
+					$scope['createPage_' + service.name]();
+				}
+				else {
+					// Nothing to do - cannot create the page
+					// TODO : manage error ?
+					service.active = false;
+				}
+			}
+			else if (service.active !== true && service.pageId !== undefined) {
+				// Delete the Page
+				$scope.deletePage(service);
+			}
+		});
+	}
+
 	$scope.createPage_home = function() {
-		var pagesModel = Behaviours.applicationsBehaviours.pages.model;
-		var page = new pagesModel.Page();
+		var page = new model.pagesModel.Page();
+		page.title = 'Accueil';
+
+		var row0 = page.addRow();
+		var row1 = page.addRow();
+
+		var cellTitle = new model.pagesModel.Cell();
+		cellTitle.width = 12;
+		cellTitle.media = { type: 'text', source: '<h1>' + $scope.community.name + '</h1>' }; // TODO : escape HTML ?
+		row0.cells.push(cellTitle);
+
+		var cellNavigation = new model.pagesModel.Cell();
+		cellNavigation.index = 0;
+		cellNavigation.width = 3;
+		cellNavigation.media = { type: 'sniplet', source: { application: 'pages', template: 'navigation', source: { _id: $scope.community.website._id } } };
+		row1.cells.push(cellNavigation);		
+
+		var cellText = new model.pagesModel.Cell();
+		cellText.index = 1;
+		cellText.width = 9;
+		cellText.media = { type: 'text', source: '<p>Bienvenue dans la communauté</p>' };
+		row1.cells.push(cellText);
+
+		$scope.community.website.pages.push(page);
+	};
+
+	$scope.deletePage = function(service) {
+		$scope.community.website.pages.all = $scope.community.website.pages.reject(function(page){ return page._id === service.pageId });
+		delete service.pageId;
 	};
 
 	/* Members */
