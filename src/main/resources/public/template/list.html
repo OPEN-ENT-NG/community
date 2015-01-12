@@ -27,8 +27,8 @@
 					<h1 ng-click="viewSite(community)" class="eight cell">[[community.name]]</h1>
 					<div class="four cell right-magnet">
 						<!--<resource-right name="manage" resource="community" class="cell right-magnet">-->
-							<button ng-click="editCommunity(community)"><i18n>properties</i18n></button>
-							<button ng-click="removeCommunity(community)"><i18n>remove</i18n></button>
+							<button ng-click="removeCommunity(community)" class="right-magnet"><i18n>remove</i18n></button>
+							<button ng-click="editCommunity(community)" class="right-magnet"><i18n>properties</i18n></button>
 						<!--</resource-right>-->
 					</div>
 				</div>
@@ -40,3 +40,11 @@
 		</li>
 	</ul>
 </nav>
+
+<lightbox show="display.confirmDelete" on-close="cancelRemoveCommunity()">
+	<p><i18n>community.confirm.delete</i18n></p>
+	<div class="row">
+		<button ng-click="doRemoveCommunity(community)" class="right-magnet"><i18n>remove</i18n></button>
+		<button ng-click="cancelRemoveCommunity()" class="right-magnet cancel"><i18n>cancel</i18n></button>
+	</div>
+</lightbox>

@@ -83,6 +83,7 @@ public class CommunityController extends BaseController {
 								public void handle(Either<String, JsonObject> r) {
 									if (r.isRight()) {
 										sharePage(pageId, user.getUserId(), r.right().getValue());
+										createPageMarkups(pageId);
 										r.right().getValue().putString("pageId", pageId);
 										renderJson(request, r.right().getValue(), 201);
 									} else {
@@ -143,6 +144,29 @@ public class CommunityController extends BaseController {
 						});
 					}
 				});
+			}
+		});
+	}
+
+	private void createPageMarkups(String pageId) {
+		JsonObject updatePage = new JsonObject()
+		.putString("action", "update")
+		.putString("pageId", pageId)
+		.putObject("page", new JsonObject()
+			.putObject("markups", new JsonObject()
+				.putArray("view", new JsonArray()
+					.addObject(new JsonObject()
+						.putString("edit", "community.edit")
+						.putString("href", "/community/" + pageId + "/edit"))
+					.addObject(new JsonObject()
+						.putString("label", "community.back.to")
+						.putString("href", "/community")))));
+		eb.send("pages", updatePage, new Handler<Message<JsonObject>>() {
+			@Override
+			public void handle(Message<JsonObject> message) {
+				if (!"ok".equals(message.body().getString("status"))) {
+					log.error(message.body().getString("message"));
+				}
 			}
 		});
 	}

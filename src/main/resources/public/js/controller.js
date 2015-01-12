@@ -14,6 +14,7 @@ routes.define(function($routeProvider){
 function CommunityController($scope, template, model, date, route){
 	$scope.template = template;
 	$scope.me = model.me;
+	$scope.display = {};
 
 	route({
 		viewCommunity: function(params){
@@ -28,6 +29,7 @@ function CommunityController($scope, template, model, date, route){
 	Behaviours.loadBehaviours('pages', function(){
 		Behaviours.applicationsBehaviours.pages.model.register();
 		model.pagesModel = Behaviours.applicationsBehaviours.pages.model;
+		sniplets.load();
 	});
 
 	/* Navigation */
@@ -155,6 +157,48 @@ function CommunityController($scope, template, model, date, route){
 		$scope.community.website.pages.push(page);
 	};
 
+	$scope.createPage_blog = function() {
+		var page = new model.pagesModel.Page();
+		page.title = 'Blog';
+
+	};
+
+	$scope.createPage_documents = function() {
+		var page = new model.pagesModel.Page();
+		page.title = 'Documents';
+
+	};
+
+	$scope.createPage_forum = function() {
+		var page = new model.pagesModel.Page();
+		page.title = 'Forum';
+
+	};
+
+	$scope.createPage_wiki = function() {
+		var page = new model.pagesModel.Page();
+		page.title = 'Wiki';
+
+	};
+
+	$scope.createPage_userbook = function() {
+		var page = new model.pagesModel.Page();
+		page.title = 'Trombinoscope';
+
+	};
+
+	$scope.createPage_timeline = function() {
+		var page = new model.pagesModel.Page();
+		page.title = 'Evenements';
+
+	};
+
+	$scope.createPage_poll = function() {
+		var page = new model.pagesModel.Page();
+		page.title = 'Sondage';
+
+	};
+
 	$scope.deletePage = function(service) {
 		$scope.community.website.pages.all = $scope.community.website.pages.reject(function(page){ return page._id === service.pageId });
 		delete service.pageId;
@@ -181,6 +225,19 @@ function CommunityController($scope, template, model, date, route){
 
 	/* Delete */
 	$scope.removeCommunity = function(community) {
-		// TODO : open delete lightbox
+		$scope.display.confirmDelete = true;
+		$scope.community = community;
+	};
+
+	$scope.cancelRemoveCommunity = function() {
+		$scope.display.confirmDelete = undefined;
+	};
+
+	$scope.doRemoveCommunity = function() {
+		$scope.community.delete(function(){
+			model.communities.remove($scope.community);
+			$scope.display.confirmDelete = undefined;
+			$scope.community = undefined;
+		});
 	};
 }
