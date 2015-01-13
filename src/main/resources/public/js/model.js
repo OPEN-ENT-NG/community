@@ -35,16 +35,7 @@ Community.prototype.update = function(callback) {
 		}
 	});
 };
-/*
-Community.prototype.save = function(callback) {
-	if (this.id === undefined) {
-		this.create(callback);
-	}
-	else {
-		this.update(callback);
-	}
-}
-*/
+
 Community.prototype.delete = function(callback) {
 	http().delete('/community/' + this.id).done(function(data){
 		if(typeof callback === 'function'){
@@ -54,11 +45,14 @@ Community.prototype.delete = function(callback) {
 };
 
 Community.prototype.toJSON = function() {
-	return {
-		name: this.name,
-		description : this.description,
-		icon: this.icon
+	var json = { name: this.name }
+	if (this.icon) {
+		json.icon = this.icon;
 	}
+	if (this.description) {
+		json.description = this.description;
+	}
+	return json;
 };
 
 Community.prototype.getMembers = function(callback) {

@@ -29,7 +29,7 @@
 
 	<div class="row">
 		<h2><i18n></i18n></h2>
-		<input type="text" ng-model="search.term" ng-change="findUserOrGroup()" i18n-placeholder="" />
+		<input type="text" ng-model="search.term" ng-change="findUserOrGroup()" i18n-placeholder="community.members.search.placeholder" />
 		<div class="found-users-list">
 			<div ng-repeat="item in search.found | limitTo:maxResults | orderBy:'lastname'">
 				<em ng-click="addMember(item)" class="row">

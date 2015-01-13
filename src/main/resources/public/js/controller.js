@@ -34,11 +34,6 @@ function CommunityController($scope, template, model, date, route, lang){
 		sniplets.load();
 	});
 
-	/* Navigation */
-	$scope.viewSite = function(community) {
-		// TODO : redirect to site
-	};
-
 
 	/* Creation */
 	$scope.createCommunity = function(){
@@ -62,15 +57,7 @@ function CommunityController($scope, template, model, date, route, lang){
 		}
 		// TODO : Manage error
 	};
-	/*
-	$scope.setupServicesWizard = function(){
-		if ($scope.wizard.servicesLoaded) {
-			return;
-		}
-		$scope.wizard.serviceLoaded = true;	
-		$scope.setupServicesEditor();		
-	};
-	*/
+
 	$scope.saveServices = function() {
 		$scope.processServicePages();
 		$scope.community.website.save(function(){
@@ -78,15 +65,7 @@ function CommunityController($scope, template, model, date, route, lang){
 		});
 		// TODO : Manage error
 	};
-	/*
-	$scope.setupMembersWizard = function(){
-		if ($scope.wizard.membersLoaded) {
-			return;
-		}
-		$scope.wizard.membersLoaded = true;
-		$scope.setupMembersEditor();
-	};
-*/
+
 	$scope.finishCreateWizard = function(){
 		template.open('main', 'list');
 	};
@@ -230,13 +209,12 @@ function CommunityController($scope, template, model, date, route, lang){
 	/* Members */
 	$scope.setupMembersEditor = function(){
 		$scope.search = { term: '', found: [] };
+		$scope.members = [];
 		$scope.community.getMembers(function(visibles){
 			$scope.members = _.union($scope.community.members.manager, $scope.community.members.contrib, $scope.community.members.read);
 			$scope.visibles = visibles;
 			$scope.edited = { delete: [], manage: [], contrib: [], read: [] };
-			// DEBUG
-			console.log($scope.members);
-			console.log($scope.visibles);
+			$scope.$apply('members');
 		});
 	};
 
@@ -263,7 +241,6 @@ function CommunityController($scope, template, model, date, route, lang){
 
 	$scope.findUserOrGroup = function(){
 		var searchTerm = lang.removeAccents($scope.search.term).toLowerCase();
-		/*DEBUG*/console.log('SEARCH: [' + searchTerm + ']'); 
 		$scope.search.found = _.union(
 			_.filter($scope.visibles.groups, function(group){
 				var testName = lang.removeAccents(group.name).toLowerCase();
@@ -275,11 +252,9 @@ function CommunityController($scope, template, model, date, route, lang){
 				return testName.indexOf(searchTerm) !== -1 || testNameReversed.indexOf(searchTerm) !== -1;
 			})
 		);
-		/*DEBUG*/console.log('matches: ' + ($scope.search.found !== undefined ? $scope.search.found.length : 0));
 		$scope.search.found = _.filter($scope.search.found, function(element){
 			return _.find($scope.members, function(member){ return member.id === element.id }) === undefined;
 		});
-		/*DEBUG*/console.log('filtered: ' + ($scope.search.found !== undefined ? $scope.search.found.length : 0));
 	};
 
 

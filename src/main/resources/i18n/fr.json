@@ -12,11 +12,10 @@
 	"community.step.members": "Membres",
 	"community.members.directions": "Les 3 niveaux d'accès à la communauté entraîneront la création de 3 groupes qui pourront être réutilisés en dehors de la communauté.",
 
-	"community.name.label": "Nom",
+	"community.name.label": "Titre :",
 	"community.name.placeholder": "Entrez un nom pour la communauté",
-	"community.icon.change": "Changer l'image",
-	"community.icon.remove": "Supprimer l'image",
-	"community.description.label": "Description",
+	"community.icon.label": "Image :",
+	"community.description.label": "Description :",
 	"community.description.placeholder": "Entrez une description",
 
 	"community.services.home.name": "Accueil",
@@ -31,5 +30,9 @@
 	"community.roles.manager": "Gestionnaires",
 	"community.roles.contrib": "Contributeurs",
 	"community.roles.read": "Lecteurs",
-	"community.members.me": "Moi"
+
+	"community.members.me": "Moi",
+	"community.members.search.placeholder" : "Ex: Sabine, Dupont, Enseignants de l'établissement...",
+
+	"community.confirm.delete": "Voulez-vous vraiment supprimer la communauté ? Toutes les pages et les données des services liés seront également supprimés"
 }
