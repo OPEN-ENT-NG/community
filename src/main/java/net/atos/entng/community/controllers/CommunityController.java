@@ -4,6 +4,8 @@ import static org.entcore.common.http.response.DefaultResponseHandler.arrayRespo
 import static org.entcore.common.http.response.DefaultResponseHandler.defaultResponseHandler;
 import static org.entcore.common.http.response.DefaultResponseHandler.leftToResponse;
 import static org.entcore.common.http.response.DefaultResponseHandler.notEmptyResponseHandler;
+import static org.entcore.common.user.UserUtils.findVisibleUsers;
+import static org.entcore.common.user.UserUtils.getUserInfos;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ import fr.wseduc.rs.Put;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.Either;
+import fr.wseduc.webutils.I18n;
 import fr.wseduc.webutils.http.BaseController;
 import fr.wseduc.webutils.request.RequestUtils;
 
@@ -272,7 +275,58 @@ public class CommunityController extends BaseController {
 		List<String> t = request.params().getAll("type");
 		JsonArray types = (t != null && !t.isEmpty()) ?
 				new JsonArray(t.toArray()) : resourcesTypes; //new JsonArray(RightsController.allowedSharingRights.toArray());
-		communityService.listUsers(request.params().get("id"), types, defaultResponseHandler(request));
+		communityService.listUsers(request.params().get("id"), types, new Handler<Either<String, JsonObject>>(){
+			@Override
+			public void handle(final Either<String, JsonObject> event) {
+				final Handler<Either<String, JsonObject>> handler = defaultResponseHandler(request);
+				if (event.isRight()) {
+					final JsonObject res = event.right().getValue();
+					listVisible(request, new Handler<JsonObject>(){
+						@Override
+						public void handle(final JsonObject visibles) {
+							res.putObject("visibles", visibles);
+							handler.handle(event);
+						}
+					});
+				}
+				else {
+					handler.handle(event);
+				}
+			}
+		});
+	}
+
+	private void listVisible(final HttpServerRequest request, final Handler<JsonObject> handler) {
+		getUserInfos(eb, request, new Handler<UserInfos>() {
+			@Override
+			public void handle(final UserInfos user) {
+				final String acceptLanguage = I18n.acceptLanguage(request);
+				final JsonObject visibles = new JsonObject();
+				UserUtils.findVisibleProfilsGroups(eb, user.getUserId(), new Handler<JsonArray>() {
+					@Override
+					public void handle(JsonArray visibleGroups) {
+						JsonArray groups = new JsonArray();
+						visibles.putArray("groups", groups);
+						for (Object u : visibleGroups) {
+							if (u instanceof JsonObject) {
+								JsonObject group = (JsonObject) u;
+								if (group.getString("type") == null) { // Do not list Community groups ?
+									UserUtils.groupDisplayName(group, acceptLanguage);
+									groups.addObject(group);
+								}
+							}
+						}
+						findVisibleUsers(eb, user.getUserId(), false, new Handler<JsonArray>() {
+							@Override
+							public void handle(JsonArray visibleUsers) {
+								visibles.putArray("users", visibleUsers);
+								handler.handle(visibles);
+							}
+						});
+					}
+				});
+			}
+		});
 	}
 
 	public void setCommunityService(CommunityService communityService) {

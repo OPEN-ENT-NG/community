@@ -11,10 +11,12 @@ routes.define(function($routeProvider){
       });
 });
 
-function CommunityController($scope, template, model, date, route){
+function CommunityController($scope, template, model, date, route, lang){
 	$scope.template = template;
 	$scope.me = model.me;
 	$scope.display = {};
+	$scope.wizard = {};
+	$scope.maxResults = 10;
 
 	route({
 		viewCommunity: function(params){
@@ -41,6 +43,7 @@ function CommunityController($scope, template, model, date, route){
 	/* Creation */
 	$scope.createCommunity = function(){
 		$scope.community = new Community();
+		$scope.wizard = {};
 
 		template.open('main', 'creation-wizard');
 		template.open('step2', 'editor-properties');
@@ -48,18 +51,46 @@ function CommunityController($scope, template, model, date, route){
 		template.open('step4', 'editor-members');
 	};
 
-	$scope.finishCreateWizard = function(){
-		$scope.community.create(function(){
-			$scope.getCommunityWebsite(function(){
-				$scope.processServicePages();
-				$scope.community.website.save(function(){
-					// Success
-					template.open('main', 'list');
-					// TODO : Manage error
-				});
+	$scope.saveCommunity = function(){
+		if ($scope.community.id === undefined) {
+			$scope.community.create(function(){
+				$scope.setupServicesEditor();
 			});
-		});
+		}
+		else {
+			$scope.community.update();			
+		}
+		// TODO : Manage error
 	};
+	/*
+	$scope.setupServicesWizard = function(){
+		if ($scope.wizard.servicesLoaded) {
+			return;
+		}
+		$scope.wizard.serviceLoaded = true;	
+		$scope.setupServicesEditor();		
+	};
+	*/
+	$scope.saveServices = function() {
+		$scope.processServicePages();
+		$scope.community.website.save(function(){
+			$scope.setupMembersEditor();
+		});
+		// TODO : Manage error
+	};
+	/*
+	$scope.setupMembersWizard = function(){
+		if ($scope.wizard.membersLoaded) {
+			return;
+		}
+		$scope.wizard.membersLoaded = true;
+		$scope.setupMembersEditor();
+	};
+*/
+	$scope.finishCreateWizard = function(){
+		template.open('main', 'list');
+	};
+
 
 	/* Edition */
 	$scope.editCommunity = function(community) {
@@ -73,7 +104,7 @@ function CommunityController($scope, template, model, date, route){
 		$scope.setupMembersEditor();
 	};
 
-	$scope.saveCommunity = function(){
+	$scope.saveEditCommunity = function(){
 		$scope.community.update(function(){
 			template.open('main', 'list');	
 		});
@@ -85,16 +116,7 @@ function CommunityController($scope, template, model, date, route){
 
 
 	/* Services */
-	$scope.setupServicesEditor = function(){
-		if ($scope.community.servicesLoaded) {
-			return;
-		}
-		$scope.getCommunityWebsite(function(){
-			$scope.community.serviceLoaded = true;	
-		});		
-	};
-
-	$scope.getCommunityWebsite = function(callback){
+	$scope.setupServicesEditor = function(callback){
 		$scope.community.website = new model.pagesModel.Website();
 		$scope.community.website._id = $scope.community.pageId;
 		$scope.community.website.sync(function(){
@@ -104,7 +126,7 @@ function CommunityController($scope, template, model, date, route){
 					delete service.pageId;
 				}
 			});
-				if(typeof callback === 'function'){
+			if (typeof callback === 'function'){
 				callback();
 			}
 		});
@@ -204,22 +226,60 @@ function CommunityController($scope, template, model, date, route){
 		delete service.pageId;
 	};
 
+
 	/* Members */
 	$scope.setupMembersEditor = function(){
-		if ($scope.community.membersLoaded) {
-			return;
-		}
-
-		$scope.community.getMembers(function(){
-			$scope.members = _.union(
-				_.each($scope.community.members.manager, function(member) { member.role = 'manager'; }),
-				_.each($scope.community.members.contrib, function(member) { member.role = 'contrib'; }),
-				_.each($scope.community.members.read, function(member) { member.role = 'read'; })
-			);
-			$scope.community.membersLoaded = true;
+		$scope.search = { term: '', found: [] };
+		$scope.community.getMembers(function(visibles){
+			$scope.members = _.union($scope.community.members.manager, $scope.community.members.contrib, $scope.community.members.read);
+			$scope.visibles = visibles;
+			$scope.edited = { delete: [], manage: [], contrib: [], read: [] };
 			// DEBUG
 			console.log($scope.members);
+			console.log($scope.visibles);
 		});
+	};
+
+	$scope.addMember = function(userOrGroup) {
+		// Default rights : read
+		userOrGroup.role = 'read';
+		$scope.members.push(userOrGroup);
+		$scope.community.addMember(userOrGroup.id, 'read');
+		// TODO : Manage error
+		$scope.search = { term: '', found: [] };
+	};
+
+	$scope.setMemberRole = function(member) {
+		$scope.community.setMemberRole(member.id, member.role);
+		// TODO : Manage error
+	};
+ 
+	$scope.removeMember = function(member) {
+		$scope.members.splice($scope.members.indexOf(member));
+		$scope.community.removeMember(member.id);
+		delete member.role;
+		// TODO : Manage error
+	};
+
+	$scope.findUserOrGroup = function(){
+		var searchTerm = lang.removeAccents($scope.search.term).toLowerCase();
+		/*DEBUG*/console.log('SEARCH: [' + searchTerm + ']'); 
+		$scope.search.found = _.union(
+			_.filter($scope.visibles.groups, function(group){
+				var testName = lang.removeAccents(group.name).toLowerCase();
+				return testName.indexOf(searchTerm) !== -1;
+			}),
+			_.filter($scope.visibles.users, function(user){
+				var testName = lang.removeAccents(user.lastName + ' ' + user.firstName).toLowerCase();
+				var testNameReversed = lang.removeAccents(user.firstName + ' ' + user.lastName).toLowerCase();
+				return testName.indexOf(searchTerm) !== -1 || testNameReversed.indexOf(searchTerm) !== -1;
+			})
+		);
+		/*DEBUG*/console.log('matches: ' + ($scope.search.found !== undefined ? $scope.search.found.length : 0));
+		$scope.search.found = _.filter($scope.search.found, function(element){
+			return _.find($scope.members, function(member){ return member.id === element.id }) === undefined;
+		});
+		/*DEBUG*/console.log('filtered: ' + ($scope.search.found !== undefined ? $scope.search.found.length : 0));
 	};
 
 

@@ -24,7 +24,7 @@
 			</div>
 			<div class="content">
 				<div class="row">
-					<h1 ng-click="viewSite(community)" class="eight cell">[[community.name]]</h1>
+					<h1 class="eight cell"><a href="[[community.url()]]">[[community.name]]</a></h1>
 					<div class="four cell right-magnet">
 						<!--<resource-right name="manage" resource="community" class="cell right-magnet">-->
 							<button ng-click="removeCommunity(community)" class="right-magnet"><i18n>remove</i18n></button>

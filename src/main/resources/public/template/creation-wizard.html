@@ -5,20 +5,20 @@
 		<p><i18n>community.step.start.message</i18n></p>
 	</step>
 
-	<step>
+	<step on-next="saveCommunity()">
 		<h1><i18n>community.step.properties</i18n></h1>
 		<p><i18n>community.properties.directions</i18n></p>
 		<container template="step2"></container>
 	</step>
 
-	<step on-previous="setupServicesEditor()">
+	<step on-next="saveServices()">
 		<h1><i18n>community.step.services</i18n></h1>
 		<h2>[[community.name]]</h2>
 		<p><i18n>community.services.directions</i18n></p>
 		<container template="step3"></container>
 	</step>
 
-	<step on-previous="setupMembersEditor()">
+	<step>
 		<h1><i18n>community.step.members</i18n></h1>
 		<h2>[[community.name]]</h2>
 		<p><i18n>community.members.directions</i18n></p>

@@ -1,24 +1,41 @@
-<table>
-	<thead>
-		<tr>
-			<th></th>
-			<th><i18n>community.roles.manager</i18n></th>
-			<th><i18n>community.roles.contrib</i18n></th>
-			<th><i18n>community.roles.read</i18n></th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><i18n>community.members.me</i18n></td>
-			<td><input type="radio" group="[[me.userId]]" disabled class="disabled" checked="true"/></td>
-			<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
-			<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
-		</tr>
-		<tr ng-repeat="member in members">
-			<td>[[member.displayName]]</td>
-			<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="manager"/></td>
-			<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="contrib"/></td>
-			<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="read"/></td>
-		</tr>
-	</tbody>
-</table>
+<div class="share">
+	<table>
+		<thead>
+			<tr>
+				<th></th>
+				<th><i18n>community.roles.read</i18n></th>
+				<th><i18n>community.roles.contrib</i18n></th>
+				<th><i18n>community.roles.manager</i18n></th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><i18n>community.members.me</i18n></td>
+				<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
+				<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
+				<td><input type="radio" group="[[me.userId]]" disabled class="disabled" checked="true"/></td>
+				<td></td>
+			</tr>
+			<tr ng-repeat="member in members">
+				<td>[[member.displayName]]</td>
+				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="read" ng-change="setMemberRole(member)"/></td>
+				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="contrib" ng-change="setMemberRole(member)"/></td>
+				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="manager" ng-change="setMemberRole(member)"/></td>
+				<td class="drop-line" ng-click="removeMember(member)"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="row">
+		<h2><i18n></i18n></h2>
+		<input type="text" ng-model="search.term" ng-change="findUserOrGroup()" i18n-placeholder="" />
+		<div class="found-users-list">
+			<div ng-repeat="item in search.found | limitTo:maxResults | orderBy:'lastname'">
+				<em ng-click="addMember(item)" class="row">
+					<span class="cell reduce-block-two">[[item.displayName]]</span>
+				</em>
+			</div>
+		</div>
+	</div>
+</div>
