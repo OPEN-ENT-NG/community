@@ -3,8 +3,8 @@ routes.define(function($routeProvider){
 		.when('/list', {
 			action: 'list'
 		})
-      .when('/view/:communityId', {
-        action: 'viewCommunity'
+      .when('/edit/:communityId', {
+        action: 'editCommunity'
       })
 	  .otherwise({
         redirectTo: '/list'
@@ -19,9 +19,20 @@ function CommunityController($scope, template, model, date, route, lang){
 	$scope.maxResults = 10;
 
 	route({
-		viewCommunity: function(params){
+		editCommunity: function(params){
+			model.communities.one('sync', function(){
+				var community = model.communities.find(function(c){ return c.pageId === params.communityId });
+				if (community !== undefined) {
+					$scope.editCommunity(community);
+				}
+				else {
+					notify.error('community.notfound');
+					$scope.cancelToList();
+				}
+			});
 		},
 		list: function(params){
+			$scope.cancelToList();
 		}
 	});
 
@@ -61,6 +72,7 @@ function CommunityController($scope, template, model, date, route, lang){
 	$scope.saveServices = function() {
 		$scope.processServicePages();
 		$scope.community.website.save(function(){
+			$scope.community.website.synchronizeRights();
 			$scope.setupMembersEditor();
 		});
 		// TODO : Manage error
@@ -84,8 +96,12 @@ function CommunityController($scope, template, model, date, route, lang){
 	};
 
 	$scope.saveEditCommunity = function(){
+		$scope.processServicePages();
+		$scope.community.website.save(function(){
+			$scope.community.website.synchronizeRights();
+		});
 		$scope.community.update(function(){
-			template.open('main', 'list');	
+			template.open('main', 'list');
 		});
 	};
 
@@ -99,10 +115,11 @@ function CommunityController($scope, template, model, date, route, lang){
 		$scope.community.website = new model.pagesModel.Website();
 		$scope.community.website._id = $scope.community.pageId;
 		$scope.community.website.sync(function(){
-			// Ensure the Pages do exists
+			// Ensure the Pages do exists - The Page must contain a 'titleLink' attr referencing the community Service 'name'
 			_.each($scope.community.services, function(service){
-				if (! $scope.community.website.pages.find(function(page) { return page._id === service.pageId; })) {
-					delete service.pageId;
+				if ($scope.community.website.pages.find(function(page) { return page.titleLink === service.name; })) {
+					service.created = true;
+					service.active = true;
 				}
 			});
 			if (typeof callback === 'function'){
@@ -113,27 +130,36 @@ function CommunityController($scope, template, model, date, route, lang){
 
 	$scope.processServicePages = function() {
 		_.each($scope.community.services, function(service){
-			if (service.active === true && service.pageId === undefined) {
+			if (service.active === true && service.created !== true) {
 				// Create the Page
 				if ($scope['createPage_' + service.name] !== undefined) {
-					$scope['createPage_' + service.name]();
+					try {
+						$scope['createPage_' + service.name](service);
+					}
+					catch (e) {
+						console.log("Could not created page for " + service.name);
+						console.log(e);
+						notify.error(lang.translate('community.service.notcreated') + service.title);
+						service.active = false;
+					}
 				}
 				else {
 					// Nothing to do - cannot create the page
-					// TODO : manage error ?
+					notify.error(lang.translate('community.service.notcreated') + service.title);
 					service.active = false;
 				}
 			}
-			else if (service.active !== true && service.pageId !== undefined) {
+			else if (service.active !== true && service.created === true) {
 				// Delete the Page
 				$scope.deletePage(service);
 			}
 		});
 	}
 
-	$scope.createPage_home = function() {
+	$scope.createBasePage = function(service) {
 		var page = new model.pagesModel.Page();
-		page.title = 'Accueil';
+		page.title = service.title;
+		page.titleLink = service.name;
 
 		var row0 = page.addRow();
 		var row1 = page.addRow();
@@ -147,7 +173,14 @@ function CommunityController($scope, template, model, date, route, lang){
 		cellNavigation.index = 0;
 		cellNavigation.width = 3;
 		cellNavigation.media = { type: 'sniplet', source: { application: 'pages', template: 'navigation', source: { _id: $scope.community.website._id } } };
-		row1.cells.push(cellNavigation);		
+		row1.cells.push(cellNavigation);
+
+		return page;
+	};
+
+	$scope.createPage_home = function(service) {
+		var page = $scope.createBasePage(service);
+		var row1 = page.rows.last();
 
 		var cellText = new model.pagesModel.Cell();
 		cellText.index = 1;
@@ -156,53 +189,56 @@ function CommunityController($scope, template, model, date, route, lang){
 		row1.cells.push(cellText);
 
 		$scope.community.website.pages.push(page);
+		$scope.community.website.landingPage = service.name;
 	};
 
-	$scope.createPage_blog = function() {
-		var page = new model.pagesModel.Page();
-		page.title = 'Blog';
+	$scope.createPage_blog = function(service) {
+		var page = $scope.createBasePage(service);
+		var row1 = page.rows.last();
 
+		var blog = new model.pagesModel.Cell();
+		blog.index = 1;
+		blog.width = 9;
+		blog.media = { type: 'sniplet' };
+
+		var blogCaller = {
+			blog: {},
+			snipletResource: $scope.community.website,
+			setSnipletSource: function(newBlog){
+				blog.media.source = {
+					template: 'articles',
+					application: 'blog',
+					source: newBlog
+				};
+				row1.addCell(blog);
+				if(typeof callback === 'function'){
+					callback();
+				}
+			}
+		};
+		var blogSniplet = _.findWhere(sniplets.sniplets, { application: 'blog', template: 'articles' });
+		blogSniplet.sniplet.controller.createBlog.call(blogCaller);
+
+		$scope.community.website.pages.push(page);
 	};
 
-	$scope.createPage_documents = function() {
-		var page = new model.pagesModel.Page();
-		page.title = 'Documents';
+	$scope.createPage_documents = function(service) {
+		var page = $scope.createBasePage(service);
+		var row1 = page.rows.last();
 
-	};
+		var cellDocuments = new model.pagesModel.Cell();
+		cellDocuments.index = 1;
+		cellDocuments.width = 9;
+		cellDocuments.media = { type: 'sniplet', source: { application: 'workspace', template: 'documents', source: {} } };
+		row1.cells.push(cellDocuments);
 
-	$scope.createPage_forum = function() {
-		var page = new model.pagesModel.Page();
-		page.title = 'Forum';
-
-	};
-
-	$scope.createPage_wiki = function() {
-		var page = new model.pagesModel.Page();
-		page.title = 'Wiki';
-
-	};
-
-	$scope.createPage_userbook = function() {
-		var page = new model.pagesModel.Page();
-		page.title = 'Trombinoscope';
-
-	};
-
-	$scope.createPage_timeline = function() {
-		var page = new model.pagesModel.Page();
-		page.title = 'Evenements';
-
-	};
-
-	$scope.createPage_poll = function() {
-		var page = new model.pagesModel.Page();
-		page.title = 'Sondage';
-
+		$scope.community.website.pages.push(page);
 	};
 
 	$scope.deletePage = function(service) {
-		$scope.community.website.pages.all = $scope.community.website.pages.reject(function(page){ return page._id === service.pageId });
-		delete service.pageId;
+		// Ensure the Page is deleted - The Page must contain a 'titleLink' attr referencing the community Service 'name'
+		$scope.community.website.pages.all = $scope.community.website.pages.reject(function(page){ return page.titleLink === service.name });
+		delete service.created;
 	};
 
 
@@ -241,17 +277,11 @@ function CommunityController($scope, template, model, date, route, lang){
 
 	$scope.findUserOrGroup = function(){
 		var searchTerm = lang.removeAccents($scope.search.term).toLowerCase();
-		$scope.search.found = _.union(
-			_.filter($scope.visibles.groups, function(group){
-				var testName = lang.removeAccents(group.name).toLowerCase();
-				return testName.indexOf(searchTerm) !== -1;
-			}),
-			_.filter($scope.visibles.users, function(user){
-				var testName = lang.removeAccents(user.lastName + ' ' + user.firstName).toLowerCase();
-				var testNameReversed = lang.removeAccents(user.firstName + ' ' + user.lastName).toLowerCase();
-				return testName.indexOf(searchTerm) !== -1 || testNameReversed.indexOf(searchTerm) !== -1;
-			})
-		);
+		$scope.search.found = _.filter($scope.visibles, function(user){
+			var testName = lang.removeAccents(user.lastName + ' ' + user.firstName).toLowerCase();
+			var testNameReversed = lang.removeAccents(user.firstName + ' ' + user.lastName).toLowerCase();
+			return testName.indexOf(searchTerm) !== -1 || testNameReversed.indexOf(searchTerm) !== -1;
+		});
 		$scope.search.found = _.filter($scope.search.found, function(element){
 			return _.find($scope.members, function(member){ return member.id === element.id }) === undefined;
 		});

@@ -34,5 +34,8 @@
 	"community.members.me": "Moi",
 	"community.members.search.placeholder" : "Ex: Sabine, Dupont, Enseignants de l'établissement...",
 
-	"community.confirm.delete": "Voulez-vous vraiment supprimer la communauté ? Toutes les pages et les données des services liés seront également supprimés"
+	"community.confirm.delete": "Voulez-vous vraiment supprimer la communauté ? Toutes les pages et les données des services liés seront également supprimés",
+
+	"community.notfound" : "La communauté a été supprimée ou n'est pas accessible",
+	"community.service.notcreated" : "La création de la page a échoué pour le service "
 }

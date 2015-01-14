@@ -4,7 +4,6 @@ import static org.entcore.common.http.response.DefaultResponseHandler.arrayRespo
 import static org.entcore.common.http.response.DefaultResponseHandler.defaultResponseHandler;
 import static org.entcore.common.http.response.DefaultResponseHandler.leftToResponse;
 import static org.entcore.common.http.response.DefaultResponseHandler.notEmptyResponseHandler;
-import static org.entcore.common.user.UserUtils.findVisibleUsers;
 import static org.entcore.common.user.UserUtils.getUserInfos;
 
 import java.util.List;
@@ -26,7 +25,6 @@ import fr.wseduc.rs.Put;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.Either;
-import fr.wseduc.webutils.I18n;
 import fr.wseduc.webutils.http.BaseController;
 import fr.wseduc.webutils.request.RequestUtils;
 
@@ -160,10 +158,10 @@ public class CommunityController extends BaseController {
 				.putArray("view", new JsonArray()
 					.addObject(new JsonObject()
 						.putString("edit", "community.edit")
-						.putString("href", "/community/" + pageId + "/edit"))
+						.putString("href", "/community#/edit/" + pageId))
 					.addObject(new JsonObject()
 						.putString("label", "community.back.to")
-						.putString("href", "/community")))));
+						.putString("href", "/community#/list")))));
 		eb.send("pages", updatePage, new Handler<Message<JsonObject>>() {
 			@Override
 			public void handle(Message<JsonObject> message) {
@@ -281,10 +279,12 @@ public class CommunityController extends BaseController {
 				final Handler<Either<String, JsonObject>> handler = defaultResponseHandler(request);
 				if (event.isRight()) {
 					final JsonObject res = event.right().getValue();
-					listVisible(request, new Handler<JsonObject>(){
+					listVisible(request, new Handler<JsonArray>(){
 						@Override
-						public void handle(final JsonObject visibles) {
-							res.putObject("visibles", visibles);
+						public void handle(final JsonArray visibles) {
+							if (visibles != null) {
+								res.putArray("visibles", visibles);
+							}
 							handler.handle(event);
 						}
 					});
@@ -296,35 +296,11 @@ public class CommunityController extends BaseController {
 		});
 	}
 
-	private void listVisible(final HttpServerRequest request, final Handler<JsonObject> handler) {
+	private void listVisible(final HttpServerRequest request, final Handler<JsonArray> handler) {
 		getUserInfos(eb, request, new Handler<UserInfos>() {
 			@Override
 			public void handle(final UserInfos user) {
-				final String acceptLanguage = I18n.acceptLanguage(request);
-				final JsonObject visibles = new JsonObject();
-				UserUtils.findVisibleProfilsGroups(eb, user.getUserId(), new Handler<JsonArray>() {
-					@Override
-					public void handle(JsonArray visibleGroups) {
-						JsonArray groups = new JsonArray();
-						visibles.putArray("groups", groups);
-						for (Object u : visibleGroups) {
-							if (u instanceof JsonObject) {
-								JsonObject group = (JsonObject) u;
-								if (group.getString("type") == null) { // Do not list Community groups ?
-									UserUtils.groupDisplayName(group, acceptLanguage);
-									groups.addObject(group);
-								}
-							}
-						}
-						findVisibleUsers(eb, user.getUserId(), false, new Handler<JsonArray>() {
-							@Override
-							public void handle(JsonArray visibleUsers) {
-								visibles.putArray("users", visibleUsers);
-								handler.handle(visibles);
-							}
-						});
-					}
-				});
+				UserUtils.findVisibleUsers(eb, user.getUserId(), false, handler);
 			}
 		});
 	}

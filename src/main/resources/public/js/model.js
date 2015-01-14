@@ -1,14 +1,14 @@
 function Community() {
 	this.services = [
-		{ name: 'home', mandatory: true, active: true },
-		{ name: 'blog' },
-		{ name: 'documents' },
-		{ name: 'forum' },
+		{ name: 'home', title: 'Accueil', mandatory: true, active: true },
+		{ name: 'blog', title: 'Blog' },
+		{ name: 'documents', title: 'Documents' }
+/*		{ name: 'forum' },
 		{ name: 'wiki' },
 		{ name: 'userbook' },
 		{ name: 'timeline' },
 		{ name: 'poll' },
-	];
+*/	];
 	this.members = {
 		read: [],
 		contrib: [],
@@ -78,16 +78,10 @@ Community.prototype.getMembers = function(callback) {
 		}
 		// community.members.all = _.union(community.members.manager, community.members.contrib, community.members.read);
 
-		var visibles = { users: [], groups: [] };
+		var visibles = [];
 		if (members.visibles) {
-			if (members.visibles.users) {
-				_.each(members.visibles.users, function(user){ user.displayName = user.username; });
-				visibles.users = members.visibles.users;
-			}
-			if (members.visibles.groups) {
-				_.each(members.visibles.groups, function(group){ group.displayName = group.name; });
-				visibles.groups = members.visibles.groups;
-			}
+			_.each(members.visibles, function(user){ user.displayName = user.username; });
+			visibles = members.visibles;
 		}
 		if(typeof callback === 'function'){
 			callback(visibles);
