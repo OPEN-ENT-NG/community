@@ -26,10 +26,12 @@
 				<div class="row">
 					<h1 class="eight cell"><a href="[[community.url()]]">[[community.name]]</a></h1>
 					<div class="four cell right-magnet">
-						<!--<resource-right name="manage" resource="community" class="cell right-magnet">-->
+						<resource-right name="manager" resource="community" class="cell right-magnet">
 							<button ng-click="removeCommunity(community)" class="right-magnet"><i18n>remove</i18n></button>
+						</resource-right>
+						<resource-right name="contrib" resource="community" class="cell right-magnet">
 							<button ng-click="editCommunity(community)" class="right-magnet"><i18n>properties</i18n></button>
-						<!--</resource-right>-->
+						</resource-right>
 					</div>
 				</div>
 				<div class="row">

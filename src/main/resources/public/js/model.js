@@ -134,10 +134,29 @@ Community.prototype.url = function() {
 model.build = function(){
 	this.makeModels([Community]);
 
+	var rightsSetter = {
+		manager: function(rights) {
+			rights.manager = true;
+			rights.contrib = true;
+		},
+		contrib: function(rights) {
+			rights.contrib = true;
+		}
+	}
+
 	this.collection(Community, {
 		sync: function(callback){
 			http().get('/community/list').done(function(communities){
-				this.load(communities);
+				this.load(communities, function(community) {
+					community.myRights = {};
+					if (community.types) {
+						_.each(community.types, function(type) {
+							if (typeof rightsSetter[type] === 'function') {
+								rightsSetter[type](community.myRights);
+							}
+						});
+					}
+				});
 				if(typeof callback === 'function'){
 					callback();
 				}

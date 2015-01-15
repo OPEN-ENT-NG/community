@@ -23,7 +23,13 @@ function CommunityController($scope, template, model, date, route, lang){
 			model.communities.one('sync', function(){
 				var community = model.communities.find(function(c){ return c.pageId === params.communityId });
 				if (community !== undefined) {
-					$scope.editCommunity(community);
+					if (community.myRights.contrib) {
+						$scope.editCommunity(community);
+					}
+					else {
+						notify.error('community.norights');
+						$scope.cancelToList();
+					}
 				}
 				else {
 					notify.error('community.notfound');
@@ -86,13 +92,16 @@ function CommunityController($scope, template, model, date, route, lang){
 	/* Edition */
 	$scope.editCommunity = function(community) {
 		$scope.community = community;
-		template.open('main', 'editor');
-		template.open('editor1', 'editor-properties');
-		template.open('editor2', 'editor-services');
-		template.open('editor3', 'editor-members');
-
+		$scope.community.oldname = $scope.community.name;
 		$scope.setupServicesEditor();
-		$scope.setupMembersEditor();
+		template.open('main', 'editor');
+		template.open('editor2', 'editor-services');
+
+		if (community.myRights.manager) {
+			template.open('editor1', 'editor-properties');
+			template.open('editor3', 'editor-members');
+			$scope.setupMembersEditor();
+		}
 	};
 
 	$scope.saveEditCommunity = function(){
@@ -100,12 +109,19 @@ function CommunityController($scope, template, model, date, route, lang){
 		$scope.community.website.save(function(){
 			$scope.community.website.synchronizeRights();
 		});
-		$scope.community.update(function(){
-			template.open('main', 'list');
-		});
+
+		if ($scope.community.myRights.manager) {
+			$scope.community.update(function(){
+				$scope.community.oldname = $scope.community.name;
+				template.open('main', 'list');
+			});
+		}
 	};
 
 	$scope.cancelToList = function(){
+		if ($scope.community && $scope.community.oldname) {
+			$scope.community.name = $scope.community.oldname;
+		}
 		template.open('main', 'list');
 	};
 
@@ -149,9 +165,28 @@ function CommunityController($scope, template, model, date, route, lang){
 					service.active = false;
 				}
 			}
+			else if (service.active === true && service.created === true) {
+				// Update the page title
+				try {
+					$scope.updatePageTitle(service);
+				}
+				catch (e) {
+					console.log("Could not update page title for " + service.name);
+					console.log(e);
+					notify.error(lang.translate('community.service.notupdated') + service.title);
+				}
+			}
 			else if (service.active !== true && service.created === true) {
 				// Delete the Page
-				$scope.deletePage(service);
+				try {	
+					$scope.deletePage(service);
+				}
+				catch (e) {
+					console.log("Could not delete page for " + service.name);
+					console.log(e);
+					notify.error(lang.translate('community.service.notdeleted') + service.title);
+					service.active = true;
+				}
 			}
 		});
 	}
@@ -233,6 +268,13 @@ function CommunityController($scope, template, model, date, route, lang){
 		row1.cells.push(cellDocuments);
 
 		$scope.community.website.pages.push(page);
+	};
+
+	$scope.updatePageTitle = function(service) {
+		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
+		if (page) {
+			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
+		}
 	};
 
 	$scope.deletePage = function(service) {
