@@ -21,7 +21,7 @@ Community.prototype.create = function(callback) {
 		data.owner = { displayName: model.me.username, userId: model.me.userId };
 		this.updateData(data);
 		this.behaviours('community');
-		model.communities.push(this);
+		model.communities.pushWithRights(this);
 		if(typeof callback === 'function'){
 			callback();
 		}
@@ -131,6 +131,43 @@ Community.prototype.url = function() {
 }
 
 
+AsyncProcessor = function() {
+	this.actions = 0;
+}
+
+AsyncProcessor.prototype.setCallback = function(callback) {
+	if (typeof callback === 'function') {
+		this.callable = true;
+		this.callback = callback;
+	}
+};
+
+AsyncProcessor.prototype.stack = function() {
+	this.actions++;
+};
+
+AsyncProcessor.prototype.done = function() {
+	if (this.callable && this.ended && this.actions <= 0 && this.callback) {
+		this.callback();
+		this.callable = false;
+	}
+	else {
+		this.actions--;
+	}
+};
+
+AsyncProcessor.prototype.end = function() {
+	if (this.callable && this.actions <= 0 && this.callback) {
+		this.callback();
+		this.callable = false;
+	}
+	else {
+		this.ended = true;
+		this.actions--;
+	}
+};
+
+
 model.build = function(){
 	this.makeModels([Community]);
 
@@ -161,6 +198,17 @@ model.build = function(){
 					callback();
 				}
 			}.bind(this));
+		},
+		pushWithRights: function(community){
+			community.myRights = {};
+			if (community.types) {
+				_.each(community.types, function(type) {
+					if (typeof rightsSetter[type] === 'function') {
+						rightsSetter[type](community.myRights);
+					}
+				});
+			}
+			this.push(community);
 		},
 		behaviours: 'community'
 	})

@@ -19,6 +19,8 @@
 	"community.description.placeholder": "Entrez une description",
 
 	"community.services.home.name": "Accueil",
+	"community.services.home.message.label": "Message de la page d'accueil",
+	"community.services.home.message.placeholder": "<p>Bienvenue dans la communauté</p>",
 	"community.services.blog.name": "Blog",
 	"community.services.documents.name": "Documents",
 	"community.services.forum.name": "Forum",

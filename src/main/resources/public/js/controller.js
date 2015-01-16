@@ -76,11 +76,12 @@ function CommunityController($scope, template, model, date, route, lang){
 	};
 
 	$scope.saveServices = function() {
-		$scope.processServicePages();
-		$scope.community.website.save(function(){
-			$scope.community.website.synchronizeRights();
-			$scope.setupMembersEditor();
-		});
+		$scope.processServicePages(function(){
+			$scope.community.website.save(function(){
+				$scope.community.website.synchronizeRights();
+				$scope.setupMembersEditor();
+			});	
+		});		
 		// TODO : Manage error
 	};
 
@@ -105,9 +106,13 @@ function CommunityController($scope, template, model, date, route, lang){
 	};
 
 	$scope.saveEditCommunity = function(){
-		$scope.processServicePages();
-		$scope.community.website.save(function(){
-			$scope.community.website.synchronizeRights();
+		$scope.processServicePages(function(){
+			/*DEBUG*/console.log("Community: saving website");
+			/*DEBUG*/console.log($scope.community.website);
+			$scope.community.website.save(function(){
+				/*DEBUG*/console.log("Community: saved website");
+				$scope.community.website.synchronizeRights();
+			});	
 		});
 
 		if ($scope.community.myRights.manager) {
@@ -128,6 +133,7 @@ function CommunityController($scope, template, model, date, route, lang){
 
 	/* Services */
 	$scope.setupServicesEditor = function(callback){
+		$scope.serviceHome = _.find($scope.community.services, function(s){ return s.name === 'home'; });
 		$scope.community.website = new model.pagesModel.Website();
 		$scope.community.website._id = $scope.community.pageId;
 		$scope.community.website.sync(function(){
@@ -136,6 +142,15 @@ function CommunityController($scope, template, model, date, route, lang){
 				if ($scope.community.website.pages.find(function(page) { return page.titleLink === service.name; })) {
 					service.created = true;
 					service.active = true;
+					try {
+						if ($scope['getPage_' + service.name] !== undefined) {
+							$scope['getPage_' + service.name](page, service);
+						}
+					}
+					catch (e) {
+						console.log("Could not get page contents for " + service.name);
+						console.log(e);
+					}
 				}
 			});
 			if (typeof callback === 'function'){
@@ -144,7 +159,10 @@ function CommunityController($scope, template, model, date, route, lang){
 		});
 	};
 
-	$scope.processServicePages = function() {
+	$scope.processServicePages = function(callback) {
+		$scope.processor = new AsyncProcessor();
+		$scope.processor.setCallback(callback);
+
 		_.each($scope.community.services, function(service){
 			if (service.active === true && service.created !== true) {
 				// Create the Page
@@ -168,7 +186,13 @@ function CommunityController($scope, template, model, date, route, lang){
 			else if (service.active === true && service.created === true) {
 				// Update the page title
 				try {
-					$scope.updatePageTitle(service);
+					if ($scope['updatePage_' + service.name] !== undefined) {
+						$scope['updatePage_' + service.name](service);
+					}
+					else {
+						// default : only update title
+						$scope.updatePageTitle(service);
+					}
 				}
 				catch (e) {
 					console.log("Could not update page title for " + service.name);
@@ -178,7 +202,7 @@ function CommunityController($scope, template, model, date, route, lang){
 			}
 			else if (service.active !== true && service.created === true) {
 				// Delete the Page
-				try {	
+				try {
 					$scope.deletePage(service);
 				}
 				catch (e) {
@@ -189,6 +213,8 @@ function CommunityController($scope, template, model, date, route, lang){
 				}
 			}
 		});
+		
+		$scope.processor.end();
 	}
 
 	$scope.createBasePage = function(service) {
@@ -220,7 +246,7 @@ function CommunityController($scope, template, model, date, route, lang){
 		var cellText = new model.pagesModel.Cell();
 		cellText.index = 1;
 		cellText.width = 9;
-		cellText.media = { type: 'text', source: '<p>Bienvenue dans la communauté</p>' };
+		cellText.media = { type: 'text', source: $scope.serviceHome.content };
 		row1.cells.push(cellText);
 
 		$scope.community.website.pages.push(page);
@@ -231,30 +257,44 @@ function CommunityController($scope, template, model, date, route, lang){
 		var page = $scope.createBasePage(service);
 		var row1 = page.rows.last();
 
-		var blog = new model.pagesModel.Cell();
-		blog.index = 1;
-		blog.width = 9;
-		blog.media = { type: 'sniplet' };
+		var blogCell = new model.pagesModel.Cell();
+		blogCell.index = 1;
+		blogCell.width = 9;
+		blogCell.media = { type: 'sniplet' };
 
+		var processor = $scope.processor;
+		processor.stack(); // async: create blog
+
+		Behaviours.applicationsBehaviours.blog.model.register();
 		var blogCaller = {
-			blog: {},
+			blog: new Behaviours.applicationsBehaviours.blog.model.Blog(),
 			snipletResource: $scope.community.website,
 			setSnipletSource: function(newBlog){
-				blog.media.source = {
+				blogCell.media.source = {
 					template: 'articles',
 					application: 'blog',
 					source: newBlog
 				};
-				row1.addCell(blog);
-				if(typeof callback === 'function'){
-					callback();
-				}
+				row1.addCell(blogCell);
+				/*DEBUG*/console.log("Community: created blog");
+				/*DEBUG*/console.log(newBlog);
+				/*DEBUG*/console.log(row1);
+				processor.done(); // create blog
 			}
 		};
 		var blogSniplet = _.findWhere(sniplets.sniplets, { application: 'blog', template: 'articles' });
-		blogSniplet.sniplet.controller.createBlog.call(blogCaller);
-
 		$scope.community.website.pages.push(page);
+
+		try {
+			// Create the blog
+			/*DEBUG*/console.log("Community: creating blog");
+			blogSniplet.sniplet.controller.createBlog.call(blogCaller);
+		}
+		catch (e) {
+			console.log("Failed to create Blog for service blog");
+			console.log(e);
+			processor.done();
+		}
 	};
 
 	$scope.createPage_documents = function(service) {
@@ -274,6 +314,23 @@ function CommunityController($scope, template, model, date, route, lang){
 		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
 		if (page) {
 			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
+		}
+	};
+
+	$scope.updatePage_home = function(service) {
+		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
+		if (page) {
+			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
+			page.rows.all[1].cells.all[1].media.source = $scope.serviceHome.content;
+		}
+	};
+
+	$scope.getPage_home = function(page, service) {
+		if (page) {
+			var content = page.rows.all[1].cells.all[1].media.source = $scope.serviceHome.content;
+			if (content && _.isString(content)) {
+				service.content = content;
+			}
 		}
 	};
 
