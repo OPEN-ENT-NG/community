@@ -2,6 +2,8 @@
 	"community.title": "Communautés",
 
 	"community.create": "Créer une communauté",
+	"community.filters.manager": "Communautés dont je suis le gestionnaire",
+	"community.list.empty": "Aucune communauté trouvée",
 
 	"community.step.start": "Créer votre communauté",
 	"community.step.start.message": "Bienvenu(e) dans l'assistant de création de votre communauté. Il vous permettra de renseigner les informations concernant votre communauté. Vous pourrez à tout moment éditer ces informations.",
@@ -32,6 +34,12 @@
 	"community.roles.manager": "Gestionnaires",
 	"community.roles.contrib": "Contributeurs",
 	"community.roles.read": "Lecteurs",
+
+	"community.user.role.start": "Vous êtes ",
+	"community.user.role.end": " de cette communauté",
+	"community.user.role.manager": "gestionnaire",
+	"community.user.role.contrib": "contributeur",
+	"community.user.role.read": "lecteur",
 
 	"community.members.me": "Moi",
 	"community.members.search.placeholder" : "Ex: Sabine, Dupont, Enseignants de l'établissement...",

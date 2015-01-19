@@ -172,12 +172,17 @@ model.build = function(){
 	this.makeModels([Community]);
 
 	var rightsSetter = {
-		manager: function(rights) {
-			rights.manager = true;
-			rights.contrib = true;
+		manager: function(resource) {
+			resource.myRights.manager = true;
+			resource.myRights.contrib = true;
+			resource.role = 'manager';
 		},
-		contrib: function(rights) {
-			rights.contrib = true;
+		contrib: function(resource) {
+			resource.myRights.contrib = true;
+			resource.role = 'contrib';
+		},
+		default: function(resource) {
+			resource.role = 'read';	
 		}
 	}
 
@@ -189,7 +194,10 @@ model.build = function(){
 					if (community.types) {
 						_.each(community.types, function(type) {
 							if (typeof rightsSetter[type] === 'function') {
-								rightsSetter[type](community.myRights);
+								rightsSetter[type](community);
+							}
+							else {
+								rightsSetter.default(community);	
 							}
 						});
 					}
@@ -204,7 +212,10 @@ model.build = function(){
 			if (community.types) {
 				_.each(community.types, function(type) {
 					if (typeof rightsSetter[type] === 'function') {
-						rightsSetter[type](community.myRights);
+						rightsSetter[type](community);
+					}
+					else {
+						rightsSetter.default(community);	
 					}
 				});
 			}

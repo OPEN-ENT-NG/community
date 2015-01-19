@@ -65,6 +65,7 @@ public class CommunityController extends BaseController {
 			public void handle(JsonObject u) {
 				JsonObject p = new JsonObject()
 						.putString("title", body.getString("name"))
+						.putBoolean("hideInPages", true)
 						.putArray("pages", new JsonArray())
 						.putObject("referencedResources", new JsonObject());
 				JsonObject pages = new JsonObject()
@@ -200,7 +201,9 @@ public class CommunityController extends BaseController {
 					JsonObject updatePage = new JsonObject()
 							.putString("action", "update")
 							.putString("pageId", pageId)
-							.putObject("page", new JsonObject().putString("title", name));
+							.putObject("page", new JsonObject()
+								.putString("title", name)
+								.putBoolean("hideInPages", true));
 					eb.send("pages", updatePage, new Handler<Message<JsonObject>>() {
 						@Override
 						public void handle(Message<JsonObject> message) {

@@ -15,6 +15,7 @@ function CommunityController($scope, template, model, date, route, lang){
 	$scope.template = template;
 	$scope.me = model.me;
 	$scope.display = {};
+	$scope.filters = { search: '' };
 	$scope.wizard = {};
 	$scope.maxResults = 10;
 
@@ -51,6 +52,13 @@ function CommunityController($scope, template, model, date, route, lang){
 		sniplets.load();
 	});
 
+	$scope.roleMatch = function(element){
+		return (!$scope.filters.manager || element.myRights.manager);
+	};
+
+	$scope.searchMatch = function(element){
+		return lang.removeAccents((element.name || '').toLowerCase()).indexOf(lang.removeAccents($scope.filters.search.toLowerCase())) !== -1;
+	};
 
 	/* Creation */
 	$scope.createCommunity = function(){
@@ -109,6 +117,7 @@ function CommunityController($scope, template, model, date, route, lang){
 		$scope.processServicePages(function(){
 			/*DEBUG*/console.log("Community: saving website");
 			/*DEBUG*/console.log($scope.community.website);
+			/*TEMP*/$scope.community.website.hideInPages = true; // update with attribute
 			$scope.community.website.save(function(){
 				/*DEBUG*/console.log("Community: saved website");
 				$scope.community.website.synchronizeRights();

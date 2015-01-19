@@ -3,21 +3,21 @@
 </div>
 
 <filters>
-	<li ng-class="{ selected: display.mineOnly }">
+	<li ng-class="{ selected: filters.manager }">
 		<label>
-			<i class="mine type" tooltip="filters.mine"></i>
-			<input type="checkbox" ng-model="display.mineOnly" />
+			<i class="mine type" tooltip="community.filters.manager"></i>
+			<input type="checkbox" ng-model="filters.manager" />
 		</label>
 	</li>
 </filters>
 
 <div class="row">
-	<input type="search" class="twelve cell" i18n-placeholder="search" ng-model="display.search" />
+	<input type="search" class="twelve cell" i18n-placeholder="search" ng-model="filters.search" />
 </div>
 
 <nav class="illustrated-links">
 	<ul>
-		<li ng-repeat="community in communities.all | filter:mine | filter:searchMatch">
+		<li ng-repeat="community in filteredCommunities = (communities.all | filter: roleMatch | filter:searchMatch)">
 			<div class="illustration" ng-click="viewSite(community)">
 				<img ng-src="[[community.icon]]?thumbnail=150x150" alt="thumbnail" ng-if="community.icon" />
 				<img skin-src="/img/illustrations/pages-default.png" alt="thumbnail" ng-if="!community.icon" />
@@ -35,10 +35,18 @@
 					</div>
 				</div>
 				<div class="row">
-					<em>Par [[community.owner.displayName]]</em> - 
+					<em>
+						<i18n>community.user.role.start</i18n>
+						<span translate content="community.user.role.[[community.role]]"></span>
+						<i18n>community.user.role.end</i18n>
+					</em>
 					<p>[[community.description]]</p>
 				</div>
 			</div>
+		</li>
+
+		<li ng-if="filteredCommunities.length === 0">
+			<em><i18n>community.list.empty</i18n></em>
 		</li>
 	</ul>
 </nav>
