@@ -24,7 +24,7 @@ function CommunityController($scope, template, model, date, route, lang){
 			model.communities.one('sync', function(){
 				var community = model.communities.find(function(c){ return c.pageId === params.communityId });
 				if (community !== undefined) {
-					if (community.myRights.contrib) {
+					if (community.myRights.manager) {
 						$scope.editCommunity(community);
 					}
 					else {
