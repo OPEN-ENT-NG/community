@@ -105,31 +105,26 @@ function CommunityController($scope, template, model, date, route, lang){
 		$scope.setupServicesEditor();
 		template.open('main', 'editor');
 		template.open('editor2', 'editor-services');
-
-		if (community.myRights.manager) {
-			template.open('editor1', 'editor-properties');
-			template.open('editor3', 'editor-members');
-			$scope.setupMembersEditor();
-		}
+		template.open('editor1', 'editor-properties');
+		template.open('editor3', 'editor-members');
+		$scope.setupMembersEditor();
 	};
 
 	$scope.saveEditCommunity = function(){
 		$scope.processServicePages(function(){
 			/*DEBUG*/console.log("Community: saving website");
 			/*DEBUG*/console.log($scope.community.website);
-			/*TEMP*/$scope.community.website.hideInPages = true; // update with attribute
 			$scope.community.website.save(function(){
 				/*DEBUG*/console.log("Community: saved website");
 				$scope.community.website.synchronizeRights();
 			});	
 		});
 
-		if ($scope.community.myRights.manager) {
-			$scope.community.update(function(){
-				$scope.community.oldname = $scope.community.name;
-				template.open('main', 'list');
-			});
-		}
+		$scope.community.update(function(){
+			$scope.community.oldname = $scope.community.name;
+		});
+
+		template.open('main', 'list');
 	};
 
 	$scope.cancelToList = function(){
@@ -148,7 +143,8 @@ function CommunityController($scope, template, model, date, route, lang){
 		$scope.community.website.sync(function(){
 			// Ensure the Pages do exists - The Page must contain a 'titleLink' attr referencing the community Service 'name'
 			_.each($scope.community.services, function(service){
-				if ($scope.community.website.pages.find(function(page) { return page.titleLink === service.name; })) {
+				var page = $scope.community.website.pages.find(function(p) { return p.titleLink === service.name; })
+				if (page) {
 					service.created = true;
 					service.active = true;
 					try {
@@ -335,11 +331,9 @@ function CommunityController($scope, template, model, date, route, lang){
 	};
 
 	$scope.getPage_home = function(page, service) {
-		if (page) {
-			var content = page.rows.all[1].cells.all[1].media.source = $scope.serviceHome.content;
-			if (content && _.isString(content)) {
-				service.content = content;
-			}
+		var content = page.rows.all[1].cells.all[1].media.source;
+		if (content && _.isString(content)) {
+			service.content = content;
 		}
 	};
 
