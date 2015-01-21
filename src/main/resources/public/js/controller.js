@@ -311,7 +311,7 @@ function CommunityController($scope, template, model, date, route, lang){
 		var cellDocuments = new model.pagesModel.Cell();
 		cellDocuments.index = 1;
 		cellDocuments.width = 9;
-		cellDocuments.media = { type: 'sniplet', source: { application: 'workspace', template: 'documents', source: {} } };
+		cellDocuments.media = { type: 'sniplet', source: { application: 'workspace', template: 'documents', source: { documents: [] } } };
 		row1.cells.push(cellDocuments);
 
 		$scope.community.website.pages.push(page);

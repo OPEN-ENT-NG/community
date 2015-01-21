@@ -20,6 +20,7 @@ Community.prototype.create = function(callback) {
 	http().postJson('/community', this).done(function(data){
 		data.owner = { displayName: model.me.username, userId: model.me.userId };
 		this.updateData(data);
+		this.types = ['manager'];
 		this.behaviours('community');
 		model.communities.pushWithRights(this);
 		if(typeof callback === 'function'){
