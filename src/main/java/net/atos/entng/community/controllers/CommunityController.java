@@ -158,7 +158,7 @@ public class CommunityController extends BaseController {
 			.putObject("markups", new JsonObject()
 				.putArray("view", new JsonArray()
 					.addObject(new JsonObject()
-						.putString("edit", "community.edit")
+						.putString("label", "community.edit")
 						.putString("href", "/community#/edit/" + pageId))
 					.addObject(new JsonObject()
 						.putString("label", "community.back.to")
@@ -203,7 +203,15 @@ public class CommunityController extends BaseController {
 							.putString("pageId", pageId)
 							.putObject("page", new JsonObject()
 								.putString("title", name)
-								.putBoolean("hideInPages", true));
+								.putBoolean("hideInPages", true)
+								.putObject("markups", new JsonObject()
+								.putArray("view", new JsonArray()
+									.addObject(new JsonObject()
+										.putString("label", "community.edit")
+										.putString("href", "/community#/edit/" + pageId))
+									.addObject(new JsonObject()
+										.putString("label", "community.back.to")
+										.putString("href", "/community#/list")))));
 					eb.send("pages", updatePage, new Handler<Message<JsonObject>>() {
 						@Override
 						public void handle(Message<JsonObject> message) {

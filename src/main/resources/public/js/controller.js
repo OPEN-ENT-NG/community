@@ -63,7 +63,9 @@ function CommunityController($scope, template, model, date, route, lang){
 	/* Creation */
 	$scope.createCommunity = function(){
 		$scope.community = new Community();
+		$scope.community.serviceHome = {};
 		$scope.wizard = {};
+		$scope.members = [];
 
 		template.open('main', 'creation-wizard');
 		template.open('step2', 'editor-properties');
@@ -103,11 +105,11 @@ function CommunityController($scope, template, model, date, route, lang){
 		$scope.community = community;
 		$scope.community.oldname = $scope.community.name;
 		$scope.setupServicesEditor();
+		$scope.setupMembersEditor();
 		template.open('main', 'editor');
 		template.open('editor2', 'editor-services');
 		template.open('editor1', 'editor-properties');
 		template.open('editor3', 'editor-members');
-		$scope.setupMembersEditor();
 	};
 
 	$scope.saveEditCommunity = function(){
@@ -137,7 +139,7 @@ function CommunityController($scope, template, model, date, route, lang){
 
 	/* Services */
 	$scope.setupServicesEditor = function(callback){
-		$scope.serviceHome = _.find($scope.community.services, function(s){ return s.name === 'home'; });
+		$scope.community.serviceHome = _.find($scope.community.services, function(s){ return s.name === 'home'; });
 		$scope.community.website = new model.pagesModel.Website();
 		$scope.community.website._id = $scope.community.pageId;
 		$scope.community.website.sync(function(){
@@ -251,7 +253,7 @@ function CommunityController($scope, template, model, date, route, lang){
 		var cellText = new model.pagesModel.Cell();
 		cellText.index = 1;
 		cellText.width = 9;
-		cellText.media = { type: 'text', source: $scope.serviceHome.content };
+		cellText.media = { type: 'text', source: $scope.community.serviceHome.content };
 		row1.cells.push(cellText);
 
 		$scope.community.website.pages.push(page);
@@ -326,7 +328,7 @@ function CommunityController($scope, template, model, date, route, lang){
 		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
 		if (page) {
 			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
-			page.rows.all[1].cells.all[1].media.source = $scope.serviceHome.content;
+			page.rows.all[1].cells.all[1].media.source = $scope.community.serviceHome.content;
 		}
 	};
 
