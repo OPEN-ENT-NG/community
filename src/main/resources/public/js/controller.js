@@ -11,7 +11,7 @@ routes.define(function($routeProvider){
       });
 });
 
-function CommunityController($scope, template, model, date, route, lang){
+function CommunityController($scope, template, model, date, route, lang, $location){
 	$scope.template = template;
 	$scope.me = model.me;
 	$scope.display = {};
@@ -21,21 +21,16 @@ function CommunityController($scope, template, model, date, route, lang){
 
 	route({
 		editCommunity: function(params){
+			if ($scope.routed) {
+				return;
+			}
+			$scope.routed = true;
+			if (model.communities.synced) {
+				$scope.routeEditCommunity(params);
+				return;
+			}
 			model.communities.one('sync', function(){
-				var community = model.communities.find(function(c){ return c.pageId === params.communityId });
-				if (community !== undefined) {
-					if (community.myRights.manager) {
-						$scope.editCommunity(community);
-					}
-					else {
-						notify.error('community.norights');
-						$scope.cancelToList();
-					}
-				}
-				else {
-					notify.error('community.notfound');
-					$scope.cancelToList();
-				}
+				$scope.routeEditCommunity(params);		
 			});
 		},
 		list: function(params){
@@ -59,6 +54,24 @@ function CommunityController($scope, template, model, date, route, lang){
 	$scope.searchMatch = function(element){
 		return lang.removeAccents((element.name || '').toLowerCase()).indexOf(lang.removeAccents($scope.filters.search.toLowerCase())) !== -1;
 	};
+
+	/* Routing */
+	$scope.routeEditCommunity = function(params){
+		var community = model.communities.find(function(c){ return c.pageId === params.communityId });
+		if (community !== undefined) {
+			if (community.myRights.manager) {
+				$scope.editCommunity(community);
+			}
+			else {
+				notify.error('community.norights');
+				$scope.cancelToList();
+			}
+		}
+		else {
+			notify.error('community.notfound');
+			$scope.cancelToList();
+		}
+	}
 
 	/* Creation */
 	$scope.createCommunity = function(){

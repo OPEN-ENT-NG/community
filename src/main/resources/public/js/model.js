@@ -190,7 +190,9 @@ model.build = function(){
 	this.collection(Community, {
 		sync: function(callback){
 			http().get('/community/list').done(function(communities){
+				var col = this;
 				this.load(communities, function(community) {
+					col.synced = true;
 					community.myRights = {};
 					if (community.types) {
 						_.each(community.types, function(type) {
