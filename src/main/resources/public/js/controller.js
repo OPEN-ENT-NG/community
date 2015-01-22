@@ -88,7 +88,14 @@ function CommunityController($scope, template, model, date, route, lang){
 	$scope.saveServices = function() {
 		$scope.processServicePages(function(){
 			$scope.community.website.save(function(){
-				$scope.community.website.synchronizeRights();
+				try {
+					$scope.community.website.synchronizeRights();
+				}
+				catch (e) {
+					notify.error(lang.translate('community.rights.notsynced'));
+					console.log("Failed to synchronize rights with services");
+					console.log(e);
+				}
 				$scope.setupMembersEditor();
 			});	
 		});		
@@ -118,7 +125,14 @@ function CommunityController($scope, template, model, date, route, lang){
 			/*DEBUG*/console.log($scope.community.website);
 			$scope.community.website.save(function(){
 				/*DEBUG*/console.log("Community: saved website");
-				$scope.community.website.synchronizeRights();
+				try {
+					$scope.community.website.synchronizeRights();
+				}
+				catch (e) {
+					notify.error(lang.translate('community.rights.notsynced'));
+					console.log("Failed to synchronize rights with services");
+					console.log(e);
+				}
 			});	
 		});
 
@@ -261,8 +275,10 @@ function CommunityController($scope, template, model, date, route, lang){
 	};
 
 	$scope.createPage_blog = function(service) {
+		var website = $scope.community.website;
 		var page = $scope.createBasePage(service);
 		var row1 = page.rows.last();
+		var langService = lang;
 
 		var blogCell = new model.pagesModel.Cell();
 		blogCell.index = 1;
@@ -273,33 +289,38 @@ function CommunityController($scope, template, model, date, route, lang){
 		processor.stack(); // async: create blog
 
 		Behaviours.applicationsBehaviours.blog.model.register();
-		var blogCaller = {
-			blog: new Behaviours.applicationsBehaviours.blog.model.Blog(),
-			snipletResource: $scope.community.website,
-			setSnipletSource: function(newBlog){
-				blogCell.media.source = {
-					template: 'articles',
-					application: 'blog',
-					source: newBlog
-				};
-				row1.addCell(blogCell);
-				/*DEBUG*/console.log("Community: created blog");
-				/*DEBUG*/console.log(newBlog);
-				/*DEBUG*/console.log(row1);
-				processor.done(); // create blog
-			}
-		};
-		var blogSniplet = _.findWhere(sniplets.sniplets, { application: 'blog', template: 'articles' });
-		$scope.community.website.pages.push(page);
+		var blog = new Behaviours.applicationsBehaviours.blog.model.Blog();
+		blog.title = lang.translate('community.services.blog.pretitle') + $scope.community.name;
+		blog.thumbnail = $scope.community.website.icon || '';
+		blog['comment-type'] = 'IMMEDIATE';
+		blog.description = $scope.community.description;
 
 		try {
-			// Create the blog
-			/*DEBUG*/console.log("Community: creating blog");
-			blogSniplet.sniplet.controller.createBlog.call(blogCaller);
+			blog.save(function(){
+				var post = {
+					state: 'SUBMITTED',
+					title: langService.translate('community.services.blog.firstpost.title'),
+					content: langService.translate('community.services.blog.firstpost.content')
+				};
+				blog.posts.addDraft(post, function(post){
+					post.publish(function(){
+						blogCell.media.source = {
+							template: 'articles',
+							application: 'blog',
+							source: blog
+						};
+						row1.addCell(blogCell);
+						/*DEBUG*/console.log("Community: successfuly created blog");
+						website.pages.push(page);
+						processor.done(); // create blog
+					});
+				});
+			});
 		}
 		catch (e) {
 			console.log("Failed to create Blog for service blog");
 			console.log(e);
+			service.active = false;
 			processor.done();
 		}
 	};

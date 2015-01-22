@@ -24,6 +24,9 @@
 	"community.services.home.message.label": "Message de la page d'accueil",
 	"community.services.home.message.placeholder": "<p>Bienvenue dans la communauté</p>",
 	"community.services.blog.name": "Blog",
+	"community.services.blog.pretitle": "Les actualités de la communauté ",
+	"community.services.blog.firstpost.title": "Votre premier article !",
+	"community.services.blog.firstpost.content": "<p>Voici le premier article publié dans votre communauté !</p><p>Vous pouvez créer de nouveaux articles en cliquant sur le bouton \"Ajouter un article\" ci-dessus, ou en accédant directement à l'application Blog. Les membres de la communauté pourront également suivre vos actualités depuis leur application, et seront notifiés lorsque votre site sera mis à jour.</p><p>La navigation, à gauche des articles, est automatiquement mise à jour lorsque vous ajoutez des services à votre communauté.",
 	"community.services.documents.name": "Documents",
 	"community.services.forum.name": "Forum",
 	"community.services.wiki.name": "Wiki",
@@ -46,9 +49,10 @@
 
 	"community.confirm.delete": "Voulez-vous vraiment supprimer la communauté ? Toutes les pages et les données des services liés seront également supprimés",
 
-	"community.notfound" : "La communauté a été supprimée ou n'est pas accessible",
-	"community.norights" : "Vous n'avez pas de droits suffisants pour éditer cette communauté",
-	"community.service.notcreated" : "La création de la page a échoué pour le service ",
-	"community.service.notupdated" : "La mise à jour de la page a échoué pour le service ",
-	"community.service.notdeleted" : "La suppression de la page a échoué pour le service "
+	"community.notfound": "La communauté a été supprimée ou n'est pas accessible",
+	"community.norights": "Vous n'avez pas de droits suffisants pour éditer cette communauté",
+	"community.service.notcreated": "La création de la page a échoué pour le service ",
+	"community.service.notupdated": "La mise à jour de la page a échoué pour le service ",
+	"community.service.notdeleted": "La suppression de la page a échoué pour le service ",
+	"community.rights.notsynced": "La synchronisation du partage pour les services a échoué, les membres de la communauté ne pourront pas accéder aux contenus de certains services"
 }

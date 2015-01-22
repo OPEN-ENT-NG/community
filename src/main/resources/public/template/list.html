@@ -17,7 +17,7 @@
 
 <nav class="illustrated-links">
 	<ul>
-		<li ng-repeat="community in filteredCommunities = (communities.all | filter: roleMatch | filter:searchMatch)">
+		<li ng-repeat="community in filteredCommunities = (communities.all | filter:roleMatch | filter:searchMatch | orderBy:'name')">
 			<div class="illustration" ng-click="viewSite(community)">
 				<img ng-src="[[community.icon]]?thumbnail=150x150" alt="thumbnail" ng-if="community.icon" />
 				<img skin-src="/img/illustrations/pages-default.png" alt="thumbnail" ng-if="!community.icon" />
