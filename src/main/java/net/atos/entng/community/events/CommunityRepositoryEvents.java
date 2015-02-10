@@ -3,7 +3,6 @@ package net.atos.entng.community.events;
 import static org.entcore.common.neo4j.Neo4jResult.validResultHandler;
 
 import org.entcore.common.neo4j.Neo4j;
-import org.entcore.common.neo4j.StatementsBuilder;
 import org.entcore.common.user.RepositoryEvents;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.EventBus;
@@ -39,27 +38,27 @@ public class CommunityRepositoryEvents implements RepositoryEvents {
 	@Override
 	public void deleteUsers(JsonArray users) {
 		// Users are already deleted in Graph - Control and delete communities with no managers
-		StatementsBuilder sb = new StatementsBuilder();
 		JsonObject params = new JsonObject().putString("type", "manager");
-		sb.add("MATCH (c:Community)<-[:DEPENDS]-(g:CommunityGroup {type : {type}}) "
-			 + "OPTIONAL MATCH g<-[:IN]-(u:User) "
-			 + "WITH c, COUNT(u) AS managers WHERE managers = 0 "
-			 + "RETURN c.pageId as pageId", params);
-		sb.add("MATCH (c:Community)<-[:DEPENDS]-(gm:CommunityGroup {type : {type}}) "
-			 + "OPTIONAL MATCH gm<-[:IN]-(um:User) "
-			 + "OPTIONAL MATCH c<-[r:DEPENDS]-(g:CommunityGroup)<-[r2:IN|COMMUNIQUE]-() "
-			 + "WITH c, gm, r, g, r2, COUNT(um) AS managers WHERE managers = 0 "
-			 + "DELETE c, r, g, r2", params);
-		neo4j.executeTransaction(sb.build(), null, true, validResultHandler(new Handler<Either<String, JsonArray>>(){
+		String query = "MATCH (c:Community)<-[:DEPENDS]-(gm:CommunityGroup {type : {type}}) "
+					 + "OPTIONAL MATCH gm<-[:IN]-(um:User) "
+					 + "OPTIONAL MATCH c<-[r:DEPENDS]-(g:CommunityGroup)<-[r2:IN|COMMUNIQUE]-() "
+					 + "WITH c, c.pageId as pageId, gm, r, g, r2, COUNT(um) AS managers WHERE managers = 0 "
+					 + "DELETE c, r, g, r2 "
+					 + "RETURN DISTINCT pageId";
+		neo4j.execute(query, params, validResultHandler(new Handler<Either<String, JsonArray>>(){
 			@Override
 			public void handle(Either<String, JsonArray> event) {
 				if (event.isRight()) {
 					JsonArray pageIds = event.right().getValue();
 					for (Object o : pageIds) {
+						if (!(o instanceof JsonObject)) continue;
+						JsonObject page = (JsonObject) o;
+						if (!page.containsField("pageId")) continue;
+
 						// Delete the page
 						JsonObject deletePage = new JsonObject()
 							.putString("action", "delete")
-							.putString("pageId", String.valueOf(o))
+							.putString("pageId", page.getString("pageId"))
 							.putBoolean("deleteResources", true);
 						eb.send("pages", deletePage);
 					}
