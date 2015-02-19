@@ -25,9 +25,9 @@ public class DefaultCommunityService implements CommunityService {
 	public void create(JsonObject data, UserInfos user, Handler<Either<String, JsonObject>> handler) {
 		String query =
 				"CREATE (c:Community {props}), " +
-				"c<-[:DEPENDS]-(cr:CommunityGroup:Group {name : c.name + '-read', type : 'read'}), " +
-				"c<-[:DEPENDS]-(cc:CommunityGroup:Group {name : c.name + '-contrib', type : 'contrib', users : ''}), " +
-				"c<-[:DEPENDS]-(cm:CommunityGroup:Group {name : c.name + '-manager', type : 'manager', users : ''}) " +
+				"c<-[:DEPENDS]-(cr:CommunityGroup:Group:Visible {name : c.name + '-read', type : 'read'}), " +
+				"c<-[:DEPENDS]-(cc:CommunityGroup:Group:Visible {name : c.name + '-contrib', type : 'contrib', users : ''}), " +
+				"c<-[:DEPENDS]-(cm:CommunityGroup:Group:Visible {name : c.name + '-manager', type : 'manager', users : ''}) " +
 				"SET cr.id = id(cr)+'-'+timestamp(), " +
 				"cc.id = id(cc)+'-'+timestamp(), cm.id = id(cm)+'-'+timestamp() " +
 				"WITH c, cm, cr, cc " +
