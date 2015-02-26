@@ -3,17 +3,48 @@ Behaviours.register('community', {
 		workflow: {
 			create: 'net.atos.entng.community.controllers.CommunityController|create'
 		}
-	}
-	/*
+	},
+	
 	sniplets: {
-		menu: {
-			title: 'Menu',
-			description: 'Navigation specifique communautes',
+		message: {
+			title: 'Message Accueil',
+			description: 'Message de la page d\'accueil modifiable',
 			hidden: true, // Attribute to hide in interfaces (pages...) - sniplet can only be added automatically
 			controller: {
-				...
+
+                initSource : function() {
+                    this.setSnipletSource({
+						content: ""
+					});
+                },
+
+                init : function() {
+                	if (! this.display) {
+                		this.display = {};
+                	}
+                    this.editedSource = { content: "" };
+                },
+
+                edit : function() {
+                    this.editedSource.content = this.source.content;
+                	this.display.editing = true;
+                },
+
+                save : function() {
+                    this.source.content = this.editedSource.content;
+                    var that = this;
+                	this.snipletResource.save(function(){
+                        that.editedSource = { content: "" };
+                    });
+                    delete this.display.editing;
+                },
+
+                cancel : function() {
+                	this.editedSource = { content: "" };
+                	delete this.display.editing;
+                }
 			}
 		}
 	}
-	*/
+	
 });

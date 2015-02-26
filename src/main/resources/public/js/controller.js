@@ -124,7 +124,9 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	$scope.editCommunity = function(community) {
 		$scope.community = community;
 		$scope.community.oldname = $scope.community.name;
-		$scope.setupServicesEditor();
+		$scope.setupServicesEditor(function(){
+			$scope.$apply('commmunity.serviceHome');
+		});
 		$scope.setupMembersEditor();
 		template.open('main', 'editor');
 		template.open('editor2', 'editor-services');
@@ -277,11 +279,11 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var page = $scope.createBasePage(service);
 		var row1 = page.rows.last();
 
-		var cellText = new model.pagesModel.Cell();
-		cellText.index = 1;
-		cellText.width = 9;
-		cellText.media = { type: 'text', source: $scope.community.serviceHome.content };
-		row1.cells.push(cellText);
+		var cellMessage = new model.pagesModel.Cell();
+		cellMessage.index = 1;
+		cellMessage.width = 9;
+		cellMessage.media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: "<h1>Bienvenue !</h1>" } } };
+		row1.cells.push(cellMessage);
 
 		$scope.community.website.pages.push(page);
 		$scope.community.website.landingPage = service.name;
@@ -362,7 +364,11 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
 		if (page) {
 			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
-			page.rows.all[1].cells.all[1].media.source = $scope.community.serviceHome.content;
+			/*TEMP*/
+			if (page.rows.all[1].cells.all[1].media.type === 'sniplet') {
+				page.rows.all[1].cells.all[1].media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: "<h1>Bienvenue !</h1><h2>J'ai changé...</h2>" } } };
+			}
+			/*/TEMP*/
 		}
 	};
 
