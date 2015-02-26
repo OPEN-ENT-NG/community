@@ -282,7 +282,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var cellMessage = new model.pagesModel.Cell();
 		cellMessage.index = 1;
 		cellMessage.width = 9;
-		cellMessage.media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: "<h1>Bienvenue !</h1>" } } };
+		cellMessage.media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: $scope.community.serviceHome.content } } };
 		row1.cells.push(cellMessage);
 
 		$scope.community.website.pages.push(page);
@@ -366,14 +366,14 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
 			/*TEMP*/
 			if (page.rows.all[1].cells.all[1].media.type === 'sniplet') {
-				page.rows.all[1].cells.all[1].media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: "<h1>Bienvenue !</h1><h2>J'ai changé...</h2>" } } };
+				page.rows.all[1].cells.all[1].media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: $scope.community.serviceHome.content } } };
 			}
 			/*/TEMP*/
 		}
 	};
 
 	$scope.getPage_home = function(page, service) {
-		var content = page.rows.all[1].cells.all[1].media.source;
+		var content = page.rows.all[1].cells.all[1].media.source.source.content;
 		if (content && _.isString(content)) {
 			service.content = content;
 		}
