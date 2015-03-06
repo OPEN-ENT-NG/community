@@ -57,7 +57,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 
 	/* Routing */
 	$scope.routeEditCommunity = function(params){
-		var community = model.communities.find(function(c){ return c.pageId === params.communityId });
+		var community = model.communities.find(function(c){ return c.pageId === params.communityId; });
 		if (community !== undefined) {
 			if (community.myRights.manager) {
 				$scope.editCommunity(community);
@@ -71,7 +71,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			notify.error('community.notfound');
 			$scope.cancelToList();
 		}
-	}
+	};
 
 	/* Creation */
 	$scope.createCommunity = function(){
@@ -174,7 +174,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		$scope.community.website.sync(function(){
 			// Ensure the Pages do exists - The Page must contain a 'titleLink' attr referencing the community Service 'name'
 			_.each($scope.community.services, function(service){
-				var page = $scope.community.website.pages.find(function(p) { return p.titleLink === service.name; })
+				var page = $scope.community.website.pages.find(function(p) { return p.titleLink === service.name; });
 				if (page) {
 					service.created = true;
 					service.active = true;
@@ -251,7 +251,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		});
 		
 		$scope.processor.end();
-	}
+	};
 
 	$scope.createBasePage = function(service) {
 		var page = new model.pagesModel.Page();
@@ -339,6 +339,54 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			processor.done();
 		}
 	};
+	
+	$scope.createPage_wiki = function(service) {
+		var website = $scope.community.website;
+		var page = $scope.createBasePage(service);
+		var row1 = page.rows.last();
+		var langService = lang;
+
+		var wikiCell = new model.pagesModel.Cell();
+		wikiCell.index = 1;
+		wikiCell.width = 9;
+		wikiCell.media = { type: 'sniplet' };
+		
+		var processor = $scope.processor;
+		processor.stack(); // async: create wiki
+
+		var wiki = new Behaviours.applicationsBehaviours.wiki.namespace.Wiki();
+		var data = { title: langService.translate('community.services.wiki.pretitle') + $scope.community.name };
+		
+		try {
+			wiki.createWiki(data, function(createdWiki){
+        		// Create a default homepage
+    			var wikiPage = { 
+    				isIndex: true,
+    				title: langService.translate('community.services.wiki.homepage.title'),
+    				content: langService.translate('community.services.wiki.homepage.content')
+        		};
+
+    			wiki.createPage(wikiPage, function(createdPage){
+    				wikiCell.media.source = {
+						template: 'wiki',
+						application: 'wiki',
+						source: { _id: createdWiki._id}
+					};
+					row1.addCell(wikiCell);
+					/*DEBUG*/console.log("Community: successfuly created wiki");
+					website.pages.push(page);
+					processor.done(); // create wiki
+    			});
+    		});
+		}
+		catch (e) {
+			console.log("Failed to create Wiki for service wiki");
+			console.log(e);
+			service.active = false;
+			processor.done();
+		}
+		
+	};
 
 	$scope.createPage_documents = function(service) {
 		var page = $scope.createBasePage(service);
@@ -381,7 +429,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 
 	$scope.deletePage = function(service) {
 		// Ensure the Page is deleted - The Page must contain a 'titleLink' attr referencing the community Service 'name'
-		$scope.community.website.pages.all = $scope.community.website.pages.reject(function(page){ return page.titleLink === service.name });
+		$scope.community.website.pages.all = $scope.community.website.pages.reject(function(page){ return page.titleLink === service.name; });
 		delete service.created;
 	};
 
@@ -427,7 +475,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			return testName.indexOf(searchTerm) !== -1 || testNameReversed.indexOf(searchTerm) !== -1;
 		});
 		$scope.search.found = _.filter($scope.search.found, function(element){
-			return _.find($scope.members, function(member){ return member.id === element.id }) === undefined;
+			return _.find($scope.members, function(member){ return member.id === element.id; }) === undefined;
 		});
 	};
 

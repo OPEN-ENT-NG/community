@@ -1,10 +1,11 @@
 function Community() {
 	this.services = [
+	    // TODO : i18n for services' titles
 		{ name: 'home', title: 'Accueil', mandatory: true, active: true },
 		{ name: 'blog', title: 'Blog' },
-		{ name: 'documents', title: 'Documents' }
+		{ name: 'documents', title: 'Documents' },
+		{ name: 'wiki', title: 'Wiki' }
 /*		{ name: 'forum' },
-		{ name: 'wiki' },
 		{ name: 'userbook' },
 		{ name: 'timeline' },
 		{ name: 'poll' },
