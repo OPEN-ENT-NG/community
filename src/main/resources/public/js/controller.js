@@ -388,6 +388,49 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		
 	};
 
+	$scope.createPage_forum = function(service) {
+		var website = $scope.community.website;
+		var page = $scope.createBasePage(service);
+		var row1 = page.rows.last();
+		var langService = lang;
+
+		var forumCell = new model.pagesModel.Cell();
+		forumCell.index = 1;
+		forumCell.width = 9;
+		forumCell.media = { type: 'sniplet' };
+		
+		var processor = $scope.processor;
+		processor.stack(); // async: create wiki
+
+		var category = new Behaviours.applicationsBehaviours.forum.namespace.Category();
+		var templateData = {
+			categoryName: lang.translate("community.services.forum.category.title").replace(/\{0\}/g, $scope.community.name),
+			firstSubject: lang.translate("community.services.forum.subject.title"),
+			firstMessage: lang.translate("community.services.forum.first.message").replace(/\{0\}/g, $scope.community.name)
+		};
+		
+		try {
+			category.createTemplatedCategory(templateData, function(){
+				forumCell.media.source = {
+					template: 'forum',
+					application: 'forum',
+					source: { _id: category._id }
+				};
+				row1.addCell(forumCell);
+				/*DEBUG*/console.log("Community: successfuly created forum");
+				website.pages.push(page);
+				processor.done(); // create forum
+    		});
+		}
+		catch (e) {
+			console.log("Failed to create Wiki for service wiki");
+			console.log(e);
+			service.active = false;
+			processor.done();
+		}
+		
+	};
+
 	$scope.createPage_documents = function(service) {
 		var page = $scope.createBasePage(service);
 		var row1 = page.rows.last();

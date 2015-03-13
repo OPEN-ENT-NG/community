@@ -4,9 +4,9 @@ function Community() {
 		{ name: 'home', title: 'Accueil', mandatory: true, active: true },
 		{ name: 'blog', title: 'Blog' },
 		{ name: 'documents', title: 'Documents' },
-		{ name: 'wiki', title: 'Wiki' }
-/*		{ name: 'forum' },
-		{ name: 'userbook' },
+		{ name: 'wiki', title: 'Wiki' },
+		{ name: 'forum', title: 'Forum' }
+/*		{ name: 'userbook' },
 		{ name: 'timeline' },
 		{ name: 'poll' },
 */	];
