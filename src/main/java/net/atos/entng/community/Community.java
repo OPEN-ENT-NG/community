@@ -19,7 +19,7 @@ public class Community extends BaseServer {
 		EventStoreFactory eventStoreFactory = EventStoreFactory.getFactory();
 		eventStoreFactory.setContainer(container);
 		eventStoreFactory.setVertx(vertx);
-		vertx.eventBus().registerHandler("user.repository", new RepositoryHandler(new CommunityRepositoryEvents(vertx.eventBus())));
+		setRepositoryEvents(new CommunityRepositoryEvents(vertx.eventBus()));
 
 		setDefaultResourceFilter(new ManagerFilter());
 		CommunityController communityController = new CommunityController();
