@@ -80,10 +80,16 @@ Community.prototype.getMembers = function(callback) {
 		}
 		// community.members.all = _.union(community.members.manager, community.members.contrib, community.members.read);
 
-		var visibles = [];
+		var visibles = { users: [], groups: [] };
 		if (members.visibles) {
-			_.each(members.visibles, function(user){ user.displayName = user.username; });
-			visibles = members.visibles;
+			if (members.visibles.users) {
+				_.each(members.visibles.users, function(user){ user.displayName = user.username; });
+				visibles.users = members.visibles.users;
+			}
+			if (members.visibles.groups) {
+				_.each(members.visibles.groups, function(group){ group.isGroup = true; });
+				visibles.groups = members.visibles.groups;
+			}
 		}
 		if(typeof callback === 'function'){
 			callback(visibles);
@@ -95,6 +101,12 @@ Community.prototype.getMembers = function(callback) {
 Community.prototype.addMember = function(id, role, callback) {
 	var data = {};
 	data[role] = [ id ];
+	this.putJsonMembers(data, callback);
+};
+
+Community.prototype.addMembers = function(ids, role, callback) {
+	var data = {};
+	data[role] = ids;
 	this.putJsonMembers(data, callback);
 };
 

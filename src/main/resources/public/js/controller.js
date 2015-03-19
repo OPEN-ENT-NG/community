@@ -489,13 +489,31 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		});
 	};
 
-	$scope.addMember = function(userOrGroup) {
+	$scope.addMember = function(user) {
 		// Default rights : read
-		userOrGroup.role = 'read';
-		$scope.members.push(userOrGroup);
-		$scope.community.addMember(userOrGroup.id, 'read');
+		user.role = 'read';
+		$scope.members.push(user);
+		$scope.community.addMember(user.id, 'read');
 		// TODO : Manage error
 		$scope.search = { term: '', found: [] };
+	};
+
+	$scope.addAllGroupMembers = function(group) {
+		http().get('/userbook/visible/users/' + group.id).done(function(users) {
+			var addingUsers = [];
+			_.each(users, function(user){
+				if (_.find($scope.members, function(member){ return member.id === user.id; })) {
+					return;
+				}
+				user.role = 'read';
+				addingUsers.push(user.id);
+				$scope.members.push(user);
+			});
+			$scope.community.addMembers(addingUsers, 'read', function(){
+				$scope.search = { term: '', found: [] };
+				$scope.$apply('members');	
+			});
+		});
 	};
 
 	$scope.setMemberRole = function(member) {
@@ -512,11 +530,17 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 
 	$scope.findUserOrGroup = function(){
 		var searchTerm = lang.removeAccents($scope.search.term).toLowerCase();
-		$scope.search.found = _.filter($scope.visibles, function(user){
-			var testName = lang.removeAccents(user.lastName + ' ' + user.firstName).toLowerCase();
-			var testNameReversed = lang.removeAccents(user.firstName + ' ' + user.lastName).toLowerCase();
-			return testName.indexOf(searchTerm) !== -1 || testNameReversed.indexOf(searchTerm) !== -1;
-		});
+		$scope.search.found = _.union(
+			_.filter($scope.visibles.groups, function(group){
+					var testName = lang.removeAccents(group.name).toLowerCase();
+					return testName.indexOf(searchTerm) !== -1;
+				}),
+			_.filter($scope.visibles.users, function(user){
+				var testName = lang.removeAccents(user.lastName + ' ' + user.firstName).toLowerCase();
+				var testNameReversed = lang.removeAccents(user.firstName + ' ' + user.lastName).toLowerCase();
+				return testName.indexOf(searchTerm) !== -1 || testNameReversed.indexOf(searchTerm) !== -1;
+			})
+		);
 		$scope.search.found = _.filter($scope.search.found, function(element){
 			return _.find($scope.members, function(member){ return member.id === element.id; }) === undefined;
 		});

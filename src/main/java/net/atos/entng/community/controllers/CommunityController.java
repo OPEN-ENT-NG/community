@@ -25,6 +25,7 @@ import fr.wseduc.rs.Put;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.Either;
+import fr.wseduc.webutils.I18n;
 import fr.wseduc.webutils.http.BaseController;
 import fr.wseduc.webutils.request.RequestUtils;
 
@@ -290,12 +291,10 @@ public class CommunityController extends BaseController {
 				final Handler<Either<String, JsonObject>> handler = defaultResponseHandler(request);
 				if (event.isRight()) {
 					final JsonObject res = event.right().getValue();
-					listVisible(request, new Handler<JsonArray>(){
+					listVisible(request, I18n.acceptLanguage(request), new Handler<JsonObject>(){
 						@Override
-						public void handle(final JsonArray visibles) {
-							if (visibles != null) {
-								res.putArray("visibles", visibles);
-							}
+						public void handle(final JsonObject visibles) {
+							res.putObject("visibles", visibles);
 							handler.handle(event);
 						}
 					});
@@ -307,11 +306,33 @@ public class CommunityController extends BaseController {
 		});
 	}
 
-	private void listVisible(final HttpServerRequest request, final Handler<JsonArray> handler) {
+	private void listVisible(final HttpServerRequest request, final String acceptLanguage, final Handler<JsonObject> handler) {
 		getUserInfos(eb, request, new Handler<UserInfos>() {
 			@Override
 			public void handle(final UserInfos user) {
-				UserUtils.findVisibleUsers(eb, user.getUserId(), false, handler);
+				final JsonObject visibles = new JsonObject();
+				UserUtils.findVisibleUsers(eb, user.getUserId(), false, new Handler<JsonArray>(){
+					@Override
+					public void handle(JsonArray users) {
+						if (users != null) {
+							visibles.putArray("users", users);
+						}
+						UserUtils.findVisibleProfilsGroups(eb, user.getUserId(), new Handler<JsonArray>(){
+							@Override
+							public void handle(JsonArray groups) {
+								if (groups != null) {
+									for (Object g : groups) {
+										if (!(g instanceof JsonObject)) continue;
+										JsonObject group = (JsonObject) g;
+										UserUtils.groupDisplayName(group, acceptLanguage);
+									}
+									visibles.putArray("groups", groups);
+								}
+								handler.handle(visibles);
+							}
+						});
+					}
+				});
 			}
 		});
 	}
