@@ -1,8 +1,11 @@
 <div class="row">
 	<div class="three cell" ng-repeat="service in community.services">
-		<input type="checkbox" disabled class="disabled" checked="true" ng-if="service.mandatory" />
-		<input type="checkbox" ng-model="service.active" ng-if="! service.mandatory" />
-		<label translate content="community.services.[[service.name]].name"></label>
+		<label>
+			<input type="checkbox" disabled class="disabled" checked="true" ng-if="service.mandatory" />
+			<input type="checkbox" ng-model="service.active" ng-if="! service.mandatory" />
+
+			<span translate content="community.services.[[service.name]].name"></span>
+		</label>
 	</div>
 </div>
 
