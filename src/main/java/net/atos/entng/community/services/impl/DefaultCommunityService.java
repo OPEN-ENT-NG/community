@@ -78,7 +78,7 @@ public class DefaultCommunityService implements CommunityService {
 		String query =
 				"MATCH (u:User {id : {userId}})-[:IN]->(g:CommunityGroup)-[:DEPENDS]->(c:Community) " +
 				"RETURN c.id as id, c.name as name, c.description as description, " +
-				"c.icon as icon, c.pageId as pageId, COLLECT(g.type) as types";
+				"c.icon as icon, c.pageId as pageId, COLLECT(g.type) as types, COLLECT(distinct {id: g.id, type: g.type, name: g.name}) as groups ";
 		JsonObject params = new JsonObject().putString("userId", user.getUserId());
 		neo4j.execute(query, params, validResultHandler(handler));
 	}
