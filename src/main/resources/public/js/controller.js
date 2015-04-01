@@ -525,7 +525,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	};
  
 	$scope.removeMember = function(member) {
-		$scope.members.splice($scope.members.indexOf(member));
+		$scope.members = _.reject($scope.members, function(m){ return m.id === member.id });
 		$scope.community.removeMember(member.id);
 		delete member.role;
 		// TODO : Manage error
