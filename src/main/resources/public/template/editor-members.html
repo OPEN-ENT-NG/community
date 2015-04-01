@@ -37,7 +37,16 @@
 				</em>
 				<em ng-if="item.isGroup" class="row">
 					<span class="cell reduce-block-two">[[item.name]]</span>
-					(<a ng-click="addAllGroupMembers(item)"><i18n>community.members.add.group</i18n></a>)
+					<span class="cell reduce-block-two"><i18n>community.members.add.group</i18n></span>&nbsp;
+					<a ng-click="addAllGroupMembers(item, 'read')" tooltip="community.members.group.tooltip.read">
+						<i18n>community.roles.read</i18n>
+					</a>&nbsp;
+					<a ng-click="addAllGroupMembers(item, 'contrib')" tooltip="community.members.group.tooltip.contrib">
+						<i18n>community.roles.contrib</i18n>
+					</a>&nbsp;
+					<a ng-click="addAllGroupMembers(item, 'manager')" tooltip="community.members.group.tooltip.manager">
+						<i18n>community.roles.manager</i18n>
+					</a>
 				</em>
 			</div>
 		</div>

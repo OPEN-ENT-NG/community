@@ -498,18 +498,18 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		$scope.search = { term: '', found: [] };
 	};
 
-	$scope.addAllGroupMembers = function(group) {
+	$scope.addAllGroupMembers = function(group, role) {
 		http().get('/userbook/visible/users/' + group.id).done(function(users) {
 			var addingUsers = [];
 			_.each(users, function(user){
 				if (_.find($scope.members, function(member){ return member.id === user.id; })) {
 					return;
 				}
-				user.role = 'read';
+				user.role = role;
 				addingUsers.push(user.id);
 				$scope.members.push(user);
 			});
-			$scope.community.addMembers(addingUsers, 'read', function(){
+			$scope.community.addMembers(addingUsers, role, function(){
 				$scope.search = { term: '', found: [] };
 				$scope.$apply('members');	
 			});
