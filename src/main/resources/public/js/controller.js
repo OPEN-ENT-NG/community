@@ -502,8 +502,11 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		http().get('/userbook/visible/users/' + group.id).done(function(users) {
 			var addingUsers = [];
 			_.each(users, function(user){
+				if (model.me.userId === user.id) {
+					return; // Do not add the current user (rights could be modified)
+				}
 				if (_.find($scope.members, function(member){ return member.id === user.id; })) {
-					return;
+					return; // Do not add users already members
 				}
 				user.role = role;
 				addingUsers.push(user.id);
