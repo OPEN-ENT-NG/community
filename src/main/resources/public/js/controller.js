@@ -308,7 +308,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		blog.title = lang.translate('community.services.blog.pretitle') + $scope.community.name;
 		blog.thumbnail = $scope.community.website.icon || '';
 		blog['comment-type'] = 'IMMEDIATE';
-		blog.description = $scope.community.description;
+		blog.description = $scope.community.description || '';
 
 		try {
 			blog.save(function(){
