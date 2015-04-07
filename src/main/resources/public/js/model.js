@@ -1,11 +1,11 @@
 function Community() {
 	this.services = [
 	    // TODO : i18n for services' titles
-		{ name: 'home', title: 'Accueil', mandatory: true, active: true },
-		{ name: 'blog', title: 'Blog' },
-		{ name: 'documents', title: 'Documents' },
-		{ name: 'wiki', title: 'Wiki' },
-		{ name: 'forum', title: 'Forum' }
+		{ name: 'home', title: 'Accueil', mandatory: true, active: true, workflow: "community.create" },
+		{ name: 'blog', title: 'Blog', workflow: 'blog.create' },
+		{ name: 'documents', title: 'Documents', workflow: 'workspace.create' },
+		{ name: 'wiki', title: 'Wiki', workflow: 'wiki.create' },
+		{ name: 'forum', title: 'Forum', workflow: 'forum.admin' }
 /*		{ name: 'userbook' },
 		{ name: 'timeline' },
 		{ name: 'poll' },
@@ -184,6 +184,7 @@ AsyncProcessor.prototype.end = function() {
 
 model.build = function(){
 	this.makeModels([Community]);
+	this.me.workflow.load(['blog', 'forum', 'wiki']);
 
 	var rightsSetter = {
 		manager: function(resource) {

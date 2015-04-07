@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="three cell" ng-repeat="service in community.services">
-		<label>
+		<label workflow="[[service.workflow]]">
 			<input type="checkbox" disabled class="disabled" checked="true" ng-if="service.mandatory" />
 			<input type="checkbox" ng-model="service.active" ng-if="! service.mandatory" />
 
