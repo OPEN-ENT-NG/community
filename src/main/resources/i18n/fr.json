@@ -71,5 +71,7 @@
     "group.school.Personnel": "Tous les personnels de l'{0}",
     "group.school.Relative": "Tous les parents de l'{0}",
     "group.school.Student": "Tous les élèves de l'{0}",
-    "group.school.Teacher": "Tous les enseignants de l'{0}"
+    "group.school.Teacher": "Tous les enseignants de l'{0}",
+    "community.back.to": "Communautés",
+    "community.edit": "Modifier"
 }
