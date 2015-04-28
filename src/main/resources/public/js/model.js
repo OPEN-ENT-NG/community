@@ -214,7 +214,7 @@ model.build = function(){
 								rightsSetter[type](community);
 							}
 							else {
-								rightsSetter.default(community);	
+								rightsSetter.default(community);
 							}
 						});
 					}
@@ -223,6 +223,12 @@ model.build = function(){
 					callback();
 				}
 			}.bind(this));
+		},
+		deleteSelection: function(){
+			this.selection().forEach(function(community){
+				community.delete();
+			});
+			this.removeSelection();
 		},
 		pushWithRights: function(community){
 			community.myRights = {};

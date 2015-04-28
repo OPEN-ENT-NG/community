@@ -19,6 +19,11 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	$scope.wizard = {};
 	$scope.maxResults = 10;
 
+	template.open('main', 'editor');
+	template.open('services', 'editor-services');
+	template.open('properties', 'editor-properties');
+	template.open('members', 'editor-members');
+
 	route({
 		editCommunity: function(params){
 			if ($scope.routed) {
@@ -81,21 +86,13 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		$scope.members = [];
 
 		template.open('main', 'creation-wizard');
-		template.open('step2', 'editor-properties');
-		template.open('step3', 'editor-services');
-		template.open('step4', 'editor-members');
+		template.open('properties', 'editor-properties');
+		template.open('services', 'editor-services');
+		template.open('members', 'editor-members');
 	};
 
 	$scope.saveCommunity = function(){
-		if ($scope.community.id === undefined) {
-			$scope.community.create(function(){
-				$scope.setupServicesEditor();
-			});
-		}
-		else {
-			$scope.community.update();			
-		}
-		// TODO : Manage error
+		$scope.community.update();
 	};
 
 	$scope.saveServices = function() {
@@ -116,9 +113,9 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	};
 
 	$scope.finishCreateWizard = function(){
+		$scope.saveServices();
 		template.open('main', 'list');
 	};
-
 
 	/* Edition */
 	$scope.editCommunity = function(community) {
@@ -129,9 +126,6 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		});
 		$scope.setupMembersEditor();
 		template.open('main', 'editor');
-		template.open('editor2', 'editor-services');
-		template.open('editor1', 'editor-properties');
-		template.open('editor3', 'editor-members');
 	};
 
 	$scope.saveEditCommunity = function(){
@@ -165,15 +159,22 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		template.open('main', 'list');
 	};
 
+	$scope.cancelCreation = function(){
+		$scope.community.delete($scope.communities.sync);
+		$scope.cancelToList();
+	};
 
 	/* Services */
 	$scope.setupServicesEditor = function(callback){
 		$scope.community.serviceHome = _.find($scope.community.services, function(s){ return s.name === 'home'; });
 		$scope.community.website = new model.pagesModel.Website();
 		$scope.community.website._id = $scope.community.pageId;
+		if(!$scope.community.website._id){
+			return;
+		}
 		$scope.community.website.sync(function(){
 			// Ensure the Pages do exists - The Page must contain a 'titleLink' attr referencing the community Service 'name'
-			_.each($scope.community.services, function(service){
+			$scope.community.services.forEach(function(service){
 				var page = $scope.community.website.pages.find(function(p) { return p.titleLink === service.name; });
 				if (page) {
 					service.created = true;
@@ -476,17 +477,29 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		delete service.created;
 	};
 
-
 	/* Members */
 	$scope.setupMembersEditor = function(){
 		$scope.search = { term: '', found: [] };
 		$scope.members = [];
-		$scope.community.getMembers(function(visibles){
-			$scope.members = _.union($scope.community.members.manager, $scope.community.members.contrib, $scope.community.members.read);
-			$scope.visibles = visibles;
-			$scope.edited = { delete: [], manage: [], contrib: [], read: [] };
-			$scope.$apply('members');
-		});
+		$scope.edited = { delete: [], manage: [], contrib: [], read: [] };
+
+		function setMembers(){
+			$scope.community.getMembers(function(visibles){
+				$scope.visibles = visibles;
+				$scope.members = _.union($scope.community.members.manager, $scope.community.members.contrib, $scope.community.members.read);
+				$scope.$apply('members');
+				$scope.$apply('visibles');
+			});
+		}
+
+		if(!$scope.community.id){
+			$scope.community.create(function(){
+				setMembers();
+			});
+		}
+		else{
+			setMembers();
+		}
 	};
 
 	$scope.addMember = function(user) {
@@ -549,8 +562,6 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		});
 	};
 
-
-	/* Delete */
 	$scope.removeCommunity = function(community) {
 		$scope.display.confirmDelete = true;
 		$scope.community = community;
@@ -561,10 +572,10 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	};
 
 	$scope.doRemoveCommunity = function() {
-		$scope.community.delete(function(){
+		$scope.community.delete(function () {
 			model.communities.remove($scope.community);
 			$scope.display.confirmDelete = undefined;
 			$scope.community = undefined;
 		});
-	};
+	}
 }

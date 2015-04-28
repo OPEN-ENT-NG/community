@@ -1,27 +1,27 @@
-<wizard on-cancel="cancelToList()" on-finish="finishCreateWizard()">
+<wizard on-cancel="cancelCreation()" on-finish="finishCreateWizard()">
 
 	<step>
 		<h1><i18n>community.step.start</i18n></h1>
 		<p><i18n>community.step.start.message</i18n></p>
 	</step>
 
-	<step on-next="saveCommunity()">
+	<step on-next="setupServicesEditor()">
 		<h1><i18n>community.step.properties</i18n></h1>
 		<p><i18n>community.properties.directions</i18n></p>
-		<container template="step2"></container>
+		<container template="properties"></container>
 	</step>
 
-	<step on-next="saveServices()">
+	<step on-next="setupMembersEditor()">
 		<h1><i18n>community.step.services</i18n></h1>
 		<h2>[[community.name]]</h2>
 		<p><i18n>community.services.directions</i18n></p>
-		<container template="step3"></container>
+		<container template="services"></container>
 	</step>
 
 	<step>
 		<h1><i18n>community.step.members</i18n></h1>
 		<h2>[[community.name]]</h2>
 		<p><i18n>community.members.directions</i18n></p>
-		<container template="step4"></container>
+		<container template="members"></container>
 	</step>
 </wizard>
