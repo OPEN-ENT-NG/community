@@ -160,7 +160,9 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	};
 
 	$scope.cancelCreation = function(){
-		$scope.community.delete($scope.communities.sync);
+		$scope.community.delete(function(){
+			$scope.communities.sync()
+		});
 		$scope.cancelToList();
 	};
 
