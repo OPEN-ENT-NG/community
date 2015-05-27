@@ -22,16 +22,16 @@
     "community.services.blog.name": "Blog",
     "community.services.blog.pretitle": "Les actualités de la communauté ",
     "community.services.blog.firstpost.title": "Votre premier article !",
-    "community.services.blog.firstpost.content": "<p>Voici le premier article publié dans votre communauté !</p><p>Vous pouvez créer de nouveaux articles en cliquant sur le bouton \"Ajouter un article\" ci-dessus, ou en accédant directement à l'application Blog. Les membres de la communauté pourront également suivre vos actualités depuis leur application, et seront notifiés lorsque votre site sera mis à jour.</p><p>La navigation, à gauche des articles, est automatiquement mise à jour lorsque vous ajoutez des services à votre communauté.",
+    "community.services.blog.firstpost.content": "<p>Voici le premier article publié dans votre communauté !</p><p>Vous pouvez créer de nouveaux articles (si vous êtes contributeur) en cliquant sur le bouton \"Ajouter un billet\" ci-dessus, ou en accédant directement à l'application Blog. Les membres de la communauté pourront également suivre vos actualités depuis leur application, et seront notifiés lorsque votre site sera mis à jour.</p><p>La navigation, à gauche des articles, est automatiquement mise à jour lorsque vous ajoutez des services à votre communauté.",
     "community.services.documents.name": "Documents",
     "community.services.forum.name": "Forum",
     "community.services.forum.category.title": "Forum de la communauté {0}",
     "community.services.forum.subject.title": "Règles d'utilisation du forum",
-    "community.services.forum.first.message": "<h1>Bienvenue dans le forum de la communauté {0}</h1><p>Merci de rester poli dans les échanges sur le forum</p>",
+    "community.services.forum.first.message": "<h1>Bienvenue dans le forum de la communauté {0}</h1><p>Merci de rester poli(e) dans les échanges sur le forum</p>",
     "community.services.wiki.name": "Wiki",
     "community.services.wiki.pretitle": "Le wiki de la communauté ",
     "community.services.wiki.homepage.title": "Accueil",
-    "community.services.wiki.homepage.content": "<p>Vous pouvez créer des pages en cliquant sur le bouton 'Nouvellepage' ci-dessus, ou en accédant directement à l'application Wiki. Vos visiteurs pourront suivre votre wiki depuis votre site web ou depuis l'application Wiki, ils seront notifiés lorsque votre wiki sera mis à jour.</p>",
+    "community.services.wiki.homepage.content": "<p>Vous pouvez créer des pages (si vous êtes contributeur) en cliquant sur le bouton \"Nouvelle page\" ci-dessus, ou en accédant directement à l'application Wiki. Vos visiteurs pourront suivre votre wiki depuis votre site web ou depuis l'application Wiki, ils seront notifiés lorsque votre wiki sera mis à jour.</p>",
     "community.services.userbook.name": "Trombinoscope",
     "community.services.timeline.name": "Frise chronologique",
     "community.services.poll.name": "Sondage",
@@ -72,6 +72,6 @@
     "group.school.Relative": "Tous les parents de l'{0}",
     "group.school.Student": "Tous les élèves de l'{0}",
     "group.school.Teacher": "Tous les enseignants de l'{0}",
-    "community.back.to": "Communautés",
-    "community.edit": "Modifier"
+	"community.back.to": "Communautés",
+	"community.edit": "Modifier"
 }

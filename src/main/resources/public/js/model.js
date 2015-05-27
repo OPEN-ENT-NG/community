@@ -79,7 +79,6 @@ Community.prototype.getMembers = function(callback) {
 				return member.id !== model.me.userId;
 			});
 		}
-		// community.members.all = _.union(community.members.manager, community.members.contrib, community.members.read);
 
 		var visibles = { users: [], groups: [] };
 		if (members.visibles) {
