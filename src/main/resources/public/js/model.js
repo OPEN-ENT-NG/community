@@ -40,11 +40,13 @@ Community.prototype.update = function(callback) {
 };
 
 Community.prototype.delete = function(callback) {
-	http().delete('/community/' + this.id).done(function(data){
-		if(typeof callback === 'function'){
-			callback();
-		}
-	});
+	if (this.id) {
+		http().delete('/community/' + this.id).done(function(data){
+			if(typeof callback === 'function'){
+				callback();
+			}
+		});
+	}
 };
 
 Community.prototype.toJSON = function() {
