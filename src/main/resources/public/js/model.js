@@ -138,6 +138,11 @@ Community.prototype.putJsonMembers = function(members, callback) {
 			callback();
 		}
 	});
+
+	this.website.sync();
+	this.website.one('sync', function(){
+		this.website.synchronizeRights();
+	}.bind(this))
 };
 
 Community.prototype.url = function() {
