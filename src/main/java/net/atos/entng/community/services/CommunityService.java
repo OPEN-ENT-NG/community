@@ -14,6 +14,8 @@ public interface CommunityService {
 
 	void delete(String id, Handler<Either<String, JsonObject>> handler);
 
+	void get(String id, UserInfos user, Handler<Either<String, JsonObject>> handler);
+
 	void list(UserInfos user, Handler<Either<String, JsonArray>> handler);
 
 	void manageUsers(String id, JsonObject users, Handler<Either<String, JsonObject>> handler);

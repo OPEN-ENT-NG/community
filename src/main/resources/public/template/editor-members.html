@@ -31,9 +31,20 @@
 		<h2><i18n></i18n></h2>
 		<input type="text" ng-model="search.term" ng-change="findUserOrGroup()" i18n-placeholder="community.members.search.placeholder" />
 		<div class="found-users-list">
-			<div ng-repeat="item in search.found | limitTo:maxResults | orderBy:'lastname'">
-				<em ng-if="!item.isGroup" ng-click="addMember(item)" class="row">
-					<span class="cell reduce-block-two">[[item.displayName]]</span>
+			<div ng-repeat="item in search.found | limitTo:maxResults | orderBy:'lastName'">
+				<em ng-if="!item.isGroup" class="row">
+					<span class="cell reduce-block-two">[[item.lastName]] [[item.firstName]]</span>
+					<em ng-repeat="profile in item.profiles" class="low-importance cell reduce-block-two" translate content="[[profile]]"></em>
+					&nbsp;:
+					<a ng-click="addMember(item, 'read')" tooltip="community.members.tooltip.read">
+						<i18n>community.roles.read.single</i18n>
+					</a>&nbsp;
+					<a ng-click="addMember(item, 'contrib')" tooltip="community.members.tooltip.contrib">
+						<i18n>community.roles.contrib.single</i18n>
+					</a>&nbsp;
+					<a ng-click="addMember(item, 'manager')" tooltip="community.members.tooltip.manager">
+						<i18n>community.roles.manager.single</i18n>
+					</a>
 				</em>
 				<em ng-if="item.isGroup" class="row">
 					<span class="cell reduce-block-two">[[item.name]]</span>

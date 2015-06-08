@@ -35,7 +35,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 				return;
 			}
 			model.communities.one('sync', function(){
-				$scope.routeEditCommunity(params);		
+				$scope.routeEditCommunity(params);
 			});
 		},
 		list: function(params){
@@ -107,8 +107,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 					console.log(e);
 				}
 				$scope.setupMembersEditor();
-			});	
-		});		
+			});
+		});
 		// TODO : Manage error
 	};
 
@@ -142,7 +142,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 					console.log("Failed to synchronize rights with services");
 					console.log(e);
 				}
-			});	
+			});
 		});
 
 		$scope.community.update(function(){
@@ -252,7 +252,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 				}
 			}
 		});
-		
+
 		$scope.processor.end();
 	};
 
@@ -342,7 +342,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			processor.done();
 		}
 	};
-	
+
 	$scope.createPage_wiki = function(service) {
 		var website = $scope.community.website;
 		var page = $scope.createBasePage(service);
@@ -353,17 +353,17 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		wikiCell.index = 1;
 		wikiCell.width = 9;
 		wikiCell.media = { type: 'sniplet' };
-		
+
 		var processor = $scope.processor;
 		processor.stack(); // async: create wiki
 
 		var wiki = new Behaviours.applicationsBehaviours.wiki.namespace.Wiki();
 		var data = { title: langService.translate('community.services.wiki.pretitle') + $scope.community.name };
-		
+
 		try {
 			wiki.createWiki(data, function(createdWiki){
         		// Create a default homepage
-    			var wikiPage = { 
+    			var wikiPage = {
     				isIndex: true,
     				title: langService.translate('community.services.wiki.homepage.title'),
     				content: langService.translate('community.services.wiki.homepage.content')
@@ -388,7 +388,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			service.active = false;
 			processor.done();
 		}
-		
+
 	};
 
 	$scope.createPage_forum = function(service) {
@@ -401,7 +401,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		forumCell.index = 1;
 		forumCell.width = 9;
 		forumCell.media = { type: 'sniplet' };
-		
+
 		var processor = $scope.processor;
 		processor.stack(); // async: create wiki
 
@@ -411,7 +411,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			firstSubject: lang.translate("community.services.forum.subject.title"),
 			firstMessage: lang.translate("community.services.forum.first.message").replace(/\{0\}/g, $scope.community.name)
 		};
-		
+
 		try {
 			category.createTemplatedCategory(templateData, function(){
 				forumCell.media.source = {
@@ -431,7 +431,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			service.active = false;
 			processor.done();
 		}
-		
+
 	};
 
 	$scope.createPage_documents = function(service) {
@@ -504,11 +504,11 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		}
 	};
 
-	$scope.addMember = function(user) {
+	$scope.addMember = function(user, right) {
 		// Default rights : read
-		user.role = 'read';
+		user.role = right ? right : 'read';
 		$scope.members.push(user);
-		$scope.community.addMember(user.id, 'read');
+		$scope.community.addMember(user.id, user.role);
 		// TODO : Manage error
 		$scope.search = { term: '', found: [] };
 	};
@@ -529,7 +529,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			});
 			$scope.community.addMembers(addingUsers, role, function(){
 				$scope.search = { term: '', found: [] };
-				$scope.$apply('members');	
+				$scope.$apply('members');
 			});
 		});
 	};
@@ -538,7 +538,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		$scope.community.setMemberRole(member.id, member.role);
 		// TODO : Manage error
 	};
- 
+
 	$scope.removeMember = function(member) {
 		$scope.members = _.reject($scope.members, function(m){ return m.id === member.id });
 		$scope.community.removeMember(member.id);

@@ -6,10 +6,12 @@ import static org.entcore.common.http.response.DefaultResponseHandler.leftToResp
 import static org.entcore.common.http.response.DefaultResponseHandler.notEmptyResponseHandler;
 import static org.entcore.common.user.UserUtils.getUserInfos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.atos.entng.community.services.CommunityService;
 
+import org.entcore.common.notification.TimelineHelper;
 import org.entcore.common.user.UserInfos;
 import org.entcore.common.user.UserUtils;
 import org.vertx.java.core.Handler;
@@ -27,12 +29,19 @@ import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.I18n;
 import fr.wseduc.webutils.http.BaseController;
+import fr.wseduc.webutils.http.Renders;
 import fr.wseduc.webutils.request.RequestUtils;
 
 public class CommunityController extends BaseController {
 
 	private CommunityService communityService;
+	private final TimelineHelper timeline;
+	private static final String NOTIFICATION_TYPE = "COMMUNITY";
 	private static final JsonArray resourcesTypes = new JsonArray().add("read").add("contrib").add("manager");
+
+	public CommunityController(TimelineHelper helper) {
+		timeline = helper;
+	}
 
 	@Get("")
 	@SecuredAction("community.view")
@@ -271,9 +280,86 @@ public class CommunityController extends BaseController {
 	public void manageUsers(final HttpServerRequest request) {
 		RequestUtils.bodyToJson(request, pathPrefix + "manageUsers", new Handler<JsonObject>() {
 			@Override
-			public void handle(JsonObject body) {
+			public void handle(final JsonObject body) {
 				if (body.size() > 0) {
-					communityService.manageUsers(request.params().get("id"), body, defaultResponseHandler(request));
+					communityService.manageUsers(request.params().get("id"), body, new Handler<Either<String, JsonObject>>() {
+						@Override
+						public void handle(Either<String, JsonObject> event) {
+							if (event.isRight()) {
+								UserUtils.getUserInfos(eb, request, new Handler<UserInfos>() {
+									@Override
+									public void handle(final UserInfos user) {
+										communityService.get(request.params().get("id"), user, new Handler<Either<String,JsonObject>>() {
+											public void handle(Either<String, JsonObject> event) {
+												if (event.isRight()) {
+													//Populate notification parameters
+													JsonObject params = new JsonObject()
+														.putString("resourceName", event.right().getValue().getString("name", ""))
+														.putString("resourceUri", event.right().getValue().getString("pageId", ""))
+														.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
+														.putString("username", user.getUsername());
+
+													//Get user list
+													ArrayList<String> readList = new ArrayList<>();
+													ArrayList<String> contribList = new ArrayList<>();
+													ArrayList<String> managerList = new ArrayList<>();
+													for(String field : body.getFieldNames()){
+														if("read".equals(field))
+															readList.addAll(body.getArray(field).toList());
+														else if("contrib".equals(field))
+															contribList.addAll(body.getArray(field).toList());
+														else if("manager".equals(field))
+															managerList.addAll(body.getArray(field).toList());
+													}
+
+													if(readList.size() > 0){
+														timeline.notifyTimeline(
+																request,
+																user,
+																NOTIFICATION_TYPE,
+																NOTIFICATION_TYPE + "_SHARE",
+																readList,
+																request.params().get("id"),
+																"notify-share.html",
+																params.putString("shareType", "read"));
+													}
+													if(contribList.size() > 0){
+														params.removeField("shareType");
+														timeline.notifyTimeline(
+																request,
+																user,
+																NOTIFICATION_TYPE,
+																NOTIFICATION_TYPE + "_SHARE",
+																contribList,
+																request.params().get("id"),
+																"notify-share.html",
+																params.putString("shareType", "contrib"));
+													}
+													if(managerList.size() > 0){
+														params.removeField("shareType");
+														timeline.notifyTimeline(
+																request,
+																user,
+																NOTIFICATION_TYPE,
+																NOTIFICATION_TYPE + "_SHARE",
+																managerList,
+																request.params().get("id"),
+																"notify-share.html",
+																params.putString("shareType", "manager"));
+													}
+												}
+											}
+										});
+									}
+								});
+								Renders.renderJson(request, event.right().getValue(), 200);
+							} else {
+								JsonObject error = new JsonObject()
+										.putString("error", event.left().getValue());
+								Renders.renderJson(request, error, 400);
+							}
+						}
+					});
 				} else {
 					badRequest(request, "empty.json");
 				}

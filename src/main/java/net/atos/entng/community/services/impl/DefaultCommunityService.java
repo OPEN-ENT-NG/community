@@ -2,6 +2,7 @@ package net.atos.entng.community.services.impl;
 
 import fr.wseduc.webutils.Either;
 import net.atos.entng.community.services.CommunityService;
+
 import org.entcore.common.neo4j.Neo4j;
 import org.entcore.common.neo4j.StatementsBuilder;
 import org.entcore.common.user.UserInfos;
@@ -82,6 +83,16 @@ public class DefaultCommunityService implements CommunityService {
 		JsonObject params = new JsonObject().putString("userId", user.getUserId());
 		neo4j.execute(query, params, validResultHandler(handler));
 	}
+
+	@Override
+	public void get(String id, UserInfos user, Handler<Either<String,JsonObject>> handler) {
+		String query =
+				"MATCH (u:User {id : {userId}})-[:IN]->(g:CommunityGroup)-[:DEPENDS]->(c:Community {id: {id}}) " +
+				"RETURN c.id as id, c.name as name, c.description as description, " +
+				"c.icon as icon, c.pageId as pageId, COLLECT(g.type) as types, COLLECT(distinct {id: g.id, type: g.type, name: g.name}) as groups ";
+		JsonObject params = new JsonObject().putString("userId", user.getUserId()).putString("id", id);
+		neo4j.execute(query, params, validUniqueResultHandler(handler));
+	};
 
 	@Override
 	public void manageUsers(String id, JsonObject users, Handler<Either<String, JsonObject>> handler) {
