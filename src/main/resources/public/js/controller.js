@@ -60,6 +60,10 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		return lang.removeAccents((element.name || '').toLowerCase()).indexOf(lang.removeAccents($scope.filters.search.toLowerCase())) !== -1;
 	};
 
+    $scope.openCommunity = function(community){
+        window.location.href = community.url();
+    };
+
 	/* Routing */
 	$scope.routeEditCommunity = function(params){
 		var community = model.communities.find(function(c){ return c.pageId === params.communityId; });
@@ -149,6 +153,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			$scope.community.oldname = $scope.community.name;
 		});
 
+        $scope.communities.deselectAll();
 		template.open('main', 'list');
 	};
 
@@ -156,12 +161,13 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		if ($scope.community && $scope.community.oldname) {
 			$scope.community.name = $scope.community.oldname;
 		}
+        $scope.communities.deselectAll();
 		template.open('main', 'list');
 	};
 
 	$scope.cancelCreation = function(){
 		$scope.community.delete(function(){
-			$scope.communities.sync()
+			$scope.communities.sync();
 		});
 		$scope.cancelToList();
 	};
@@ -269,8 +275,14 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		cellTitle.media = { type: 'text', source: '<h1>' + $scope.community.name + '</h1>' }; // TODO : escape HTML ?
 		row0.cells.push(cellTitle);
 
+        var cellSlider = new model.pagesModel.Cell();
+        cellSlider.index = 0;
+        cellSlider.width = 1;
+        cellSlider.media = { type: 'sniplet', source: { application: 'community', template: 'navslider', source: {} } };
+		row1.cells.push(cellSlider);
+
 		var cellNavigation = new model.pagesModel.Cell();
-		cellNavigation.index = 0;
+		cellNavigation.index = 1;
 		cellNavigation.width = 3;
 		cellNavigation.media = { type: 'sniplet', source: { application: 'pages', template: 'navigation', source: { _id: $scope.community.website._id } } };
 		row1.cells.push(cellNavigation);
@@ -283,8 +295,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var row1 = page.rows.last();
 
 		var cellMessage = new model.pagesModel.Cell();
-		cellMessage.index = 1;
-		cellMessage.width = 9;
+		cellMessage.index = 2;
+		cellMessage.width = 7;
 		cellMessage.media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: $scope.community.serviceHome.content } } };
 		row1.cells.push(cellMessage);
 
@@ -299,8 +311,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var langService = lang;
 
 		var blogCell = new model.pagesModel.Cell();
-		blogCell.index = 1;
-		blogCell.width = 9;
+		blogCell.index = 2;
+		blogCell.width = 7;
 		blogCell.media = { type: 'sniplet' };
 
 		var processor = $scope.processor;
@@ -350,8 +362,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var langService = lang;
 
 		var wikiCell = new model.pagesModel.Cell();
-		wikiCell.index = 1;
-		wikiCell.width = 9;
+		wikiCell.index = 2;
+		wikiCell.width = 7;
 		wikiCell.media = { type: 'sniplet' };
 
 		var processor = $scope.processor;
@@ -398,8 +410,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var langService = lang;
 
 		var forumCell = new model.pagesModel.Cell();
-		forumCell.index = 1;
-		forumCell.width = 9;
+		forumCell.index = 2;
+		forumCell.width = 7;
 		forumCell.media = { type: 'sniplet' };
 
 		var processor = $scope.processor;
@@ -439,8 +451,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var row1 = page.rows.last();
 
 		var cellDocuments = new model.pagesModel.Cell();
-		cellDocuments.index = 1;
-		cellDocuments.width = 9;
+		cellDocuments.index = 2;
+		cellDocuments.width = 7;
 		cellDocuments.media = { type: 'sniplet', source: { application: 'workspace', template: 'documents', source: { documents: [] } } };
 		row1.cells.push(cellDocuments);
 
@@ -458,11 +470,11 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
 		if (page) {
 			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
-			/*TEMP*/
+			/*TEMP
 			if (page.rows.all[1].cells.all[1].media.type === 'sniplet') {
 				page.rows.all[1].cells.all[1].media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: $scope.community.serviceHome.content } } };
 			}
-			/*/TEMP*/
+			TEMP*/
 		}
 	};
 
@@ -564,20 +576,36 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		});
 	};
 
-	$scope.removeCommunity = function(community) {
-		$scope.display.confirmDelete = true;
-		$scope.community = community;
-	};
+
+    $scope.removeCommunities = function(){
+        $scope.display.confirmDelete = true;
+    }
 
 	$scope.cancelRemoveCommunity = function() {
 		$scope.display.confirmDelete = undefined;
 	};
 
-	$scope.doRemoveCommunity = function() {
-		$scope.community.delete(function () {
-			model.communities.remove($scope.community);
-			$scope.display.confirmDelete = undefined;
-			$scope.community = undefined;
-		});
+	$scope.doRemoveCommunities = function() {
+        var communitiesList = $scope.communities.selection()
+        var launcher = {
+            countUp: 0,
+            max: communitiesList.length,
+            action: function(){
+                communitiesList[launcher.countUp].delete(function(){
+                    model.communities.remove(communitiesList[launcher.countUp]);
+                    if(++launcher.countUp >= launcher.max){
+                        launcher.terminate()
+                    } else {
+                        launcher.action()
+                    }
+                })
+            },
+            terminate: function(){
+                $scope.display.confirmDelete = undefined
+                $scope.$apply()
+            }
+        }
+
+        launcher.action()
 	}
 }

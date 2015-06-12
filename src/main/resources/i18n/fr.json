@@ -1,5 +1,7 @@
+
 {
     "community.title": "Communautés",
+    "community.mine": "Mes communautés",
     "community.create": "Créer une communauté",
     "community.filters.manager": "Communautés dont je suis le gestionnaire",
     "community.list.empty": "Aucune communauté trouvée",

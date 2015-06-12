@@ -4,7 +4,7 @@ Behaviours.register('community', {
 			create: 'net.atos.entng.community.controllers.CommunityController|create'
 		}
 	},
-	
+
 	sniplets: {
 		message: {
 			title: 'Message Accueil',
@@ -44,7 +44,28 @@ Behaviours.register('community', {
                 	delete this.display.editing;
                 }
 			}
+		},
+		navslider: {
+			title: 'sniplet.navslider.title',
+			description: 'sniplet.navslider.description',
+			hidden: true,
+			controller: {
+				init: function(){
+					var that = this;
+					this.communities = [];
+					http().get('/community/list').done(function(data){
+						that.communities = data;
+					});
+				},
+				initSource: function(){
+					this.setSnipletSource({});
+				},
+				openCommunity: function(community){
+					window.location.href = '/pages#/website/' + community.pageId;
+					window.location.reload();
+				}
+			}
 		}
 	}
-	
+
 });

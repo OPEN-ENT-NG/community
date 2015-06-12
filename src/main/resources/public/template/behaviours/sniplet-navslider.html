@@ -1,0 +1,10 @@
+<side-panel class="cell">
+	<h2><i18n>community.mine</i18n></h2>
+	<nav class="vertical">
+        <ul>
+            <li ng-repeat="comm in communities">
+                <h2><a ng-click="openCommunity(comm)">[[comm.name]]</a></h2>
+            </li>
+        </ul>
+    </nav>
+</side-panel>
