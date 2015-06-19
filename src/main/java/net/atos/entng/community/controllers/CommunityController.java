@@ -8,17 +8,24 @@ import static org.entcore.common.user.UserUtils.getUserInfos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import net.atos.entng.community.Community;
 import net.atos.entng.community.services.CommunityService;
 
 import org.entcore.common.notification.TimelineHelper;
+import org.entcore.common.events.EventStore;
+import org.entcore.common.events.EventStoreFactory;
 import org.entcore.common.user.UserInfos;
 import org.entcore.common.user.UserUtils;
 import org.vertx.java.core.Handler;
+import org.vertx.java.core.Vertx;
 import org.vertx.java.core.eventbus.Message;
 import org.vertx.java.core.http.HttpServerRequest;
+import org.vertx.java.core.http.RouteMatcher;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
+import org.vertx.java.platform.Container;
 
 import fr.wseduc.rs.Delete;
 import fr.wseduc.rs.Get;
@@ -38,6 +45,15 @@ public class CommunityController extends BaseController {
 	private final TimelineHelper timeline;
 	private static final String NOTIFICATION_TYPE = "COMMUNITY";
 	private static final JsonArray resourcesTypes = new JsonArray().add("read").add("contrib").add("manager");
+	private EventStore eventStore;
+	private enum CommunityEvent { ACCESS }
+
+	@Override
+	public void init(Vertx vertx, Container container, RouteMatcher rm,
+			Map<String, fr.wseduc.webutils.security.SecuredAction> securedActions) {
+		super.init(vertx, container, rm, securedActions);
+		eventStore = EventStoreFactory.getFactory().getEventStore(Community.class.getSimpleName());
+	}
 
 	public CommunityController(TimelineHelper helper) {
 		timeline = helper;
@@ -47,6 +63,9 @@ public class CommunityController extends BaseController {
 	@SecuredAction("community.view")
 	public void view(HttpServerRequest request) {
 		renderView(request);
+
+		// Create event "access to application Community" and store it, for module "statistics"
+		eventStore.createAndStoreEvent(CommunityEvent.ACCESS.name(), request);
 	}
 
 	@Post("")

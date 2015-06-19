@@ -3,6 +3,7 @@
       "config": {
         "main" : "net.atos.entng.community.Community",
         "port" : 8078,
+        "mongodb" : true,
         "app-name" : "Community",
         "app-address" : "/community",
         "app-icon" : "community-large",

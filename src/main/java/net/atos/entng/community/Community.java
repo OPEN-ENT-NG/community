@@ -5,7 +5,6 @@ import net.atos.entng.community.events.CommunityRepositoryEvents;
 import net.atos.entng.community.filters.ManagerFilter;
 import net.atos.entng.community.services.impl.DefaultCommunityService;
 
-import org.entcore.common.events.EventStoreFactory;
 import org.entcore.common.http.BaseServer;
 import org.entcore.common.notification.TimelineHelper;
 
@@ -18,9 +17,7 @@ public class Community extends BaseServer {
 
 		TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.container);
 
-		EventStoreFactory eventStoreFactory = EventStoreFactory.getFactory();
-		eventStoreFactory.setContainer(container);
-		eventStoreFactory.setVertx(vertx);
+		// Set RepositoryEvents implementation used to process events published for transition
 		setRepositoryEvents(new CommunityRepositoryEvents(vertx.eventBus()));
 
 		setDefaultResourceFilter(new ManagerFilter());
