@@ -337,7 +337,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 						blogCell.media.source = {
 							template: 'articles',
 							application: 'blog',
-							source: blog
+							source: { _id: blog._id }
 						};
 						row1.addCell(blogCell);
 						/*DEBUG*/console.log("Community: successfuly created blog");
