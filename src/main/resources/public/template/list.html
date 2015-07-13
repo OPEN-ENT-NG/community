@@ -31,19 +31,17 @@
 			<div class="bottom">
 				<div class="content">
 					<div ng-click="openCommunity(community)">
-						<strong>[[community.name]]</strong><br>
-						<div class="cell-ellipsis">[[community.description]]</div>
-						<p><em>
-							<i18n>community.user.role.start</i18n>
-							<span translate content="community.user.role.[[community.role]]"></span>
-							<i18n>community.user.role.end</i18n>
-						</em></p>
+						<div class="cell-ellipsis"><strong>[[community.name]]</strong></div>
+						<div class="two-lines">[[community.description]]</div>
 					</div>
-					<resource-right name="manager" resource="community">
-						<div class="bottom-locked eleven vertical-spacing-twice">
+					<div class="bottom-locked eleven vertical-spacing-twice">
+						<i class="view cell"   ng-if="community.role === 'read'"    tooltip="community.user.role.[[community.role]]"></i>
+						<i class="edit cell"   ng-if="community.role === 'contrib'" tooltip="community.user.role.[[community.role]]"></i>
+						<i class="manage cell" ng-if="community.role === 'manager'"  tooltip="community.user.role.[[community.role]]"></i>
+						<resource-right name="manager" resource="community">
 							<input type="checkbox" ng-model="community.selected" class="right-magnet cell" />
-						</div>
-					</resource-right>
+						</resource-right>
+					</div>
 				</div>
 			</div>
 		</section>
