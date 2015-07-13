@@ -22,7 +22,7 @@
     "community.services.home.message.label": "Message de la page d'accueil",
     "community.services.home.message.placeholder": "<p>Bienvenue dans la communauté</p>",
     "community.services.blog.name": "Blog",
-    "community.services.blog.pretitle": "Les actualités de la communauté ",
+    "community.services.blog.pretitle": "Le blog de la communauté ",
     "community.services.blog.firstpost.title": "Votre premier article !",
     "community.services.blog.firstpost.content": "<p>Voici le premier article publié dans votre communauté !</p><p>Vous pouvez créer de nouveaux articles (si vous êtes contributeur) en cliquant sur le bouton \"Ajouter un billet\" ci-dessus, ou en accédant directement à l'application Blog. Les membres de la communauté pourront également suivre vos actualités depuis leur application, et seront notifiés lorsque votre site sera mis à jour.</p><p>La navigation, à gauche des articles, est automatiquement mise à jour lorsque vous ajoutez des services à votre communauté.",
     "community.services.documents.name": "Documents",
