@@ -270,20 +270,21 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var row0 = page.addRow();
 		var row1 = page.addRow();
 
+		var cellSlider = new model.pagesModel.Cell();
+		cellSlider.index = 0;
+		cellSlider.width = 0;
+		cellSlider.media = { type: 'sniplet', source: { application: 'community', template: 'navslider', source: {} } };
+		row0.cells.push(cellSlider);
+
 		var cellTitle = new model.pagesModel.Cell();
-		cellTitle.width = 12;
+		cellTitle.width = 11;
+		cellTitle.index = 1;
 		cellTitle.media = { type: 'text', source: '<h1>' + $scope.community.name + '</h1>' }; // TODO : escape HTML ?
 		row0.cells.push(cellTitle);
 
-        var cellSlider = new model.pagesModel.Cell();
-        cellSlider.index = 0;
-        cellSlider.width = 1;
-        cellSlider.media = { type: 'sniplet', source: { application: 'community', template: 'navslider', source: {} } };
-		row1.cells.push(cellSlider);
-
 		var cellNavigation = new model.pagesModel.Cell();
-		cellNavigation.index = 1;
-		cellNavigation.width = 3;
+		cellNavigation.index = 0;
+		cellNavigation.width = 4;
 		cellNavigation.media = { type: 'sniplet', source: { application: 'pages', template: 'navigation', source: { _id: $scope.community.website._id } } };
 		row1.cells.push(cellNavigation);
 
@@ -295,8 +296,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var row1 = page.rows.last();
 
 		var cellMessage = new model.pagesModel.Cell();
-		cellMessage.index = 2;
-		cellMessage.width = 7;
+		cellMessage.index = 1;
+		cellMessage.width = 8;
 		cellMessage.media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: $scope.community.serviceHome.content } } };
 		row1.cells.push(cellMessage);
 
@@ -311,8 +312,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var langService = lang;
 
 		var blogCell = new model.pagesModel.Cell();
-		blogCell.index = 2;
-		blogCell.width = 7;
+		blogCell.index = 1;
+		blogCell.width = 8;
 		blogCell.media = { type: 'sniplet' };
 
 		var processor = $scope.processor;
@@ -362,8 +363,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var langService = lang;
 
 		var wikiCell = new model.pagesModel.Cell();
-		wikiCell.index = 2;
-		wikiCell.width = 7;
+		wikiCell.index = 1;
+		wikiCell.width = 8;
 		wikiCell.media = { type: 'sniplet' };
 
 		var processor = $scope.processor;
@@ -410,8 +411,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var langService = lang;
 
 		var forumCell = new model.pagesModel.Cell();
-		forumCell.index = 2;
-		forumCell.width = 7;
+		forumCell.index = 1;
+		forumCell.width = 8;
 		forumCell.media = { type: 'sniplet' };
 
 		var processor = $scope.processor;
@@ -451,8 +452,8 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var row1 = page.rows.last();
 
 		var cellDocuments = new model.pagesModel.Cell();
-		cellDocuments.index = 2;
-		cellDocuments.width = 7;
+		cellDocuments.index = 1;
+		cellDocuments.width = 8;
 		cellDocuments.media = { type: 'sniplet', source: { application: 'workspace', template: 'documents', source: { documents: [] } } };
 		row1.cells.push(cellDocuments);
 
