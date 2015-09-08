@@ -1,3 +1,5 @@
+console.log('community behaviours loaded');
+
 Behaviours.register('community', {
 	rights: {
 		workflow: {

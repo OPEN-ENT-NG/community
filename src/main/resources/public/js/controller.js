@@ -463,14 +463,20 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	$scope.updatePageTitle = function(service) {
 		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
 		if (page) {
-			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
+            var titleCell = page.rows.first().cells.first().media.type === 'text' ?
+                page.rows.first().cells.first() :
+                page.rows.first().cells.all[1];
+			titleCell.media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
 		}
 	};
 
 	$scope.updatePage_home = function(service) {
 		var page = $scope.community.website.pages.find(function(page){ return page.titleLink === service.name; });
 		if (page) {
-			page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
+			var titleCell = page.rows.first().cells.first().media.type === 'text' ?
+                page.rows.first().cells.first() :
+                page.rows.first().cells.all[1];
+			titleCell.media.source = '<h1>' + $scope.community.name + '</h1>'; // TODO : escape HTML ?
 			/*TEMP
 			if (page.rows.all[1].cells.all[1].media.type === 'sniplet') {
 				page.rows.all[1].cells.all[1].media = { type: 'sniplet', source: { application: 'community', template: 'message', source: { content: $scope.community.serviceHome.content } } };
