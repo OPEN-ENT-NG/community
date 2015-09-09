@@ -17,7 +17,10 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	$scope.display = {};
 	$scope.filters = { search: '' };
 	$scope.wizard = {};
-	$scope.maxResults = 10;
+    $scope.resultsLimit = {
+        init: 10,
+        limit: 10
+    }
 
 	template.open('main', 'editor');
 	template.open('services', 'editor-services');
@@ -566,6 +569,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 	};
 
 	$scope.findUserOrGroup = function(){
+        $scope.resultsLimit.limit = $scope.resultsLimit.init;
 		var searchTerm = lang.removeAccents($scope.search.term).toLowerCase();
 		$scope.search.found = _.union(
 			_.filter($scope.visibles.groups, function(group){

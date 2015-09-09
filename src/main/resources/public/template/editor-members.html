@@ -31,7 +31,7 @@
 		<h2><i18n></i18n></h2>
 		<input type="text" ng-model="search.term" ng-change="findUserOrGroup()" i18n-placeholder="community.members.search.placeholder" />
 		<div class="found-users-list">
-			<div ng-repeat="item in search.found | limitTo:maxResults | orderBy:'lastName'">
+			<div ng-repeat="item in search.found | orderBy:'lastName' | limitTo:resultsLimit.limit" >
 				<em ng-if="!item.isGroup" class="row">
 					<span class="cell reduce-block-two">[[item.lastName]] [[item.firstName]]</span>
 					<em ng-repeat="profile in item.profiles" class="low-importance cell reduce-block-two" translate content="[[profile]]"></em>
@@ -60,6 +60,10 @@
 					</a>
 				</em>
 			</div>
+			<a ng-click="resultsLimit.limit = resultsLimit.limit + resultsLimit.init" ng-if="search.found.length > 0 && search.found.length > resultsLimit.limit"
+				class="vertical-spacing-twice display-more-bar">
+				<em translate content="show.more"></em>
+			</a>
 		</div>
 	</div>
 </div>

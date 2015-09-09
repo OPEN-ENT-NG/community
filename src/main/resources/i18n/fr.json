@@ -81,5 +81,6 @@
     "group.school.Student": "Tous les élèves de l'{0}",
     "group.school.Teacher": "Tous les enseignants de l'{0}",
 	"community.back.to": "Communautés",
-	"community.edit": "Modifier"
+	"community.edit": "Modifier",
+    "show.more": "Afficher plus de résultats"
 }
