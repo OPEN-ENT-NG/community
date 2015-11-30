@@ -95,6 +95,17 @@ public class DefaultCommunityService implements CommunityService {
 	};
 
 	@Override
+	public void get(String id, Handler<Either<String,JsonObject>> handler) {
+		String query =
+				"MATCH (c:Community {id: {id}})-[:DEPENDS]-(g:CommunityGroup) " +
+				"RETURN c.id as id, c.name as name, c.description as description, " +
+				"c.icon as icon, c.pageId as pageId, COLLECT(g.type) as types, " +
+				"COLLECT(distinct {id: g.id, type: g.type, name: g.name}) as groups ";
+		JsonObject params = new JsonObject().putString("id", id);
+		neo4j.execute(query, params, validUniqueResultHandler(handler));
+	}
+
+	@Override
 	public void manageUsers(String id, JsonObject users, Handler<Either<String, JsonObject>> handler) {
 		StatementsBuilder sb = new StatementsBuilder();
 		JsonObject params = new JsonObject().putString("id", id);

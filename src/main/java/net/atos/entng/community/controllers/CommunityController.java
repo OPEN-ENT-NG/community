@@ -294,6 +294,13 @@ public class CommunityController extends BaseController {
 		});
 	}
 
+
+	@Get("/:id/details")
+	@SecuredAction(value = "", type = ActionType.RESOURCE)
+	public void details(HttpServerRequest request) {
+		communityService.get(request.params().get("id"), notEmptyResponseHandler(request));
+	}
+
 	@Put("/:id/users")
 	@SecuredAction(value = "", type = ActionType.RESOURCE)
 	public void manageUsers(final HttpServerRequest request) {
