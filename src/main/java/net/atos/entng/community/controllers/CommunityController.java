@@ -111,12 +111,21 @@ public class CommunityController extends BaseController {
 							body.putString("pageId", pageId);
 							communityService.create(body, user, new Handler<Either<String, JsonObject>>() {
 								@Override
-								public void handle(Either<String, JsonObject> r) {
+								public void handle(final Either<String, JsonObject> r) {
 									if (r.isRight()) {
-										sharePage(pageId, user.getUserId(), r.right().getValue());
+										sharePage(pageId, user.getUserId(), r.right().getValue(), new Handler<Either<String, JsonObject>>(){
+											public void handle(Either<String, JsonObject> event) {
+												if (r.isLeft()){
+													leftToResponse(request, event.left());
+													eb.send("pages", new JsonObject().putString("action", "delete")
+															.putString("pageId", pageId));
+													return;
+												}
+												r.right().getValue().putString("pageId", pageId);
+												renderJson(request, r.right().getValue(), 201);
+											}
+										});
 										createPageMarkups(pageId);
-										r.right().getValue().putString("pageId", pageId);
-										renderJson(request, r.right().getValue(), 201);
 									} else {
 										leftToResponse(request, r.left());
 										eb.send("pages", new JsonObject().putString("action", "delete")
@@ -133,7 +142,7 @@ public class CommunityController extends BaseController {
 		});
 	}
 
-	private void sharePage(String pageId, String userId, final JsonObject value) {
+	private void sharePage(String pageId, String userId, final JsonObject value, final Handler<Either<String, JsonObject>> handler) {
 		final JsonObject share = new JsonObject().putString("action", "share")
 				.putString("pageId", pageId).putString("userId", userId);
 
@@ -144,7 +153,10 @@ public class CommunityController extends BaseController {
 			@Override
 			public void handle(Message<JsonObject> message) {
 				if (!"ok".equals(message.body().getString("status"))) {
-					log.error("Error when share page : " + message.body().getString("message"));
+					final String error_msg = "Error while sharing page (read) : " + message.body().getString("message");
+					log.error(error_msg);
+					handler.handle(new Either.Left<String, JsonObject>(error_msg));
+					return;
 				}
 				JsonObject c = share
 						.putString("groupId", value.getString("contrib"))
@@ -156,7 +168,10 @@ public class CommunityController extends BaseController {
 					@Override
 					public void handle(Message<JsonObject> message) {
 						if (!"ok".equals(message.body().getString("status"))) {
-							log.error("Error when share page : " + message.body().getString("message"));
+							final String error_msg = "Error while sharing page (contrib) : " + message.body().getString("message");
+							log.error(error_msg);
+							handler.handle(new Either.Left<String, JsonObject>(error_msg));
+							return;
 						}
 						JsonObject m = share
 								.putString("groupId", value.getString("manager"))
@@ -169,8 +184,12 @@ public class CommunityController extends BaseController {
 							@Override
 							public void handle(Message<JsonObject> message) {
 								if (!"ok".equals(message.body().getString("status"))) {
-									log.error("Error when share page : " + message.body().getString("message"));
+									final String error_msg = "Error while sharing page (manager) : " + message.body().getString("message");
+									log.error(error_msg);
+									handler.handle(new Either.Left<String, JsonObject>(error_msg));
+									return;
 								}
+								handler.handle(new Either.Right<String, JsonObject>(message.body()));
 							}
 						});
 					}
