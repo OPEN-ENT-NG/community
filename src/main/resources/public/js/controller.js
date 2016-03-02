@@ -131,7 +131,10 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		$scope.setupServicesEditor(function(){
 			$scope.$apply('commmunity.serviceHome');
 		});
-		$scope.setupMembersEditor();
+        $scope.community.getDetails(function(){
+            $scope.setupMembersEditor();
+        });
+		
 		template.open('main', 'editor');
 	};
 
@@ -573,9 +576,12 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 		var searchTerm = lang.removeAccents($scope.search.term).toLowerCase();
 		$scope.search.found = _.union(
 			_.filter($scope.visibles.groups, function(group){
-					var testName = lang.removeAccents(group.name).toLowerCase();
-					return testName.indexOf(searchTerm) !== -1;
-				}),
+                if($scope.community.groups.read === group.id || $scope.community.groups.contrib === group.id || $scope.community.groups.manager === group.id){
+                    return false;
+                }
+                var testName = lang.removeAccents(group.name).toLowerCase();
+                return testName.indexOf(searchTerm) !== -1;
+            }),
 			_.filter($scope.visibles.users, function(user){
 				var testName = lang.removeAccents(user.lastName + ' ' + user.firstName).toLowerCase();
 				var testNameReversed = lang.removeAccents(user.firstName + ' ' + user.lastName).toLowerCase();

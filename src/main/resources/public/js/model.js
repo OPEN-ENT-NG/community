@@ -6,19 +6,26 @@ function Community() {
 		{ name: 'documents', title: 'Documents', workflow: 'workspace.create' },
 		{ name: 'wiki', title: 'Wiki', workflow: 'wiki.create' },
 		{ name: 'forum', title: 'Forum', workflow: 'forum.admin' }
-/*		{ name: 'userbook' },
-		{ name: 'timeline' },
-		{ name: 'poll' },
-*/	];
+	];
 	this.members = {
 		read: [],
 		contrib: [],
 		manager: []
 	};
+    this.groups = {
+        read: '',
+        contrib: '',
+        manager: ''
+    };
 }
 
 Community.prototype.create = function(callback) {
 	http().postJson('/community', this).done(function(data){
+        this.groups = {
+            read: data.read,
+            contrib: data.contrib,
+            manager: data.manager
+        };
 		this.website._id = data.pageId;
 		data.owner = { displayName: model.me.username, userId: model.me.userId };
 		this.updateData(data);
@@ -29,6 +36,20 @@ Community.prototype.create = function(callback) {
 			callback();
 		}
 	}.bind(this));
+};
+
+Community.prototype.getDetails = function(cb){
+    http().get('/community/' + this.id + '/details').done(function(data){
+        console.log(data);
+        this.groups = {
+            read: _.findWhere(data.groups, { type: 'read' }).id,
+            contrib: _.findWhere(data.groups, { type: 'contrib' }).id,
+            manager: _.findWhere(data.groups, { type: 'manager' }).id
+        }
+        if(typeof cb === 'function'){
+            cb();
+        }
+    }.bind(this));
 };
 
 Community.prototype.update = function(callback) {
