@@ -43,7 +43,6 @@ public class CommunityController extends BaseController {
 
 	private CommunityService communityService;
 	private final TimelineHelper timeline;
-	private static final String NOTIFICATION_TYPE = "COMMUNITY";
 	private static final JsonArray resourcesTypes = new JsonArray().add("read").add("contrib").add("manager");
 	private EventStore eventStore;
 	private enum CommunityEvent { ACCESS }
@@ -340,7 +339,8 @@ public class CommunityController extends BaseController {
 													//Populate notification parameters
 													JsonObject params = new JsonObject()
 														.putString("resourceName", event.right().getValue().getString("name", ""))
-														.putString("resourceUri", event.right().getValue().getString("pageId", ""))
+														.putString("resourceUri", container.config().getString("host", "http://localhost:8078") +
+																"/pages#/website/" + event.right().getValue().getString("pageId", ""))
 														.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
 														.putString("username", user.getUsername());
 
@@ -358,39 +358,18 @@ public class CommunityController extends BaseController {
 													}
 
 													if(readList.size() > 0){
-														timeline.notifyTimeline(
-																request,
-																user,
-																NOTIFICATION_TYPE,
-																NOTIFICATION_TYPE + "_SHARE",
-																readList,
-																request.params().get("id"),
-																"notify-share.html",
-																params.putString("shareType", "read"));
+														timeline.notifyTimeline(request, "community.share", user, readList,
+																request.params().get("id"), params.putString("shareType", "read"));
 													}
 													if(contribList.size() > 0){
 														params.removeField("shareType");
-														timeline.notifyTimeline(
-																request,
-																user,
-																NOTIFICATION_TYPE,
-																NOTIFICATION_TYPE + "_SHARE",
-																contribList,
-																request.params().get("id"),
-																"notify-share.html",
-																params.putString("shareType", "contrib"));
+														timeline.notifyTimeline(request, "community.share", user, contribList,
+																request.params().get("id"), params.putString("shareType", "contrib"));
 													}
 													if(managerList.size() > 0){
 														params.removeField("shareType");
-														timeline.notifyTimeline(
-																request,
-																user,
-																NOTIFICATION_TYPE,
-																NOTIFICATION_TYPE + "_SHARE",
-																managerList,
-																request.params().get("id"),
-																"notify-share.html",
-																params.putString("shareType", "manager"));
+														timeline.notifyTimeline(request, "community.share", user, managerList,
+																request.params().get("id"), params.putString("shareType", "manager"));
 													}
 												}
 											}
