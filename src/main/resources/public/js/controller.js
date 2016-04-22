@@ -134,7 +134,7 @@ function CommunityController($scope, template, model, date, route, lang, $locati
         $scope.community.getDetails(function(){
             $scope.setupMembersEditor();
         });
-		
+
 		template.open('main', 'editor');
 	};
 
@@ -525,7 +525,9 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 			});
 		}
 		else{
-			setMembers();
+            $scope.community.update(function(){
+                setMembers();
+            })
 		}
 	};
 
