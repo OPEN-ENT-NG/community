@@ -341,7 +341,8 @@ public class CommunityController extends BaseController {
 														.putString("resourceName", event.right().getValue().getString("name", ""))
 														.putString("resourceUri", container.config().getString("host", "http://localhost:8078") +
 																"/pages#/website/" + event.right().getValue().getString("pageId", ""))
-														.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
+														.putString("uri", container.config().getString("host", "http://localhost:8090") +
+																"/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
 														.putString("username", user.getUsername());
 
 													//Get user list
