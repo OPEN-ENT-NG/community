@@ -257,9 +257,11 @@ public class CommunityController extends BaseController {
 								.putArray("view", new JsonArray()
 									.addObject(new JsonObject()
 										.putString("label", "community.edit")
+										.putString("resourceRight", "share")
 										.putString("href", "/community#/edit/" + pageId))
 									.addObject(new JsonObject()
 										.putString("label", "community.back.to")
+										.putString("resourceRight", "read")
 										.putString("href", "/community#/list")))));
 					eb.send("pages", updatePage, new Handler<Message<JsonObject>>() {
 						@Override
