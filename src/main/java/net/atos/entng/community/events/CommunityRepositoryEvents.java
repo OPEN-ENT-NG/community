@@ -37,7 +37,8 @@ public class CommunityRepositoryEvents implements RepositoryEvents {
 
 	@Override
 	public void deleteUsers(JsonArray users) {
-		// Users are already deleted in Graph - Control and delete communities with no managers
+        //FIXME: anonymization is not relevant
+        // Users are already deleted in Graph - Control and delete communities with no managers
 		JsonObject params = new JsonObject().putString("type", "manager");
 		String query = "MATCH (c:Community)<-[:DEPENDS]-(gm:CommunityGroup {type : {type}}) "
 					 + "OPTIONAL MATCH gm<-[:IN]-(um:User) "
