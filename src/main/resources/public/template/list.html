@@ -38,12 +38,14 @@
 						<i class="view cell"   ng-if="community.role === 'read'"    tooltip="community.user.role.[[community.role]]"></i>
 						<i class="edit cell"   ng-if="community.role === 'contrib'" tooltip="community.user.role.[[community.role]]"></i>
 						<i class="manage cell" ng-if="community.role === 'manager'"  tooltip="community.user.role.[[community.role]]"></i>
-						<resource-right name="manager" resource="community">
-							<input type="checkbox" ng-model="community.selected" class="right-magnet cell" />
-						</resource-right>
 					</div>
 				</div>
 			</div>
+
+			<resource-right name="manager" resource="community">
+				<check-tool ng-model="community.selected"></check-tool>
+			</resource-right>
+
 		</section>
 	</div>
 </div>
