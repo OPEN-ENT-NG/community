@@ -1,10 +1,15 @@
-<side-panel class="cell zero-mobile" style="margin-top: 5px;">
+<side-panel class="zero-mobile">
 	<h2><i18n>community.mine</i18n></h2>
 	<nav class="vertical">
         <ul>
             <li ng-repeat="comm in communities">
-                <h2><a ng-click="openCommunity(comm)">[[comm.name]]</a></h2>
+                <h2><a ng-class="{selected : community.id == comm.id}" ng-click="openCommunity(comm)">[[comm.name]]</a></h2>
             </li>
         </ul>
     </nav>
 </side-panel>
+<app-title>
+	<h1>
+		<a href="/community#/list">[[community.name]]</a>
+	</h1>
+</app-title>

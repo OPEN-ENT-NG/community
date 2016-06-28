@@ -58,6 +58,7 @@ Behaviours.register('community', {
 					http().get('/community/list').done(function(data){
 						that.communities = data;
 					});
+					 this.community = this.source.community;
 				},
 				initSource: function(){
 					this.setSnipletSource({});

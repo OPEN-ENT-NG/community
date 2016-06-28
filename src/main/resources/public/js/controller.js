@@ -278,15 +278,9 @@ function CommunityController($scope, template, model, date, route, lang, $locati
 
 		var cellSlider = new model.pagesModel.Cell();
 		cellSlider.index = 1;
-		cellSlider.width = 1;
-		cellSlider.media = { type: 'sniplet', source: { application: 'community', template: 'navslider', source: {} } };
+		cellSlider.width = 12;
+		cellSlider.media = { type: 'sniplet', source: { application: 'community', template: 'navslider', source: {community:$scope.community} } };
 		row0.cells.push(cellSlider);
-
-		var cellTitle = new model.pagesModel.Cell();
-		cellTitle.width = 11;
-		cellTitle.index = 1;
-		cellTitle.media = { type: 'text', source: '<h1><a href="/community#/list">' + $scope.community.name + '</a></h1>' }; // TODO : escape HTML ?
-		row0.cells.push(cellTitle);
 
 		var cellNavigation = new model.pagesModel.Cell();
 		cellNavigation.index = 0;
