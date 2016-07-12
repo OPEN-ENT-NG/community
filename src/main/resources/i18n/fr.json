@@ -64,7 +64,7 @@
     "community.service.notupdated": "La mise à jour de la page a échoué pour le service ",
     "community.service.notdeleted": "La suppression de la page a échoué pour le service ",
     "community.rights.notsynced": "La synchronisation du partage pour les services a échoué, les membres de la communauté ne pourront pas accéder aux contenus de certains services",
-    "group.AdminLocal": "Tous les administrateurs locaux",
+    "group.AdminLocal": "Tous les administrateurs locaux du groupe {0}.",
     "group.Personnel": "Tous les personnels du groupe {0}",
     "group.Relative": "Tous les parents du groupe {0}",
     "group.Student": "Tous les élèves du groupe {0}",
