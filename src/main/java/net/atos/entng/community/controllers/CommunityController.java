@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.wseduc.rs.*;
 import net.atos.entng.community.Community;
 import net.atos.entng.community.services.CommunityService;
 
@@ -471,6 +472,21 @@ public class CommunityController extends BaseController {
 
 	public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
+	}
+
+	@Get("/listallpages")
+	@ApiDoc("List communities, visible by current user")
+	@SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+	public void listAllPages(final HttpServerRequest request) {
+		UserUtils.getUserInfos(eb, request, new Handler<UserInfos>() {
+			@Override
+			public void handle(final UserInfos user) {
+				if (user != null) {
+					Handler<Either<String, JsonArray>> handler = arrayResponseHandler(request);
+					communityService.list(user, handler);
+				}
+			}
+		});
 	}
 
 }
