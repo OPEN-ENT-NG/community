@@ -120,7 +120,7 @@ public class CommunityController extends BaseController {
 						.putString("action", "create")
 						.putObject("user", u)
 						.putObject("page", p);
-				eb.send("pages", pages, new Handler<Message<JsonObject>>() {
+				eb.send("communityPages", pages, new Handler<Message<JsonObject>>() {
 					@Override
 					public void handle(Message<JsonObject> message) {
 						final JsonObject result = message.body().getObject("result");
@@ -147,7 +147,7 @@ public class CommunityController extends BaseController {
 										createPageMarkups(pageId);
 									} else {
 										leftToResponse(request, r.left());
-										eb.send("pages", new JsonObject().putString("action", "delete")
+										eb.send("communityPages", new JsonObject().putString("action", "delete")
 												.putString("pageId", pageId));
 									}
 								}
@@ -167,7 +167,7 @@ public class CommunityController extends BaseController {
 
 		JsonObject r = share
 				.putString("groupId", value.getString("read"))
-				.putArray("actions", new JsonArray().add("fr-wseduc-pages-controllers-PagesController|get"));
+				.putArray("actions", new JsonArray().add("net-atos-entng-community-controllers-PagesController|get"));
 		eb.send("pages", r, new Handler<Message<JsonObject>>() {
 			@Override
 			public void handle(Message<JsonObject> message) {
@@ -180,10 +180,10 @@ public class CommunityController extends BaseController {
 				JsonObject c = share
 						.putString("groupId", value.getString("contrib"))
 						.putArray("actions", new JsonArray()
-										.add("fr-wseduc-pages-controllers-PagesController|get")
-										.add("fr-wseduc-pages-controllers-PagesController|update")
+										.add("net-atos-entng-community-controllers-PagesController|get")
+										.add("net-atos-entng-community-controllers-PagesController|update")
 						);
-				eb.send("pages", c, new Handler<Message<JsonObject>>() {
+				eb.send("communityPages", c, new Handler<Message<JsonObject>>() {
 					@Override
 					public void handle(Message<JsonObject> message) {
 						if (!"ok".equals(message.body().getString("status"))) {
@@ -195,11 +195,11 @@ public class CommunityController extends BaseController {
 						JsonObject m = share
 								.putString("groupId", value.getString("manager"))
 								.putArray("actions", new JsonArray()
-												.add("fr-wseduc-pages-controllers-PagesController|get")
-												.add("fr-wseduc-pages-controllers-PagesController|update")
-												.add("fr-wseduc-pages-controllers-PagesController|delete")
+												.add("net-atos-entng-community-controllers-PagesController|get")
+												.add("net-atos-entng-community-controllers-PagesController|update")
+												.add("net-atos-entng-community-controllers-PagesController|delete")
 								);
-						eb.send("pages", m, new Handler<Message<JsonObject>>() {
+						eb.send("communityPages", m, new Handler<Message<JsonObject>>() {
 							@Override
 							public void handle(Message<JsonObject> message) {
 								if (!"ok".equals(message.body().getString("status"))) {
@@ -232,7 +232,7 @@ public class CommunityController extends BaseController {
 						.putString("label", "community.back.to")
 						.putString("resourceRight", "read")
 						.putString("href", "/community#/list")))));
-		eb.send("pages", updatePage, new Handler<Message<JsonObject>>() {
+		eb.send("communityPages", updatePage, new Handler<Message<JsonObject>>() {
 			@Override
 			public void handle(Message<JsonObject> message) {
 				if (!"ok".equals(message.body().getString("status"))) {
@@ -355,39 +355,39 @@ public class CommunityController extends BaseController {
 								UserUtils.getUserInfos(eb, request, new Handler<UserInfos>() {
 									@Override
 									public void handle(final UserInfos user) {
-										communityService.get(request.params().get("id"), user, new Handler<Either<String,JsonObject>>() {
+										communityService.get(request.params().get("id"), user, new Handler<Either<String, JsonObject>>() {
 											public void handle(Either<String, JsonObject> event) {
 												if (event.isRight()) {
 													//Populate notification parameters
 													JsonObject params = new JsonObject()
-														.putString("resourceName", event.right().getValue().getString("name", ""))
-														.putString("resourceUri", "/pages#/website/" + event.right().getValue().getString("pageId", ""))
-														.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
-														.putString("username", user.getUsername());
+															.putString("resourceName", event.right().getValue().getString("name", ""))
+															.putString("resourceUri", "/pages#/website/" + event.right().getValue().getString("pageId", ""))
+															.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
+															.putString("username", user.getUsername());
 
 													//Get user list
 													ArrayList<String> readList = new ArrayList<>();
 													ArrayList<String> contribList = new ArrayList<>();
 													ArrayList<String> managerList = new ArrayList<>();
-													for(String field : body.getFieldNames()){
-														if("read".equals(field))
+													for (String field : body.getFieldNames()) {
+														if ("read".equals(field))
 															readList.addAll(body.getArray(field).toList());
-														else if("contrib".equals(field))
+														else if ("contrib".equals(field))
 															contribList.addAll(body.getArray(field).toList());
-														else if("manager".equals(field))
+														else if ("manager".equals(field))
 															managerList.addAll(body.getArray(field).toList());
 													}
 
-													if(readList.size() > 0){
+													if (readList.size() > 0) {
 														timeline.notifyTimeline(request, "community.share", user, readList,
 																request.params().get("id"), params.putString("shareType", "read"));
 													}
-													if(contribList.size() > 0){
+													if (contribList.size() > 0) {
 														params.removeField("shareType");
 														timeline.notifyTimeline(request, "community.share", user, contribList,
 																request.params().get("id"), params.putString("shareType", "contrib"));
 													}
-													if(managerList.size() > 0){
+													if (managerList.size() > 0) {
 														params.removeField("shareType");
 														timeline.notifyTimeline(request, "community.share", user, managerList,
 																request.params().get("id"), params.putString("shareType", "manager"));
@@ -418,21 +418,20 @@ public class CommunityController extends BaseController {
 		List<String> t = request.params().getAll("type");
 		JsonArray types = (t != null && !t.isEmpty()) ?
 				new JsonArray(t.toArray()) : resourcesTypes; //new JsonArray(RightsController.allowedSharingRights.toArray());
-		communityService.listUsers(request.params().get("id"), types, new Handler<Either<String, JsonObject>>(){
+		communityService.listUsers(request.params().get("id"), types, new Handler<Either<String, JsonObject>>() {
 			@Override
 			public void handle(final Either<String, JsonObject> event) {
 				final Handler<Either<String, JsonObject>> handler = defaultResponseHandler(request);
 				if (event.isRight()) {
 					final JsonObject res = event.right().getValue();
-					listVisible(request, I18n.acceptLanguage(request), new Handler<JsonObject>(){
+					listVisible(request, I18n.acceptLanguage(request), new Handler<JsonObject>() {
 						@Override
 						public void handle(final JsonObject visibles) {
 							res.putObject("visibles", visibles);
 							handler.handle(event);
 						}
 					});
-				}
-				else {
+				} else {
 					handler.handle(event);
 				}
 			}
@@ -444,13 +443,13 @@ public class CommunityController extends BaseController {
 			@Override
 			public void handle(final UserInfos user) {
 				final JsonObject visibles = new JsonObject();
-				UserUtils.findVisibleUsers(eb, user.getUserId(), false, new Handler<JsonArray>(){
+				UserUtils.findVisibleUsers(eb, user.getUserId(), false, new Handler<JsonArray>() {
 					@Override
 					public void handle(JsonArray users) {
 						if (users != null) {
 							visibles.putArray("users", users);
 						}
-						UserUtils.findVisibleProfilsGroups(eb, user.getUserId(), new Handler<JsonArray>(){
+						UserUtils.findVisibleProfilsGroups(eb, user.getUserId(), new Handler<JsonArray>() {
 							@Override
 							public void handle(JsonArray groups) {
 								if (groups != null) {

@@ -20,11 +20,13 @@
 package net.atos.entng.community;
 
 import net.atos.entng.community.controllers.CommunityController;
+import net.atos.entng.community.controllers.PagesController;
 import net.atos.entng.community.events.CommunityRepositoryEvents;
 import net.atos.entng.community.filters.ManagerFilter;
 import net.atos.entng.community.services.impl.DefaultCommunityService;
 
 import org.entcore.common.http.BaseServer;
+import org.entcore.common.mongodb.MongoDbConf;
 import org.entcore.common.notification.TimelineHelper;
 
 
@@ -34,6 +36,7 @@ public class Community extends BaseServer {
 	public void start() {
 		super.start();
 
+		MongoDbConf.getInstance().setCollection("communityPages");
 		TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.container);
 
 		// Set RepositoryEvents implementation used to process events published for transition
@@ -43,6 +46,8 @@ public class Community extends BaseServer {
 		CommunityController communityController = new CommunityController(timeline);
 		communityController.setCommunityService(new DefaultCommunityService());
 		addController(communityController);
+
+		addController(new PagesController());
 	}
 
 }

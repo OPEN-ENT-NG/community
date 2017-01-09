@@ -22,7 +22,6 @@ package net.atos.entng.community.events;
 import static org.entcore.common.neo4j.Neo4jResult.validResultHandler;
 
 import org.entcore.common.neo4j.Neo4j;
-import org.entcore.common.user.RepositoryEvents;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.json.JsonArray;
@@ -32,7 +31,7 @@ import org.vertx.java.core.logging.impl.LoggerFactory;
 
 import fr.wseduc.webutils.Either;
 
-public class CommunityRepositoryEvents implements RepositoryEvents {
+public class CommunityRepositoryEvents extends PagesRepositoryEvents {
 
 	private static final Logger log = LoggerFactory.getLogger(CommunityRepositoryEvents.class);
 	private final Neo4j neo4j = Neo4j.getInstance();
@@ -50,12 +49,14 @@ public class CommunityRepositoryEvents implements RepositoryEvents {
 
 	@Override
 	public void deleteGroups(JsonArray groups) {
+		super.deleteGroups(groups);
 		// No group members in Community
 		log.info("Event [deleteGroups] : no goup to delete");
 	}
 
 	@Override
 	public void deleteUsers(JsonArray users) {
+		super.deleteUsers(users);
         //FIXME: anonymization is not relevant
         // Users are already deleted in Graph - Control and delete communities with no managers
 		JsonObject params = new JsonObject().putString("type", "manager");
