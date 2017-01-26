@@ -1,22 +1,20 @@
 ﻿import { Selection, Selectable, Mix, Provider } from 'toolkit';
 import { Rights, Shareable, model } from 'entcore';
 import { Page } from './page';
+import { Website } from './website';
+import { _ } from 'entcore/libs/underscore/underscore';
 
 import http from 'axios';
 
-export class Website {
-    _id: string;
-    pages: Page[];
+interface User {
+    id: string;
+    displayName: string;
+    username: string;
+}
 
-    async save() {
-        let response = await http.put('/community/pages/' + this._id, this);
-    }
-
-    toJSON() {
-        return {
-            pages: this.pages
-        }
-    }
+interface Group{
+    id: string,
+    isGroup: boolean
 }
 
 interface Service {
@@ -26,6 +24,7 @@ interface Service {
     mandatory: boolean;
     active: boolean;
     created: boolean;
+    content?: string;
 }
 
 let services = [
@@ -56,10 +55,24 @@ export class Community implements Shareable, Selectable {
         contrib: string,
         manager: string
     };
+    members: {
+        read: User[],
+        contrib: User[],
+        manager: User[],
+        visibles: { users: User[], groups: Group[] }
+    };
+    membersDiff: {
+        read: string[],
+        contrib: string[],
+        manager: string[],
+        delete: string[]
+    };
     types: string[];
+    pageId: string;
+    membersList: User[]
 
     constructor() {
-        this.website = new Website();
+        this.website = new Website(this);
         this.rights = new Rights(this);
     }
 
@@ -69,6 +82,67 @@ export class Community implements Shareable, Selectable {
             icon: this.icon,
             description: this.description
         };
+    }
+
+    async loadMembers(){
+	    let response = await http.get('/community/' + this.id + '/users');
+        let members = response.data;
+        for(let property in members){
+            this.members[property] = members[property].filter((u) => u.id !== model.me.userId);
+            this.members[property].forEach((m) => m.role = property);
+        }
+
+        this.members.visibles.users.forEach((u) => u.displayName = u.username);
+        this.members.visibles.groups.forEach((g) => g.isGroup = true);
+
+        this.membersList = this.members.manager.concat(this.members.contrib).concat(this.members.read);
+    }
+
+    async loadGroupsInfos(){
+        let response = await http.get('/community/' + this.id + '/details');
+        this.groups = {
+            read: _.findWhere(response.data.groups, { type: 'read' }).id,
+            contrib: _.findWhere(response.data.groups, { type: 'contrib' }).id,
+            manager: _.findWhere(response.data.groups, { type: 'manager' }).id
+        }
+    }
+
+    async addUsersToRole(users: User[], role){
+        if(!this.membersDiff.delete){
+            this.membersDiff.delete = [];
+        }
+        if(!this.membersDiff[role]){
+            this.membersDiff[role] = [];
+        }
+
+        this.membersDiff.delete = this.membersDiff.delete.concat(
+            users.filter(
+                (u) => this.membersDiff.delete.indexOf(u.id)
+            )
+            .map((u) => u.id)
+        );
+        this.membersDiff[role] = this.membersDiff[role].concat(
+            users.filter(
+                (u) => this.membersDiff[role].indexOf(u.id)
+            )
+            .map((u) => u.id)
+        );
+    }
+
+    async addGroupMembers(group, role){
+        let response = await http.get('/userbook/visible/users/' + group.id);
+        let users = response.data;
+        let addingUsers = [];
+        users.forEach((user) => {
+            if (model.me.userId === user.id || this.membersList.find((member) => member.id === user.id)) {
+                return;
+            }
+
+            user.role = role;
+            addingUsers.push(user.id);
+            this.membersList.push(user);
+        });
+        await this.addUsersToRole(addingUsers, role);
     }
 
     setRights() {
@@ -104,6 +178,14 @@ export class Community implements Shareable, Selectable {
         else {
             await this.create();
         }
+        await this.saveMembers
+    }
+
+    private async saveMembers(){
+        let response = await http.put('/community/' + this.id + '/users', this.membersDiff);
+
+	    await this.website.open();
+		await this.website.synchronizeRights();
     }
 
     async saveModifications() {
@@ -127,6 +209,10 @@ export class Community implements Shareable, Selectable {
         this.types = ['manager'];
         this.setRights();
         Library.push(this);
+    }
+
+    get serviceHome(): Service{
+        return _.find(this.services, (s) => { return s.name === 'home'; });
     }
 }
 

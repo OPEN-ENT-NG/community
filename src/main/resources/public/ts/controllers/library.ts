@@ -1,5 +1,6 @@
 ﻿import { ng, template, idiom, notify } from 'entcore';
 import { _ } from 'entcore/libs/underscore/underscore';
+import { Community, Library } from '../model/community';
 
 export let library = ng.controller('LibraryController', [
     '$scope', 'model', 'route', '$location', ($scope, model, route, $location) => {
@@ -13,10 +14,10 @@ export let library = ng.controller('LibraryController', [
             limit: 10
         }
 
-        template.open('main', 'editor');
-        template.open('services', 'editor-services');
-        template.open('properties', 'editor-properties');
-        template.open('members', 'editor-members');
+        template.open('main', 'list');
+        template.open('editor/services', 'editor/services');
+        template.open('editor/properties', 'editor/properties');
+        template.open('editor/members', 'editor/members');
 
         route({
             editCommunity: function (params) {
@@ -38,7 +39,7 @@ export let library = ng.controller('LibraryController', [
         });
 
         $scope.communities = model.communities;
-        template.open('main', 'list');
+        
 
         $scope.roleMatch = function (element) {
             return (!$scope.filters.manager || element.myRights.manager);
@@ -163,40 +164,7 @@ export let library = ng.controller('LibraryController', [
             $scope.cancelToList();
         };
 
-        /* Services */
-        $scope.setupServicesEditor = function (callback) {
-            $scope.community.serviceHome = _.find($scope.community.services, function (s) { return s.name === 'home'; });
-            $scope.community.website = new model.pagesModel.Website();
-            $scope.community.website._id = $scope.community.pageId;
-            if (!$scope.community.website._id) {
-                return;
-            }
-            $scope.community.website.sync(function () {
-                // Ensure the Pages do exists - The Page must contain a 'titleLink' attr referencing the community Service 'name'
-                $scope.community.services.forEach(function (service) {
-                    var page = $scope.community.website.pages.find(function (p) { return p.titleLink === service.name; });
-                    if (page) {
-                        service.created = true;
-                        service.active = true;
-                        try {
-                            if ($scope['getPage_' + service.name] !== undefined) {
-                                $scope['getPage_' + service.name](page, service);
-                            }
-                        }
-                        catch (e) {
-                            console.log("Could not get page contents for " + service.name);
-                            console.log(e);
-                        }
-                    }
-                });
-                if (typeof callback === 'function') {
-                    callback();
-                }
-            });
-        };
-
         /*$scope.processServicePages = function (callback) {
-            $scope.processor = new AsyncProcessor();
             $scope.processor.setCallback(callback);
 
             _.each($scope.community.services, function (service) {
@@ -253,60 +221,6 @@ export let library = ng.controller('LibraryController', [
             $scope.processor.end();
         };*/
 
-        $scope.createBasePage = function (service) {
-            var page = new model.pagesModel.Page();
-            page.title = service.title;
-            page.titleLink = service.name;
-
-            var row0 = page.addRow();
-            var row1 = page.addRow();
-
-            var cellSlider = new model.pagesModel.Cell();
-            cellSlider.index = 1;
-            cellSlider.width = 12;
-            cellSlider.media = { type: 'sniplet', source: { application: 'community', template: 'navslider', source: { community: $scope.community } } };
-            row0.cells.push(cellSlider);
-
-            var cellNavigation = new model.pagesModel.Cell();
-            cellNavigation.index = 0;
-            cellNavigation.width = 4;
-            cellNavigation.media = { type: 'sniplet', source: { application: 'pages', template: 'navigation', source: { _id: $scope.community.website._id } } };
-            row1.cells.push(cellNavigation);
-
-            return page;
-        };
-
-        $scope.updatePageTitle = function (service) {
-            var page = $scope.community.website.pages.find(function (page) { return page.titleLink === service.name; });
-            if (page) {
-                if (page.rows.first().cells.first().media.type === 'text') {
-                    page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>';
-                }
-                else {
-                    page.rows.first().cells.first().media.source.source.community.name = $scope.community.name;
-                }
-            }
-        };
-
-        $scope.updatePage_home = function (service) {
-            var page = $scope.community.website.pages.find(function (page) { return page.titleLink === service.name; });
-            if (page) {
-                if (page.rows.first().cells.first().media.type === 'text') {
-                    page.rows.first().cells.first().media.source = '<h1>' + $scope.community.name + '</h1>';
-                }
-                else {
-                    page.rows.first().cells.first().media.source.source.community.name = $scope.community.name;
-                }
-            }
-        };
-
-        $scope.getPage_home = function (page, service) {
-            var content = page.rows.all[1].cells.all[1].media.source.source.content;
-            if (content && _.isString(content)) {
-                service.content = content;
-            }
-        };
-
         $scope.deletePage = function (service) {
             // Ensure the Page is deleted - The Page must contain a 'titleLink' attr referencing the community Service 'name'
             $scope.community.website.pages.all = $scope.community.website.pages.reject(function (page) { return page.titleLink === service.name; });
@@ -314,30 +228,9 @@ export let library = ng.controller('LibraryController', [
         };
 
         /* Members */
-        $scope.setupMembersEditor = function () {
-            $scope.search = { term: '', found: [] };
-            $scope.members = [];
-            $scope.edited = { delete: [], manage: [], contrib: [], read: [] };
-
-            function setMembers() {
-                $scope.community.getMembers(function (visibles) {
-                    $scope.visibles = visibles;
-                    $scope.members = _.union($scope.community.members.manager, $scope.community.members.contrib, $scope.community.members.read);
-                    $scope.$apply('members');
-                    $scope.$apply('visibles');
-                });
-            }
-
-            if (!$scope.community.id) {
-                $scope.community.create(function () {
-                    setMembers();
-                });
-            }
-            else {
-                $scope.community.update(function () {
-                    setMembers();
-                })
-            }
+        $scope.setupMembersEditor = async () => {
+            await $scope.community.loadMembers();
+            $scope.$apply();
         };
 
         $scope.addMember = function (user, right) {
@@ -349,25 +242,9 @@ export let library = ng.controller('LibraryController', [
             $scope.search = { term: '', found: [] };
         };
 
-        $scope.addAllGroupMembers = function (group, role) {
-            http().get('/userbook/visible/users/' + group.id).done(function (users) {
-                var addingUsers = [];
-                _.each(users, function (user) {
-                    if (model.me.userId === user.id) {
-                        return; // Do not add the current user (rights could be modified)
-                    }
-                    if (_.find($scope.members, function (member) { return member.id === user.id; })) {
-                        return; // Do not add users already members
-                    }
-                    user.role = role;
-                    addingUsers.push(user.id);
-                    $scope.members.push(user);
-                });
-                $scope.community.addMembers(addingUsers, role, function () {
-                    $scope.search = { term: '', found: [] };
-                    $scope.$apply('members');
-                });
-            });
+        $scope.addAllGroupMembers = async (group, role)  =>{
+            await $scope.community.addGroupMembers(group, role);
+            $scope.$apply();
         };
 
         $scope.setMemberRole = function (member) {
@@ -413,27 +290,8 @@ export let library = ng.controller('LibraryController', [
             $scope.display.confirmDelete = undefined;
         };
 
-        $scope.doRemoveCommunities = function () {
-            var communitiesList = $scope.communities.selection()
-            var launcher = {
-                countUp: 0,
-                max: communitiesList.length,
-                action: function () {
-                    communitiesList[launcher.countUp].delete(function () {
-                        model.communities.remove(communitiesList[launcher.countUp]);
-                        if (++launcher.countUp >= launcher.max) {
-                            launcher.terminate()
-                        } else {
-                            launcher.action()
-                        }
-                    })
-                },
-                terminate: function () {
-                    $scope.display.confirmDelete = undefined
-                    $scope.$apply()
-                }
-            }
-
-            launcher.action()
+        $scope.doRemoveCommunities = async () => {
+            await Library.deleteSelection();
+            $scope.$apply();
         }
     }]);

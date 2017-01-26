@@ -2,7 +2,9 @@
 import { Community } from './community';
 
 export interface Source {
-
+    template: string;
+    application: string;
+    source: any;
 }
 
 export interface App {
@@ -16,7 +18,7 @@ export class AppGenerator {
     static register(app: App) {
         this.generators.push(app);
     }
-};
+}
 
 AppGenerator.register({
     prefix: 'blog',
@@ -28,16 +30,16 @@ AppGenerator.register({
         blog['comment-type'] = 'IMMEDIATE';
         blog.description = community.description || '';
 
-        return new Promise((resolve, reject) => {
+        return new Promise<Source>((resolve, reject) => {
             try {
-                blog.save(function () {
-                    var post = {
+                blog.save(() => {
+                    let post = {
                         state: 'SUBMITTED',
                         title: idiom.translate('community.services.blog.firstpost.title'),
                         content: idiom.translate('community.services.blog.firstpost.content')
                     };
-                    blog.posts.addDraft(post, function (post) {
-                        post.publish(function () {
+                    blog.posts.addDraft(post, (post) => {
+                        post.publish(() => {
                             resolve({
                                 template: 'articles',
                                 application: 'blog',
@@ -50,7 +52,7 @@ AppGenerator.register({
             }
             catch (e) {
                 console.log("Failed to create Blog for service blog");
-                reject();
+                reject(undefined);
             }
         });
     }
@@ -60,36 +62,34 @@ AppGenerator.register({
     prefix: 'wiki',
     generator: async (community: Community): Promise<Source> => {
         var wiki = new Behaviours.applicationsBehaviours.wiki.namespace.Wiki();
-        var data = { title: idiomService.translate('community.services.wiki.pretitle') + $scope.community.name };
+        var data = { title: idiom.translate('community.services.wiki.pretitle') + community.name };
 
-        try {
-            wiki.createWiki(data, function (createdWiki) {
-                // Create a default homepage
-                var wikiPage = {
-                    isIndex: true,
-                    title: idiomService.translate('community.services.wiki.homepage.title'),
-                    content: idiomService.translate('community.services.wiki.homepage.content')
-                };
-
-                wiki.createPage(wikiPage, function (createdPage) {
-                    wikiCell.media.source = {
-                        template: 'wiki',
-                        application: 'wiki',
-                        source: { _id: createdWiki._id }
+        return new Promise<Source>((resolve, reject) => {
+            try {
+                wiki.createWiki(data, (createdWiki) => {
+                    var wikiPage = {
+                        isIndex: true,
+                        title: idiom.translate('community.services.wiki.homepage.title'),
+                        content: idiom.translate('community.services.wiki.homepage.content')
                     };
-                    row1.addCell(wikiCell);
-					/*DEBUG*/console.log("Community: successfuly created wiki");
-                    website.pages.push(page);
-                    processor.done(); // create wiki
+
+                    wiki.createPage(wikiPage, function (createdPage) {
+                        resolve({
+                            template: 'wiki',
+                            application: 'wiki',
+                            source: { _id: createdWiki._id }
+                        });
+                        console.log("Community: successfuly created wiki");
+                    });
                 });
-            });
-        }
-        catch (e) {
-            console.log("Failed to create Wiki for service wiki");
-            console.log(e);
-            service.active = false;
-            processor.done();
-        }
+            }
+            catch (e) {
+                console.log("Failed to create Wiki for service wiki");
+                console.log(e);
+                reject();
+            }
+        });
+    }
 });
 
 AppGenerator.register({
@@ -97,30 +97,29 @@ AppGenerator.register({
     generator: async (community: Community): Promise<Source> => {
         var category = new Behaviours.applicationsBehaviours.forum.namespace.Category();
         var templateData = {
-            categoryName: idiom.translate("community.services.forum.category.title").replace(/\{0\}/g, $scope.community.name),
+            categoryName: idiom.translate("community.services.forum.category.title").replace(/\{0\}/g, community.name),
             firstSubject: idiom.translate("community.services.forum.subject.title"),
-            firstMessage: idiom.translate("community.services.forum.first.message").replace(/\{0\}/g, $scope.community.name)
+            firstMessage: idiom.translate("community.services.forum.first.message").replace(/\{0\}/g, community.name)
         };
 
-        try {
-            category.createTemplatedCategory(templateData, function () {
-                forumCell.media.source = {
-                    template: 'forum',
-                    application: 'forum',
-                    source: { _id: category._id }
-                };
-                row1.addCell(forumCell);
-				/*DEBUG*/console.log("Community: successfuly created forum");
-                website.pages.push(page);
-                processor.done(); // create forum
-            });
-        }
-        catch (e) {
-            console.log("Failed to create Forum for service forum");
-            console.log(e);
-            service.active = false;
-            processor.done();
-        }
+        return new Promise<Source>((resolve, reject) => {
+            try {
+                category.createTemplatedCategory(templateData, function () {
+                    console.log("Community: successfuly created forum");
+                    resolve({
+                        template: 'forum',
+                        application: 'forum',
+                        source: { _id: category._id }
+                    });
+                });
+            }
+            catch (e) {
+                console.log("Failed to create Forum for service forum");
+                console.log(e);
+                reject();
+            }
+        });
+    }
 });
 
 AppGenerator.register({
