@@ -2,37 +2,26 @@
 import { Rights, Shareable, model } from 'entcore';
 import { Page } from './page';
 import { Website } from './website';
+import { User, Group } from './dictionary';
 import { _ } from 'entcore/libs/underscore/underscore';
 
 import http from 'axios';
 
-interface User {
-    id: string;
-    displayName: string;
-    username: string;
-}
-
-interface Group{
-    id: string,
-    isGroup: boolean
-}
-
-interface Service {
+export interface Service {
     name: string;
-    title: string;
     workflow: string;
-    mandatory: boolean;
-    active: boolean;
-    created: boolean;
+    mandatory?: boolean;
+    active?: boolean;
+    created?: boolean;
     content?: string;
 }
 
-let services = [
-    { name: 'home', title: 'Accueil', mandatory: true, active: true, workflow: "community.create" },
-    { name: 'blog', title: 'Blog', workflow: 'blog.create' },
-    { name: 'documents', title: 'Documents', workflow: 'workspace.create' },
-    { name: 'wiki', title: 'Wiki', workflow: 'wiki.create' },
-    { name: 'forum', title: 'Forum', workflow: 'forum.admin' }
+let services = () => [
+    { name: 'home', mandatory: true, active: true, workflow: "community.create" },
+    { name: 'blog', workflow: 'blog.create' },
+    { name: 'documents', workflow: 'workspace.create' },
+    { name: 'wiki', workflow: 'wiki.create' },
+    { name: 'forum', workflow: 'forum.admin' }
 ];
 
 export class Community implements Shareable, Selectable {
@@ -56,10 +45,10 @@ export class Community implements Shareable, Selectable {
         manager: string
     };
     members: {
-        read: User[],
-        contrib: User[],
-        manager: User[],
-        visibles: { users: User[], groups: Group[] }
+        read?: User[],
+        contrib?: User[],
+        manager?: User[],
+        visibles?: { users: User[], groups: Group[] }
     };
     membersDiff: {
         read: string[],
@@ -74,31 +63,83 @@ export class Community implements Shareable, Selectable {
     constructor() {
         this.website = new Website(this);
         this.rights = new Rights(this);
+        this.services = services();
+        this.membersDiff = {
+            read: [],
+            contrib: [],
+            manager: [],
+            delete: []
+        };
+        this.members = {};
+    }
+
+    async fromJSON(data: any) {
+        this.website = Mix.castAs(Website, data.website, this);
+        await this.website.open();
+        this.services.forEach((s) => s.active =
+            this.website.pages.find((p) => p.titleLink === s.name) !== undefined
+        );
     }
 
     toJSON() {
         return {
-            name: this.name,
-            icon: this.icon,
-            description: this.description
+            name: this.name || '',
+            icon: this.icon || '',
+            description: this.description || ''
         };
     }
 
-    async loadMembers(){
+    removeMember(id: string) {
+        this.membersDiff.delete.push(id);
+        let index = this.membersList.findIndex((u) => u.id === id);
+        this.membersList.splice(index, 1);
+    }
+
+    private async loadVisibles() {
+        let response = await http.get('/community/visibles');
+        this.members = {
+            read: [],
+            contrib: [],
+            manager: [],
+            visibles: response.data
+        };
+
+        this.members.visibles.users.forEach((u) => u.displayName = u.username);
+        this.members.visibles.groups.forEach((g) => g.isGroup = true);
+
+        this.membersList = [];
+        this.groups = {
+            read: '',
+            contrib: '',
+            manager: ''
+        };
+    }
+
+    async loadMembers() {
+        if (!this.id) {
+            await this.loadVisibles();
+            return;
+        }
 	    let response = await http.get('/community/' + this.id + '/users');
         let members = response.data;
-        for(let property in members){
-            this.members[property] = members[property].filter((u) => u.id !== model.me.userId);
-            this.members[property].forEach((m) => m.role = property);
+        for (let property in members) {
+            if (members[property] instanceof Array) {
+                this.members[property] = members[property].filter((u) => u.id !== model.me.userId);
+                this.members[property].forEach((m) => m.role = property);
+            }
+            else {
+                this.members[property] = members[property];
+            }
         }
 
         this.members.visibles.users.forEach((u) => u.displayName = u.username);
         this.members.visibles.groups.forEach((g) => g.isGroup = true);
 
         this.membersList = this.members.manager.concat(this.members.contrib).concat(this.members.read);
+        await this.loadGroupsInfos();
     }
 
-    async loadGroupsInfos(){
+    private async loadGroupsInfos(){
         let response = await http.get('/community/' + this.id + '/details');
         this.groups = {
             read: _.findWhere(response.data.groups, { type: 'read' }).id,
@@ -107,7 +148,7 @@ export class Community implements Shareable, Selectable {
         }
     }
 
-    async addUsersToRole(users: User[], role){
+    addUsersToRole(users: User[], role: string){
         if(!this.membersDiff.delete){
             this.membersDiff.delete = [];
         }
@@ -127,6 +168,11 @@ export class Community implements Shareable, Selectable {
             )
             .map((u) => u.id)
         );
+    }
+
+    addMember(user: User, role: string) {
+        this.membersList.push(user);
+        this.addUsersToRole([user], role);
     }
 
     async addGroupMembers(group, role){
@@ -178,7 +224,8 @@ export class Community implements Shareable, Selectable {
         else {
             await this.create();
         }
-        await this.saveMembers
+        await this.website.applyServices();
+        await this.saveMembers();
     }
 
     private async saveMembers(){
@@ -232,8 +279,9 @@ export class Library {
     }
 
     static deleteSelection() {
-        this.selection.forEach((community) => {
+        this.selection.selected.forEach((community) => {
             community.delete();
+            this.provider.remove(community);
         });
         this.selection.removeSelection();
     }

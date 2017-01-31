@@ -17,7 +17,7 @@
 				<td><input type="radio" group="[[me.userId]]" disabled class="disabled" checked="true"/></td>
 				<td></td>
 			</tr>
-			<tr ng-repeat="member in members">
+			<tr ng-repeat="member in community.membersList">
 				<td>[[member.displayName]]</td>
 				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="read" ng-change="setMemberRole(member)"/></td>
 				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="contrib" ng-change="setMemberRole(member)"/></td>
@@ -29,40 +29,53 @@
 
 	<div class="row">
 		<h2><i18n></i18n></h2>
-		<input type="text" ng-model="search.term" ng-change="findUserOrGroup()" i18n-placeholder="community.members.search.placeholder" />
+		<input type="text" ng-model="membersEditor.search" ng-change="findUserOrGroup()" i18n-placeholder="community.members.search.placeholder" />
 		<div class="found-users-list">
-			<div ng-repeat="item in search.found | orderBy:'lastName' | limitTo:resultsLimit.limit" >
-				<em ng-if="!item.isGroup" class="row">
-					<span class="cell reduce-block-two">[[item.lastName]] [[item.firstName]]</span>
-					<em ng-repeat="profile in item.profiles" class="low-importance cell reduce-block-two" translate content="[[profile]]"></em>
-					&nbsp;:
-					<a ng-click="addMember(item, 'read')" tooltip="community.members.tooltip.read">
-						<i18n>community.roles.read.single</i18n>
-					</a>&nbsp;
-					<a ng-click="addMember(item, 'contrib')" tooltip="community.members.tooltip.contrib">
-						<i18n>community.roles.contrib.single</i18n>
-					</a>&nbsp;
-					<a ng-click="addMember(item, 'manager')" tooltip="community.members.tooltip.manager">
-						<i18n>community.roles.manager.single</i18n>
-					</a>
-				</em>
-				<em ng-if="item.isGroup" class="row">
-					<span class="cell reduce-block-two">[[item.name]]</span>
-					<span class="cell reduce-block-two"><i18n>community.members.add.group</i18n></span>&nbsp;
-					<a ng-click="addAllGroupMembers(item, 'read')" tooltip="community.members.group.tooltip.read">
-						<i18n>community.roles.read</i18n>
-					</a>&nbsp;
-					<a ng-click="addAllGroupMembers(item, 'contrib')" tooltip="community.members.group.tooltip.contrib">
-						<i18n>community.roles.contrib</i18n>
-					</a>&nbsp;
-					<a ng-click="addAllGroupMembers(item, 'manager')" tooltip="community.members.group.tooltip.manager">
-						<i18n>community.roles.manager</i18n>
-					</a>
-				</em>
+			<div ng-repeat="item in membersEditor.found | orderBy:'lastName' | limitTo:membersEditor.limit" >
+				<div class="row">
+                    <em class="row">
+                        [[item.lastName]] [[item.firstName]]
+                        <em 
+                            ng-repeat="profile in item.profiles" 
+                            class="low-importance cell reduce-block-two" 
+                            translate content="[[profile]]"></em>
+                    </em>
+                    <em ng-if="!item.isGroup" class="row">
+                        <a ng-click="addMember(item, 'read')" tooltip="community.members.tooltip.read">
+                            <i18n>community.roles.read.single</i18n>
+                        </a>&nbsp;
+                        <a ng-click="addMember(item, 'contrib')" tooltip="community.members.tooltip.contrib">
+                            <i18n>community.roles.contrib.single</i18n>
+                        </a>&nbsp;
+                        <a ng-click="addMember(item, 'manager')" tooltip="community.members.tooltip.manager">
+                            <i18n>community.roles.manager.single</i18n>
+                        </a>
+                    </em>
+                </div>
+                <div class="row vertical-spacing">
+                    <em class="row">
+                        [[item.name]]
+                    </em>
+                    <em ng-if="item.isGroup" class="row">
+                        <a ng-click="addAllGroupMembers(item, 'read')" tooltip="community.members.group.tooltip.read">
+                            <i18n>community.roles.read</i18n>
+                        </a>&nbsp;
+                        <a ng-click="addAllGroupMembers(item, 'contrib')" tooltip="community.members.group.tooltip.contrib">
+                            <i18n>community.roles.contrib</i18n>
+                        </a>&nbsp;
+                        <a ng-click="addAllGroupMembers(item, 'manager')" tooltip="community.members.group.tooltip.manager">
+                            <i18n>community.roles.manager</i18n>
+                        </a>
+                    </em>
+                </div>
+                
+				
 			</div>
-			<a ng-click="resultsLimit.limit = resultsLimit.limit + resultsLimit.init" ng-if="search.found.length > 0 && search.found.length > resultsLimit.limit"
+			<a 
+               ng-click="membersEditor.limit = membersEditor.limit + 5" 
+               ng-if="membersEditor.found.length > 0 && membersEditor.found.length > membersEditor.limit"
 				class="vertical-spacing-twice display-more-bar">
-				<em translate content="show.more"></em>
+				<em><i18n>show.more</i18n></em>
 			</a>
 		</div>
 	</div>

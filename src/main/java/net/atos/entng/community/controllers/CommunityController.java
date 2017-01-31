@@ -438,6 +438,17 @@ public class CommunityController extends BaseController {
 		});
 	}
 
+	@Get("/visibles")
+	@SecuredAction("community.listVisibles")
+	public void listVisibles(final HttpServerRequest request) {
+		listVisible(request, I18n.acceptLanguage(request), new Handler<JsonObject>() {
+			@Override
+			public void handle(final JsonObject visibles) {
+				renderJson(request, visibles);
+			}
+		});
+	}
+
 	private void listVisible(final HttpServerRequest request, final String acceptLanguage, final Handler<JsonObject> handler) {
 		getUserInfos(eb, request, new Handler<UserInfos>() {
 			@Override

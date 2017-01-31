@@ -1,26 +1,30 @@
-<div class="config">
+<div class="config" ng-controller="EditController">
 	<h1>[[community.oldname]]</h1>
 
 	<div class="row">
 		<h2><i18n>community.step.properties</i18n></h2>
-		<container template="properties"></container>
+		<container template="editor/properties"></container>
 	</div>
 	<hr />
 
 	<div class="row">
 		<h2><i18n>community.step.services</i18n></h2>
-		<container template="services"></container>
+		<container template="editor/services"></container>
 	</div>
 	<hr />
 
 	<div class="row">
 		<h2><i18n>community.step.members</i18n></h2>
-		<container template="members"></container>
+		<container template="editor/members"></container>
 	</div>
 	<hr />
 
 	<div class="row">
-		<button ng-click="saveEditCommunity()" class="right-magnet"><i18n>save</i18n></button>
-		<button ng-click="cancelToList()" class="right-magnet cancel"><i18n>cancel</i18n></button>
+		<button ng-click="community.save(); redirectTo('/list')" class="right-magnet">
+            <i18n>save</i18n>
+        </button>
+		<button ng-click="redirectTo('/list')" class="right-magnet cancel">
+            <i18n>cancel</i18n>
+        </button>
 	</div>
 </div>

@@ -1,10 +1,10 @@
-<resource-right resource="snipletResource" name="update" class="right-magnet">
-	<button ng-if="!display.editing" ng-click="edit()" class="right-magnet"><i18n>edit</i18n></button>
-</resource-right>
+<editor ng-if="display.editing" class="twelve cell" ng-model="editedSource.content"></editor>
+
+<article ng-if="!display.editing" class="twelve cell" bind-html="source.content"></article>
 
 <button ng-if="display.editing" ng-click="save()" class="right-magnet"><i18n>save</i18n></button>
 <button ng-if="display.editing" ng-click="cancel()" class="right-magnet cancel"><i18n>cancel</i18n></button>
 
-<editor ng-if="display.editing" class="twelve cell" ng-model="editedSource.content"></editor>
-
-<article ng-if="!display.editing" class="twelve cell" bind-html="source.content"></article>
+<resource-right resource="snipletResource" name="update" class="right-magnet">
+    <button ng-if="!display.editing" ng-click="edit()" class="right-magnet"><i18n>edit.message</i18n></button>
+</resource-right>

@@ -1,0 +1,15 @@
+﻿<!-- Display actions for selected communities -->
+<section class="toggle-buttons" ng-class="{ hide: selection.selected.length === 0 }">
+    <div class="toggle">
+        <div class="row">
+            <resource-right name="manager" resource="selection.selected" class="cell">
+                <button ng-click="display.confirmDelete = true"><i18n>remove</i18n></button>
+                <button 
+                        ng-click="redirectTo('/edit/' + selection.selected[0].id)" 
+                        ng-if="selection.selected.length === 1">
+                    <i18n>properties</i18n>
+                </button>
+            </resource-right>
+        </div>
+    </div>
+</section>

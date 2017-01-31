@@ -82,5 +82,11 @@
     "group.school.Teacher": "Tous les enseignants de l'{0}",
 	"community.back.to": "Communautés",
 	"community.edit": "Modifier",
-    "show.more": "Afficher plus de résultats"
+  "show.more": "Afficher plus de résultats",
+  "home": "Accueil",
+  "blog": "Blog",
+  "documents": "Documents",
+  "wiki": "Wiki",
+  "forum":  "Forum",
+  "edit.message": "Modifier le message"
 }

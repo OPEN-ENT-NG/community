@@ -1,0 +1,41 @@
+﻿<div ng-controller="LibraryController">
+    <div class="twelve cell">
+        <div class="eight cell">
+            <h1><i18n>community.title</i18n></h1>
+        </div>
+        <div class="contextual-buttons four cell">
+            <button ng-click="createCommunity()" class="right-magnet" workflow="community.create"><i18n>community.create</i18n></button>
+        </div>
+    </div>
+
+    <div class="four cell row">
+        <input type="search" class="twelve cell" i18n-placeholder="search" ng-model="filters.search" />
+    </div>
+
+    <div class="eight cell horizontal-spacing">
+        <filters>
+            <li ng-class="{ selected: filters.manager }">
+                <label>
+                    <i class="mine type" tooltip="community.filters.manager"></i>
+                    <input type="checkbox" ng-model="filters.manager" />
+                </label>
+            </li>
+        </filters>
+    </div>
+
+    <container template="library/list"></container>
+
+    <lightbox show="display.confirmDelete" on-close="display.confirmDelete = false">
+        <p><i18n>community.confirm.delete</i18n></p>
+        <div class="row">
+            <button ng-click="removeCommunities()" class="right-magnet"><i18n>remove</i18n></button>
+            <button ng-click="display.confirmDelete = false" class="right-magnet cancel"><i18n>cancel</i18n></button>
+        </div>
+    </lightbox>
+
+    <lightbox show="display.wizard" on-close="display.wizard = false">
+        <container template="library/wizard"></container>
+    </lightbox>
+
+    <container template="library/toaster"></container>
+</div>

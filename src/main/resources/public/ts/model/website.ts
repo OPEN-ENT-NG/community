@@ -1,8 +1,9 @@
 import { Page } from './page';
-import { Community } from './community';
+import { Community, Service } from './community';
 import { Mix } from 'toolkit';
-import { Behaviours, sniplets, Rights, Shareable } from 'entcore';
+import { Behaviours, sniplets, Rights, Shareable, idiom, cleanJSON } from 'entcore';
 import { _ } from 'entcore/libs/underscore/underscore';
+import { AppGenerator } from './apps';
 
 import http from 'axios';
 
@@ -15,18 +16,17 @@ export class Website implements Shareable {
         userId: string;
         displayName: string;
     };
+    rights: Rights<Website>;
 
     constructor(community: Community){
         this.community = community;
         this._id = community.pageId;
+        this.pages = [];
+        this.rights = new Rights<Website>(this);
     }
 
     get myRights(){
-        return {
-            manager: this.community.types.indexOf('manager') !== -1,
-            contrib: this.community.types.indexOf('contrib') !== -1,
-            read: true,
-        }
+        return this.rights.myRights;
     }
 
     async save() {
@@ -35,8 +35,12 @@ export class Website implements Shareable {
 
     toJSON() {
         return {
-            pages: this.pages
+            pages: cleanJSON(this.pages)
         }
+    }
+
+    fromJSON(data: any) {
+        this.rights.fromBehaviours();
     }
 
     async open(): Promise<void>{
@@ -47,7 +51,7 @@ export class Website implements Shareable {
     async synchronizeRights(){
         await sniplets.load();
 
-        let referencedResources: any;
+        let referencedResources: any = {};
         for(let page of this.pages){
             let source = page.source;
             if (!referencedResources[source.application]) {
@@ -73,5 +77,27 @@ export class Website implements Shareable {
                 }
             });
         }
+    }
+
+    async applyServices() {
+        for (let service of this.community.services) {
+            if (service.active) {
+                let index = this.pages.findIndex((p) => p.titleLink === service.name);
+                if (index === -1) {
+                    let page = new Page();
+                    page.source = await AppGenerator.generate(service, this.community);
+                    page.titleLink = service.name;
+                    page.title = idiom.translate(service.name);
+                    this.pages.push(page);
+                }
+            }
+            else {
+                let index = this.pages.findIndex((p) => p.titleLink === service.name);
+                if (index !== -1) {
+                    this.pages.splice(index, 1);
+                }
+            }
+        }
+        await this.save()
     }
 }

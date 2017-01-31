@@ -1,5 +1,5 @@
 ﻿import { Behaviours, idiom } from 'entcore';
-import { Community } from './community';
+import { Community, Service } from './community';
 
 export interface Source {
     template: string;
@@ -8,7 +8,7 @@ export interface Source {
 }
 
 export interface App {
-    prefix: string;
+    serviceName: string;
     generator: (community: Community) => Promise<Source>;
 }
 
@@ -18,10 +18,15 @@ export class AppGenerator {
     static register(app: App) {
         this.generators.push(app);
     }
+
+    static async generate(service: Service, community: Community): Promise<Source> {
+        let generator = this.generators.find((a) => a.serviceName === service.name);
+        return await generator.generator(community);
+    }
 }
 
 AppGenerator.register({
-    prefix: 'blog',
+    serviceName: 'blog',
     generator: async(community: Community): Promise<Source> => {
         Behaviours.applicationsBehaviours.blog.model.register();
         var blog = new Behaviours.applicationsBehaviours.blog.model.Blog();
@@ -59,7 +64,7 @@ AppGenerator.register({
 });
 
 AppGenerator.register({
-    prefix: 'wiki',
+    serviceName: 'wiki',
     generator: async (community: Community): Promise<Source> => {
         var wiki = new Behaviours.applicationsBehaviours.wiki.namespace.Wiki();
         var data = { title: idiom.translate('community.services.wiki.pretitle') + community.name };
@@ -93,7 +98,7 @@ AppGenerator.register({
 });
 
 AppGenerator.register({
-    prefix: 'forum',
+    serviceName: 'forum',
     generator: async (community: Community): Promise<Source> => {
         var category = new Behaviours.applicationsBehaviours.forum.namespace.Category();
         var templateData = {
@@ -123,7 +128,7 @@ AppGenerator.register({
 });
 
 AppGenerator.register({
-    prefix: 'documents',
+    serviceName: 'documents',
     generator: async (community: Community): Promise<Source> => {
         return {
             application: 'workspace',
@@ -134,7 +139,7 @@ AppGenerator.register({
 });
 
 AppGenerator.register({
-    prefix: 'home',
+    serviceName: 'home',
     generator: async (community: Community): Promise<Source> => {
         return {
             application: 'community',

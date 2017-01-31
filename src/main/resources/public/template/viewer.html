@@ -1,0 +1,50 @@
+﻿<div class="row">
+    <div class="cell">
+        <side-panel class="zero-mobile">
+            <nav class="vertical">
+                <h2><i18n>community.mine</i18n></h2>
+                <ul>
+                    <li ng-repeat="com in communities">
+                        <a ng-class="{selected : community.id == com.id}" ng-click="redirectTo('/view/' + com.id)">[[com.name]]</a>
+                    </li>
+                </ul>
+            </nav>
+        </side-panel>
+        <app-title>
+            <h1>
+                <a href="/community#/list"><i18n>community.mine</i18n></a> / [[community.name]]
+            </h1>
+        </app-title>
+    </div>
+    <div class="cell right-magnet">
+        <resource-right name="update" resource="community.website">
+            <button ng-click="redirectTo('/edit/' + community.id)">
+                <i18n>edit</i18n>
+            </button>
+        </resource-right>
+    </div>
+</div>
+<hr class="row" />
+<div class="rigid-grid row">
+    <div class="three cell">
+        <nav class="vertical">
+            <ul>
+                <li 
+                    ng-repeat="p in community.website.pages" 
+                    ng-click="redirectTo('/view/' + community.id + '/' + p.titleLink)"
+                >
+                    <a ng-class="{selected : p.titleLink === page.titleLink}">[[p.title]]</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="margin-three">
+        <div class="twelve cell" ng-if="page">
+            <sniplet 
+                     template="[[page.source.template]]" 
+                     application="[[page.source.application]]"
+                     source="page.source.source"
+            ></sniplet>
+        </div>
+    </div>
+</div>

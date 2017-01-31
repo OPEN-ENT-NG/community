@@ -63,7 +63,11 @@ gulp.task('copy-local-libs', ['drop-old-files'], () => {
     var ts = gulp.src(paths.infra + '/src/ts/**/*.ts')
         .pipe(gulp.dest('./src/main/resources/public/ts/entcore'));
         
-    var toolkitModule = gulp.src([paths.toolkit + '/**/*.d.ts', paths.toolkit + '/**/*.js'])
+    var toolkitModule = gulp.src([
+        paths.toolkit + '/dist/**/*.d.ts',
+        paths.toolkit + '/dist/**/*.js',
+        paths.toolkit + '/index.js',
+    ], { base: paths.toolkit })
         .pipe(gulp.dest('./node_modules/toolkit'));
 
     var module = gulp.src(paths.infra + '/src/ts/**/*.ts')

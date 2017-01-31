@@ -1,0 +1,28 @@
+<div class="fallen dominos">
+	<div class="item" ng-repeat="community in filteredCommunities = (communities | filter:roleMatch | filter:searchMatch | orderBy:'name')">
+		<section class="domino cyan">
+			<div class="top" ng-click="redirectTo('/view/' + community.id)">
+				<img class="absolute" ng-src="[[community.icon]]?thumbnail=150x150" alt="thumbnail" ng-if="community.icon" />
+				<img class="absolute" skin-src="/img/illustrations/pages-default.png" alt="thumbnail" ng-if="!community.icon" />
+			</div>
+			<div class="bottom" ng-click="redirectTo('/view/' + community.id)">
+				<div class="content">
+					<div>
+						<div class="cell-ellipsis"><strong>[[community.name]]</strong></div>
+						<div class="two-lines">[[community.description]]</div>
+					</div>
+					<div class="bottom-locked eleven vertical-spacing-twice">
+						<i class="view cell"   ng-if="community.role === 'read'"    tooltip="community.user.role.[[community.role]]"></i>
+						<i class="edit cell"   ng-if="community.role === 'contrib'" tooltip="community.user.role.[[community.role]]"></i>
+						<i class="manage cell" ng-if="community.role === 'manager'"  tooltip="community.user.role.[[community.role]]"></i>
+					</div>
+				</div>
+			</div>
+
+			<resource-right name="manager" resource="community">
+				<check-tool ng-model="community.selected"></check-tool>
+			</resource-right>
+
+		</section>
+	</div>
+</div>

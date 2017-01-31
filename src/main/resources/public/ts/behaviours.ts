@@ -10,6 +10,9 @@ Behaviours.register('community', {
 			create: 'net.atos.entng.community.controllers.CommunityController|create',
 			listAllPages: 'net.atos.entng.community.controllers.CommunityController|listAllPages',
 			view: 'net.atos.entng.community.controllers.CommunityController|view'
+		},
+		resource: {
+			update: 'net-atos-entng-community-controllers-PagesController|update'
 		}
 	},
 	// Used by component "linker" to load community pages
