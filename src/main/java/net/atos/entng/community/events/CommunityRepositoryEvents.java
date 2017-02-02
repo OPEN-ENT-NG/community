@@ -81,7 +81,7 @@ public class CommunityRepositoryEvents extends PagesRepositoryEvents {
 							.putString("action", "delete")
 							.putString("pageId", page.getString("pageId"))
 							.putBoolean("deleteResources", true);
-						eb.send("pages", deletePage);
+						eb.send("communityPages", deletePage);
 					}
 					log.info("Deleted communities (community, page and resources) : " + pageIds.toList().toString());
 				}

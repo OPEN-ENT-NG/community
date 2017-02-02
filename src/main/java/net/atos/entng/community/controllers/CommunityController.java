@@ -136,7 +136,7 @@ public class CommunityController extends BaseController {
 											public void handle(Either<String, JsonObject> event) {
 												if (r.isLeft()){
 													leftToResponse(request, event.left());
-													eb.send("pages", new JsonObject().putString("action", "delete")
+													eb.send("communityPages", new JsonObject().putString("action", "delete")
 															.putString("pageId", pageId));
 													return;
 												}
@@ -168,7 +168,7 @@ public class CommunityController extends BaseController {
 		JsonObject r = share
 				.putString("groupId", value.getString("read"))
 				.putArray("actions", new JsonArray().add("net-atos-entng-community-controllers-PagesController|get"));
-		eb.send("pages", r, new Handler<Message<JsonObject>>() {
+		eb.send("communityPages", r, new Handler<Message<JsonObject>>() {
 			@Override
 			public void handle(Message<JsonObject> message) {
 				if (!"ok".equals(message.body().getString("status"))) {
@@ -283,7 +283,7 @@ public class CommunityController extends BaseController {
 										.putString("label", "community.back.to")
 										.putString("resourceRight", "read")
 										.putString("href", "/community#/list")))));
-					eb.send("pages", updatePage, new Handler<Message<JsonObject>>() {
+					eb.send("communityPages", updatePage, new Handler<Message<JsonObject>>() {
 						@Override
 						public void handle(Message<JsonObject> message) {
 							if (!"ok".equals(message.body().getString("status"))) {
@@ -310,7 +310,7 @@ public class CommunityController extends BaseController {
 							.putString("action", "delete")
 							.putString("pageId", r.right().getValue().getString("pageId"))
 							.putBoolean("deleteResources", true);
-					eb.send("pages", deletePage);
+					eb.send("communityPages", deletePage);
 					ok(request);
 				} else {
 					leftToResponse(request, r.left());
