@@ -61,7 +61,7 @@ Behaviours.register('community', {
 		message: {
 			title: 'Message Accueil',
 			description: 'Message de la page d\'accueil modifiable',
-			//hidden: true, // Attribute to hide in interfaces (pages...) - sniplet can only be added automatically
+			hidden: true, // Attribute to hide in interfaces (pages...) - sniplet can only be added automatically
 			controller: {
 
                 initSource : function() {
