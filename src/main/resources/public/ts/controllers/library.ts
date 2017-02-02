@@ -14,7 +14,9 @@ export let library = ng.controller('LibraryController', [
         
         $scope.communities = Library.all;
         $scope.selection = Library.selection;
-        Library.communities();
+        Library.communities().then(() => {
+            $scope.$apply();
+        });
         
 
         $scope.roleMatch = (element) => {
