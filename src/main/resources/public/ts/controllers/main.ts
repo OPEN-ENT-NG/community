@@ -27,7 +27,7 @@ export let main = ng.controller('MainController', ['$scope', '$location', 'model
                 template.open('main', 'editor');
                 let communities = await Library.communities();
                 $scope.community = communities.find((c) => c.id === params.id);
-                await $scope.community.loadMembers();
+                await $scope.community.open();
                 $scope.$apply();
             },
             view: async (params) => {

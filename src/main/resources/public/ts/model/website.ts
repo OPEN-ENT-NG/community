@@ -44,6 +44,9 @@ export class Website implements Shareable {
     }
 
     async open(): Promise<void>{
+        if(this.pages.length){
+            return;
+        }
         let response = await http.get('/community/pages/' + this._id);
         Mix.extend(this, response.data);
     }
@@ -66,9 +69,9 @@ export class Website implements Shareable {
         }
 
         for (let application in referencedResources) {
-            Behaviours.copyRights({
+            await Behaviours.copyRights({
                 provider: {
-                    application: 'community/pages',
+                    application: 'community',
                     resource: this
                 },
                 target: {
@@ -98,6 +101,6 @@ export class Website implements Shareable {
                 }
             }
         }
-        await this.save()
+        await this.save();
     }
 }

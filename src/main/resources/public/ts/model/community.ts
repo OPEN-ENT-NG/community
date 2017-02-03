@@ -73,12 +73,18 @@ export class Community implements Shareable, Selectable {
         this.members = {};
     }
 
-    async fromJSON(data: any) {
-        this.website = Mix.castAs(Website, data.website, this);
-        await this.website.open();
-        this.services.forEach((s) => s.active =
+    async open(){
+         await this.loadMembers();
+         await this.website.open();
+         this.services.forEach((s) => s.active =
             this.website.pages.find((p) => p.titleLink === s.name) !== undefined
         );
+    }
+
+    async fromJSON(data: any) {
+        if(!this.website._id){
+            this.website = Mix.castAs(Website, data.website, this);
+        }
     }
 
     toJSON() {

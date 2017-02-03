@@ -28,7 +28,7 @@ routes.define(function ($routeProvider) {
 
 model.build = () => {
     model.me.workflow.load(['blog', 'forum', 'wiki']);
-    idiom.addBundle('blog');
-    idiom.addBundle('forum');
-    idiom.addBundle('wiki');
+    idiom.addBundle('blog/i18n');
+    idiom.addBundle('forum/i18n');
+    idiom.addBundle('wiki/i18n');
 };
