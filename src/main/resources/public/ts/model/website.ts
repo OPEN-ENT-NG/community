@@ -40,7 +40,6 @@ export class Website implements Shareable {
     }
 
     fromJSON(data: any) {
-        this.pages = Mix.castArrayAs(Page, data.pages);
         this.rights.fromBehaviours();
     }
 
@@ -50,6 +49,7 @@ export class Website implements Shareable {
         }
         let response = await http.get('/community/pages/' + this._id);
         Mix.extend(this, response.data);
+        this.pages = Mix.castArrayAs(Page, response.data.pages);
     }
 
     async synchronizeRights(){

@@ -83,7 +83,7 @@ export class Community implements Shareable, Selectable {
 
     async fromJSON(data: any) {
         if(!this.website._id){
-            this.website = Mix.castAs(Website, data.website, this);
+            this.website._id = this.pageId;
         }
     }
 
