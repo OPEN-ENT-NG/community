@@ -40,6 +40,7 @@ export class Website implements Shareable {
     }
 
     fromJSON(data: any) {
+        this.pages = Mix.castArrayAs(Page, data.pages);
         this.rights.fromBehaviours();
     }
 
