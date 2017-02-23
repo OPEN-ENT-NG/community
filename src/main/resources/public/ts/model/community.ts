@@ -16,12 +16,12 @@ export interface Service {
     content?: string;
 }
 
-let services = () => [
-    { name: 'home', mandatory: true, active: true, workflow: "community.create" },
-    { name: 'blog', workflow: 'blog.create' },
-    { name: 'documents', workflow: 'workspace.create' },
-    { name: 'wiki', workflow: 'wiki.create' },
-    { name: 'forum', workflow: 'forum.admin' }
+export let services = () => [
+    { name: 'home', mandatory: true, active: true, workflow: "community.create", template: "message" },
+    { name: 'blog', workflow: 'blog.create', template: "articles" },
+    { name: 'documents', workflow: 'workspace.create', template: 'documents' },
+    { name: 'wiki', workflow: 'wiki.create', template: 'wiki' },
+    { name: 'forum', workflow: 'forum.admin', template: 'forum' }
 ];
 
 export class Community implements Shareable, Selectable {

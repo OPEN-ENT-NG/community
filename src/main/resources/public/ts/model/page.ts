@@ -2,6 +2,7 @@
 import { Source } from './apps';
 import http from 'axios';
 import { Mix } from 'toolkit';
+import { services } from './community';
 
 interface Cell {
     media: {
@@ -33,7 +34,7 @@ export class Page implements Selectable {
         else {
             this.rows.forEach((r) => {
                 r.cells.forEach((c) => {
-                    if (c.media.type === 'sniplet' && c.media.source.template === this.titleLink) {
+                    if (c.media.type === 'sniplet' && services().find((s) => s.template === c.media.source.template).name === this.titleLink) {
                         this.source = c.media.source;
                     }
                 });
