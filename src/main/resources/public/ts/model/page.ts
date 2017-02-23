@@ -34,7 +34,8 @@ export class Page implements Selectable {
         else {
             this.rows.forEach((r) => {
                 r.cells.forEach((c) => {
-                    if (c.media.type === 'sniplet' && services().find((s) => s.template === c.media.source.template).name === this.titleLink) {
+                    let service = services().find((s) => s.template === c.media.source.template);
+                    if (c.media.type === 'sniplet' && service && service.name === this.titleLink) {
                         this.source = c.media.source;
                     }
                 });
