@@ -254,6 +254,7 @@ export class Community implements Shareable, Selectable {
             manager: response.data.manager
         };
         this.website._id = response.data.pageId;
+        await this.website.open();
         response.data.owner = {
             displayName: model.me.username,
             userId: model.me.userId
