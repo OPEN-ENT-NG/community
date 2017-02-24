@@ -162,6 +162,15 @@ export class Community implements Shareable, Selectable {
             this.membersDiff[role] = [];
         }
 
+        for(let role in this.membersDiff){
+            this.membersDiff[role] = _.reject(this.membersDiff[role],
+                (id) => users.find(
+                    (u) => u.id === id
+                ) !== undefined
+            );
+        }
+        
+
         this.membersDiff.delete = this.membersDiff.delete.concat(
             users.filter(
                 (u) => this.membersDiff.delete.indexOf(u.id)

@@ -11,16 +11,18 @@ export let edit = ng.controller('EditController', [
             user.role = right || 'read';
             $scope.community.addMember(user, user.role);
             $scope.membersEditor.search = '';
+            $scope.membersEditor.found = [];
         };
 
         $scope.addAllGroupMembers = async (group, role) => {
+            $scope.membersEditor.search = '';
+            $scope.membersEditor.found = [];
             await $scope.community.addGroupMembers(group, role);
             $scope.$apply();
         };
 
         $scope.setMemberRole = (member) => {
             $scope.community.addUsersToRole([member], member.role);
-            // TODO : Manage error
         };
 
         $scope.removeMember = function (member) {
