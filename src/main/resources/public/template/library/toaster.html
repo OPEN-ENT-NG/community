@@ -2,6 +2,7 @@
 <section class="toggle-buttons" ng-class="{ hide: selection.selected.length === 0 }">
     <div class="toggle">
         <div class="row">
+            <button ng-click="redirectTo('/view/' + selection.selected[0].id)"><i18n>open</i18n></button>
             <resource-right name="manager" resource="selection.selected" class="cell">
                 <button ng-click="display.confirmDelete = true"><i18n>remove</i18n></button>
                 <button 
