@@ -31,4 +31,5 @@ model.build = () => {
     idiom.addBundle('blog/i18n');
     idiom.addBundle('forum/i18n');
     idiom.addBundle('wiki/i18n');
+    idiom.addBundle('workspace/i18n');
 };

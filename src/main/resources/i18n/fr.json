@@ -89,5 +89,6 @@
   "documents": "Documents",
   "wiki": "Wiki",
   "forum":  "Forum",
-  "edit.message": "Modifier le message"
+  "edit.message": "Modifier le message",
+  "wizard.finish": "Créer"
 }
