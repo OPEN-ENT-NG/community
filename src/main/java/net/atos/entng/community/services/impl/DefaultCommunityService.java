@@ -30,7 +30,7 @@ import org.vertx.java.core.eventbus.Message;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 
-import java.util.UUID;
+import java.util.*;
 
 import static org.entcore.common.neo4j.Neo4jResult.validEmptyHandler;
 import static org.entcore.common.neo4j.Neo4jResult.validResultHandler;
@@ -129,20 +129,25 @@ public class DefaultCommunityService implements CommunityService {
 		StatementsBuilder sb = new StatementsBuilder();
 		JsonObject params = new JsonObject().putString("id", id);
 
-		JsonArray delete = users.getArray("delete");
-		if (delete != null && delete.size() > 0) {
-			users.removeField("delete");
-			final String query =
-					"MATCH (c:Community {id : {id}})<-[:DEPENDS]-(:CommunityGroup)<-[r:IN|COMMUNIQUE]-(u:User) " +
-					"WHERE u.id IN {delete} " +
-					"DELETE r";
-			sb.add(query, params.copy().putArray("delete", delete));
+		final Set<String> allUser = new HashSet<>();
+		for (String attr : users.getFieldNames()) {
+			allUser.addAll(users.getArray(attr, new JsonArray()).toList());
 		}
+
+		//delete all relation and recreate
+		final String deleteQuery =
+				"MATCH (c:Community {id : {id}})<-[:DEPENDS]-(:CommunityGroup)<-[r:IN|COMMUNIQUE]-(u:User) " +
+						"WHERE u.id IN {delete} " +
+						"DELETE r";
+		sb.add(deleteQuery, params.copy().putArray("delete", new JsonArray(new ArrayList<Object>(allUser))));
+
 		final String query =
 				"MATCH (c:Community {id : {id}})<-[:DEPENDS]-(g:CommunityGroup {type: {type}}), (u:User) " +
-				"WHERE u.id IN {users} " +
-				"CREATE UNIQUE g<-[:IN]-u";
-		for (String attr: users.getFieldNames()) {
+						"WHERE u.id IN {users} " +
+						"CREATE UNIQUE g<-[:IN]-u";
+
+		users.removeField("delete");
+		for (String attr : users.getFieldNames()) {
 			String q = ("contrib".equals(attr) || "manager".equals(attr)) ?
 					query + ", g<-[:COMMUNIQUE]-u" : query;
 			sb.add(q, params.copy().putString("type", attr).putArray("users", users.getArray(attr)));

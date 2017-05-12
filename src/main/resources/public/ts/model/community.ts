@@ -96,6 +96,14 @@ export class Community implements Shareable, Selectable {
     }
 
     removeMember(id: string) {
+        for(let role in this.membersDiff){
+            if (role !== "delete") {
+                this.membersDiff[role] = _.reject(this.membersDiff[role],
+                    (userId) => userId === id
+                );
+            }
+        }
+
         this.membersDiff.delete.push(id);
         let index = this.membersList.findIndex((u) => u.id === id);
         this.membersList.splice(index, 1);
@@ -154,7 +162,18 @@ export class Community implements Shareable, Selectable {
         }
     }
 
-    addUsersToRole(users: User[], role: string){
+    addUsersToRole(usersTab: string[], role: string){
+        let users:string[] = [];
+        if (usersTab && usersTab.length > 0) {
+            if (typeof usersTab[0] === "string") {
+                users = usersTab;
+            } else {
+                (<any>usersTab).forEach(function (user) {
+                    users.push(user.id);
+                })
+            }
+        }
+
         if(!this.membersDiff.delete){
             this.membersDiff.delete = [];
         }
@@ -164,30 +183,27 @@ export class Community implements Shareable, Selectable {
 
         for(let role in this.membersDiff){
             this.membersDiff[role] = _.reject(this.membersDiff[role],
-                (id) => users.find(
-                    (u) => u.id === id
-                ) !== undefined
+                (id) => users.indexOf(id) !== -1
             );
         }
-        
 
         this.membersDiff.delete = this.membersDiff.delete.concat(
             users.filter(
-                (u) => this.membersDiff.delete.indexOf(u.id)
+                (u) => this.membersDiff.delete.indexOf(u) !== -1
             )
-            .map((u) => u.id)
+            .map((u) => u)
         );
         this.membersDiff[role] = this.membersDiff[role].concat(
             users.filter(
-                (u) => this.membersDiff[role].indexOf(u.id)
+                (u) => this.membersDiff[role].indexOf(u) === -1
             )
-            .map((u) => u.id)
+            .map((u) => u)
         );
     }
 
     addMember(user: User, role: string) {
         this.membersList.push(user);
-        this.addUsersToRole([user], role);
+        this.addUsersToRole([user.id], role);
     }
 
     async addGroupMembers(group, role){
@@ -245,7 +261,12 @@ export class Community implements Shareable, Selectable {
 
     private async saveMembers(){
         let response = await http.put('/community/' + this.id + '/users', this.membersDiff);
-
+        this.membersDiff = {
+            read: [],
+            contrib: [],
+            manager: [],
+            delete: []
+        };
 	    await this.website.open();
 		await this.website.synchronizeRights();
     }
