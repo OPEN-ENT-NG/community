@@ -31,7 +31,7 @@ Behaviours.register('community', {
             return {
                 title : community.name,
                 icon : communityIcon,
-                path : '/community#/view/' + community.pageId,
+                path : '/community#/view/' + community.id,
                 community_id : community.id,
                 id : community.id
             };
@@ -113,7 +113,7 @@ Behaviours.register('community', {
 					this.setSnipletSource({});
 				},
 				openCommunity: function(community){
-					window.location.href = '/community#/view/' + community.pageId;
+					window.location.href = '/community#/view/' + community.id;
 					window.location.reload();
 				}
 			}

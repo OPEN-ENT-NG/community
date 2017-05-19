@@ -362,7 +362,7 @@ public class CommunityController extends BaseController {
 													//Populate notification parameters
 													JsonObject params = new JsonObject()
 															.putString("resourceName", event.right().getValue().getString("name", ""))
-															.putString("resourceUri", "/community#/view/" + event.right().getValue().getString("pageId", ""))
+															.putString("resourceUri", "/community#/view/" + id)
 															.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
 															.putString("username", user.getUsername());
 
