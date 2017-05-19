@@ -169,7 +169,7 @@ public class PagesController extends MongoDbControllerHelper {
 					JsonObject params = new JsonObject()
 							.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
 							.putString("username", user.getUsername())
-							.putString("pageUri", "/community/pages#/website/" + id);
+							.putString("pageUri", "/community#/view/" + id);
 					params.putString("resourceUri", params.getString("pageUri"));
 
 					shareJsonSubmit(request, "pages.shared", false, params, "title");

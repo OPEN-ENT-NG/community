@@ -344,24 +344,25 @@ public class CommunityController extends BaseController {
 	@Put("/:id/users")
 	@SecuredAction(value = "", type = ActionType.RESOURCE)
 	public void manageUsers(final HttpServerRequest request) {
+		final String id = request.params().get("id");
 		RequestUtils.bodyToJson(request, pathPrefix + "manageUsers", new Handler<JsonObject>() {
 			@Override
 			public void handle(final JsonObject body) {
 				if (body.size() > 0) {
-					communityService.manageUsers(request.params().get("id"), body, new Handler<Either<String, JsonObject>>() {
+					communityService.manageUsers(id, body, new Handler<Either<String, JsonObject>>() {
 						@Override
 						public void handle(Either<String, JsonObject> event) {
 							if (event.isRight()) {
 								UserUtils.getUserInfos(eb, request, new Handler<UserInfos>() {
 									@Override
 									public void handle(final UserInfos user) {
-										communityService.get(request.params().get("id"), user, new Handler<Either<String, JsonObject>>() {
+										communityService.get(id, user, new Handler<Either<String, JsonObject>>() {
 											public void handle(Either<String, JsonObject> event) {
 												if (event.isRight()) {
 													//Populate notification parameters
 													JsonObject params = new JsonObject()
 															.putString("resourceName", event.right().getValue().getString("name", ""))
-															.putString("resourceUri", "/pages#/website/" + event.right().getValue().getString("pageId", ""))
+															.putString("resourceUri", "/community#/view/" + event.right().getValue().getString("pageId", ""))
 															.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
 															.putString("username", user.getUsername());
 

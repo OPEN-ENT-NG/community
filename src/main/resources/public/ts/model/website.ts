@@ -49,7 +49,7 @@ export class Website implements Shareable {
         }
         let response = await http.get('/community/pages/' + this._id);
         Mix.extend(this, response.data);
-        this.pages = Mix.castArrayAs(Page, response.data.pages);
+        this.pages = Mix.castArrayAs(Page, _.map(response.data.pages, el => el));
     }
 
     async synchronizeRights(){

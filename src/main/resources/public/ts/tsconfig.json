@@ -5,6 +5,14 @@
     "declaration": false,
     "moduleResolution": "node",
     "sourceMap": true,
-    "noImplicitAny": false
-  }
+    "noImplicitAny": false,
+    "typeRoots": [
+      "../../../../../node_modules/@types"
+    ],
+    "types": ["core-js"]
+
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
