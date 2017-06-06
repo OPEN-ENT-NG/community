@@ -381,17 +381,17 @@ public class CommunityController extends BaseController {
 
 													if (readList.size() > 0) {
 														timeline.notifyTimeline(request, "community.share", user, readList,
-																request.params().get("id"), params.putString("shareType", "read"));
+																request.params().get("id"), null, params.putString("shareType", "read"), true);
 													}
 													if (contribList.size() > 0) {
 														params.removeField("shareType");
 														timeline.notifyTimeline(request, "community.share", user, contribList,
-																request.params().get("id"), params.putString("shareType", "contrib"));
+																request.params().get("id"), null, params.putString("shareType", "contrib"), true);
 													}
 													if (managerList.size() > 0) {
 														params.removeField("shareType");
 														timeline.notifyTimeline(request, "community.share", user, managerList,
-																request.params().get("id"), params.putString("shareType", "manager"));
+																request.params().get("id"), null, params.putString("shareType", "manager"), true);
 													}
 												}
 											}
