@@ -30,7 +30,7 @@ AppGenerator.register({
     generator: async(community: Community): Promise<Source> => {
         Behaviours.applicationsBehaviours.blog.model.register();
         var blog = new Behaviours.applicationsBehaviours.blog.model.Blog();
-        blog.title = idiom.translate('community.services.blog.pretitle') + community.name;
+        blog.title = idiom.translate('community.services.blog.pretitle')  + ' ' + community.name;
         blog.thumbnail = community.icon || '';
         blog['comment-type'] = 'IMMEDIATE';
         blog.description = community.description || '';
@@ -67,7 +67,7 @@ AppGenerator.register({
     serviceName: 'wiki',
     generator: async (community: Community): Promise<Source> => {
         var wiki = new Behaviours.applicationsBehaviours.wiki.namespace.Wiki();
-        var data = { title: idiom.translate('community.services.wiki.pretitle') + community.name };
+        var data = { title: idiom.translate('community.services.wiki.pretitle') + ' ' + community.name };
 
         return new Promise<Source>((resolve, reject) => {
             try {
