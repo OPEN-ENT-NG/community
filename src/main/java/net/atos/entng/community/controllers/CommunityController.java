@@ -132,9 +132,9 @@ public class CommunityController extends BaseController {
 								@Override
 								public void handle(final Either<String, JsonObject> r) {
 									if (r.isRight()) {
-										sharePage(pageId, user.getUserId(), r.right().getValue(), new Handler<Either<String, JsonObject>>(){
+										communityService.updateShare(pageId, user.getUserId(), r.right().getValue(), new Handler<Either<String, JsonObject>>(){
 											public void handle(Either<String, JsonObject> event) {
-												if (r.isLeft()){
+												if (event.isLeft()){
 													leftToResponse(request, event.left());
 													eb.send("communityPages", new JsonObject().putString("action", "delete")
 															.putString("pageId", pageId));
@@ -161,61 +161,6 @@ public class CommunityController extends BaseController {
 		});
 	}
 
-	private void sharePage(String pageId, String userId, final JsonObject value, final Handler<Either<String, JsonObject>> handler) {
-		final JsonObject share = new JsonObject().putString("action", "share")
-				.putString("pageId", pageId).putString("userId", userId);
-
-		JsonObject r = share
-				.putString("groupId", value.getString("read"))
-				.putArray("actions", new JsonArray().add("net-atos-entng-community-controllers-PagesController|get"));
-		eb.send("communityPages", r, new Handler<Message<JsonObject>>() {
-			@Override
-			public void handle(Message<JsonObject> message) {
-				if (!"ok".equals(message.body().getString("status"))) {
-					final String error_msg = "Error while sharing page (read) : " + message.body().getString("message");
-					log.error(error_msg);
-					handler.handle(new Either.Left<String, JsonObject>(error_msg));
-					return;
-				}
-				JsonObject c = share
-						.putString("groupId", value.getString("contrib"))
-						.putArray("actions", new JsonArray()
-										.add("net-atos-entng-community-controllers-PagesController|get")
-										.add("net-atos-entng-community-controllers-PagesController|update")
-						);
-				eb.send("communityPages", c, new Handler<Message<JsonObject>>() {
-					@Override
-					public void handle(Message<JsonObject> message) {
-						if (!"ok".equals(message.body().getString("status"))) {
-							final String error_msg = "Error while sharing page (contrib) : " + message.body().getString("message");
-							log.error(error_msg);
-							handler.handle(new Either.Left<String, JsonObject>(error_msg));
-							return;
-						}
-						JsonObject m = share
-								.putString("groupId", value.getString("manager"))
-								.putArray("actions", new JsonArray()
-												.add("net-atos-entng-community-controllers-PagesController|get")
-												.add("net-atos-entng-community-controllers-PagesController|update")
-												.add("net-atos-entng-community-controllers-PagesController|delete")
-								);
-						eb.send("communityPages", m, new Handler<Message<JsonObject>>() {
-							@Override
-							public void handle(Message<JsonObject> message) {
-								if (!"ok".equals(message.body().getString("status"))) {
-									final String error_msg = "Error while sharing page (manager) : " + message.body().getString("message");
-									log.error(error_msg);
-									handler.handle(new Either.Left<String, JsonObject>(error_msg));
-									return;
-								}
-								handler.handle(new Either.Right<String, JsonObject>(message.body()));
-							}
-						});
-					}
-				});
-			}
-		});
-	}
 
 	private void createPageMarkups(String pageId) {
 		JsonObject updatePage = new JsonObject()

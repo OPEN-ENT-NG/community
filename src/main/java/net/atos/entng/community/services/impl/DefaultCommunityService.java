@@ -19,9 +19,15 @@
 
 package net.atos.entng.community.services.impl;
 
+import com.mongodb.QueryBuilder;
+import fr.wseduc.mongodb.MongoDb;
+import fr.wseduc.mongodb.MongoQueryBuilder;
+import fr.wseduc.mongodb.MongoUpdateBuilder;
 import fr.wseduc.webutils.Either;
 import net.atos.entng.community.services.CommunityService;
 
+import org.entcore.common.mongodb.MongoDbConf;
+import org.entcore.common.mongodb.MongoDbResult;
 import org.entcore.common.neo4j.Neo4j;
 import org.entcore.common.neo4j.StatementsBuilder;
 import org.entcore.common.user.UserInfos;
@@ -40,6 +46,8 @@ import static org.entcore.common.neo4j.Neo4jUtils.nodeSetPropertiesFromJson;
 public class DefaultCommunityService implements CommunityService {
 
 	private Neo4j neo4j = Neo4j.getInstance();
+	private MongoDb mongo = MongoDb.getInstance();
+	private MongoDbConf conf = MongoDbConf.getInstance();
 
 	@Override
 	public void create(JsonObject data, UserInfos user, Handler<Either<String, JsonObject>> handler) {
@@ -181,6 +189,24 @@ public class DefaultCommunityService implements CommunityService {
 				}
 			}
 		});
+	}
+
+	@Override
+	public void updateShare(String pageId, String userId, JsonObject value, Handler<Either<String, JsonObject>> handler) {
+		JsonArray shared = new JsonArray();
+		shared.add(new JsonObject().putString("groupId", value.getString("read")).
+				putBoolean("net-atos-entng-community-controllers-PagesController|get", true));
+		shared.add(new JsonObject().putString("groupId", value.getString("contrib")).
+				putBoolean("net-atos-entng-community-controllers-PagesController|get", true).
+				putBoolean("net-atos-entng-community-controllers-PagesController|update", true));
+		shared.add(new JsonObject().putString("groupId", value.getString("manager")).
+				putBoolean("net-atos-entng-community-controllers-PagesController|get", true).
+				putBoolean("net-atos-entng-community-controllers-PagesController|update", true).
+				putBoolean("net-atos-entng-community-controllers-PagesController|delete", true));
+
+		MongoUpdateBuilder updateQuery = new MongoUpdateBuilder().set("shared", shared);
+		QueryBuilder query = QueryBuilder.start("_id").is(pageId);
+		mongo.update(conf.getCollection(), MongoQueryBuilder.build(query), updateQuery.build(), MongoDbResult.validActionResultHandler(handler));
 	}
 
 }

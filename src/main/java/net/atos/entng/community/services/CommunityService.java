@@ -43,4 +43,6 @@ public interface CommunityService {
 
 	void listUsers(String id, JsonArray types, Handler<Either<String, JsonObject>> handler);
 
+	void updateShare(String pageId, String userId, final JsonObject value, final  Handler<Either<String, JsonObject>> handler);
+
 }
