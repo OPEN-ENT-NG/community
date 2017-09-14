@@ -1,5 +1,5 @@
-﻿import { Selection, Selectable, Mix, Provider } from 'toolkit';
-import { Rights, Shareable, model } from 'entcore';
+﻿import { Selection, Selectable, Mix, Provider } from 'entcore-toolkit';
+import { Rights, Shareable, model, notify } from 'entcore';
 import { Page } from './page';
 import { Website } from './website';
 import { User, Group } from './dictionary';
@@ -315,12 +315,13 @@ export class Library {
         return this.all;
     }
 
-    static deleteSelection() {
-        this.selection.selected.forEach((community) => {
-            community.delete();
+    static async deleteSelection() {
+        for( let community of  this.selection.selected){
+            await community.delete();
             this.provider.remove(community);
-        });
+        }
         this.selection.removeSelection();
+        notify.info("selection.suppression");
     }
 
     static push(community: Community) {
