@@ -251,12 +251,13 @@ export class Community implements Shareable, Selectable {
     async save() {
         if (this.id) {
             await this.saveModifications();
+            await this.website.applyServices();
+            await this.saveMembers();
         }
         else {
             await this.create();
+            await this.website.applyServices();
         }
-        await this.website.applyServices();
-        await this.saveMembers();
     }
 
     private async saveMembers(){

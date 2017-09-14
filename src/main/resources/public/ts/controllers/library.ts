@@ -7,6 +7,7 @@ export let library = ng.controller('LibraryController', [
     '$scope', 'model', '$location', ($scope, model, $location) => {
         $scope.template = template;
         $scope.me = model.me;
+        $scope.creationFlag=false;
 
         template.open('library/list', 'library/list');
         template.open('library/wizard', 'library/wizard');
@@ -34,11 +35,15 @@ export let library = ng.controller('LibraryController', [
         };
 
         $scope.finishCreateWizard = async () => {
-            await $scope.community.save();
-            $scope.display.wizard = false;
-            $location.path('/edit/' + $scope.community.id);
-            $scope.membersEditor.found = [];
-            $scope.$apply();
+            if(!$scope.creationFlag) {
+                $scope.creationFlag = true;
+                await $scope.community.save();
+                $scope.display.wizard = false;
+                $scope.creationFlag = false;
+                $location.path('/edit/' + $scope.community.id);
+                $scope.membersEditor.found = [];
+                $scope.$apply();
+            }
         };
 
         $scope.removeCommunities = async () => {
