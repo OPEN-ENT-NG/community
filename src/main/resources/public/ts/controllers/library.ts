@@ -34,9 +34,9 @@ export let library = ng.controller('LibraryController', [
         };
 
         $scope.finishCreateWizard = async () => {
-            $scope.display.wizard = false;
             await $scope.community.save();
-            $location.path('/view/' + $scope.community.id);
+            $scope.display.wizard = false;
+            $location.path('/edit/' + $scope.community.id);
             $scope.membersEditor.found = [];
             $scope.$apply();
         };

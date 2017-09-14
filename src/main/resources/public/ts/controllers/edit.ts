@@ -2,7 +2,7 @@
 import { Dictionary } from '../model/dictionary';
 
 export let edit = ng.controller('EditController', [
-    '$scope', 'model', ($scope, model) => {
+    '$scope', 'model','$location', ($scope, model, $location) => {
         template.open('editor/services', 'editor/services');
         template.open('editor/properties', 'editor/properties');
         template.open('editor/members', 'editor/members');
@@ -35,6 +35,12 @@ export let edit = ng.controller('EditController', [
                 $scope.membersEditor.search
             ).toLowerCase();
             $scope.membersEditor.found = Dictionary.find(searchTerm, $scope.community);
+        };
+
+        $scope.save = async () => {
+            await $scope.community.save();
+            $location.path('/view/' + $scope.community.id);
+            $scope.$apply();
         };
 
     }

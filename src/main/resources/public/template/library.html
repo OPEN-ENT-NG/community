@@ -34,7 +34,27 @@
     </lightbox>
 
     <lightbox show="display.wizard" on-close="display.wizard = false">
-        <container template="library/wizard"></container>
+        <h2><i18n>community.step.start</i18n></h2>
+        <div class="row">
+            <label class="three cell"><i18n>community.name.label</i18n></label>
+            <input type="text" ng-model="community.name" name="name" i18n-placeholder="community.name.placeholder" class="nine cell" required />
+        </div>
+        <div class="row">
+            <label class="three cell"><i18n>community.icon.label</i18n></label>
+            <label class="niine cell"><i18n>community.description.label</i18n></label>
+        </div>
+        <div class="row">
+            <image-select ng-model="community.icon" default="/img/illustrations/pages-default.png" thumbnails="[{ width: 150, height: 150 }]" class="two cell"></image-select>
+            <textarea ng-model="community.description" name="description" i18n-placeholder="community.description.placeholder" class="nine right-magnet"></textarea>
+        </div>
+        <div class="row">
+            <button class="right-magnet" ng-disabled="!community.name" ng-click="finishCreateWizard()">
+                <i18n>wizard.finish</i18n>
+            </button>
+            <button class="cancel right-magnet" ng-click="display.wizard = false">
+                <i18n>cancel</i18n>
+            </button>
+        </div>
     </lightbox>
 
     <container template="library/toaster"></container>
