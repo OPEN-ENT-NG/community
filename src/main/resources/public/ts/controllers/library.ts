@@ -51,4 +51,16 @@ export let library = ng.controller('LibraryController', [
             await Library.deleteSelection();
             $scope.$apply();
         }
+
+        $scope.canAddCommunity  = (communityName) => {
+            if(communityName === undefined || communityName.trim() === ''){
+                return false;
+            }
+            let communityFound = _.findWhere($scope.communities, {name: communityName});
+            if (communityFound === undefined) {
+                return true;
+            } else {
+                return false;
+            }
+        };
     }]);

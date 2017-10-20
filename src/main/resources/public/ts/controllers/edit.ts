@@ -1,11 +1,15 @@
 ﻿import { ng, template, idiom } from 'entcore';
 import { Dictionary } from '../model/dictionary';
+import { _ } from 'entcore/libs/underscore/underscore';
+import { Community, Library } from '../model/community';
 
 export let edit = ng.controller('EditController', [
     '$scope', 'model','$location', ($scope, model, $location) => {
         template.open('editor/services', 'editor/services');
         template.open('editor/properties', 'editor/properties');
         template.open('editor/members', 'editor/members');
+
+        $scope.communities = Library.all;
 
         $scope.addMember = function (user, right) {
             user.role = right || 'read';
@@ -43,5 +47,16 @@ export let edit = ng.controller('EditController', [
             $scope.$apply();
         };
 
+        $scope.canEditCommunity  = (communityModified) => {
+            if(communityModified.name === undefined || communityModified.name.trim() === ''){
+                return communityModified.error = true;
+            }
+            let communitiesFound = _.where($scope.communities, {name: communityModified.name});
+            if (communitiesFound !== undefined && communitiesFound.length > 1 ) {
+                return communityModified.error = true;
+            } else {
+                return communityModified.error = false;
+            }
+        };
     }
 ])

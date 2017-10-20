@@ -84,6 +84,7 @@
 	"community.back.to": "Communautés",
 	"community.edit": "Modifier",
     "selection.suppression": "La séléction a été supprimée",
+    "community.name.unique.error":"Le nom d'une communauté au sein de l'établissement doit être renseigné et unique",
   "show.more": "Afficher plus de résultats",
   "home": "Accueil",
   "blog": "Blog",

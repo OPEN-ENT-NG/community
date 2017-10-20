@@ -1,6 +1,7 @@
+<div class="row warning" ng-if="community.error"><i18n>community.name.unique.error</i18n></div>
 <div class="row">
 	<label class="three cell"><i18n>community.name.label</i18n></label>
-	<input type="text" ng-model="community.name" name="name" i18n-placeholder="community.name.placeholder" class="nine cell" required />
+	<input type="text" ng-change="canEditCommunity(community)" ng-model="community.name" name="name" i18n-placeholder="community.name.placeholder" class="nine cell" required />
 </div>
 
 <div class="row">

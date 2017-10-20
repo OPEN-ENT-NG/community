@@ -20,7 +20,7 @@
 	<hr />
 
 	<div class="row">
-		<button ng-click="save()" class="right-magnet">
+		<button ng-disabled="community.error" ng-click="save()" class="right-magnet">
             <i18n>save</i18n>
         </button>
 		<button ng-click="redirectTo('/list')" class="right-magnet cancel">
