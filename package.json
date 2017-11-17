@@ -17,6 +17,7 @@
     "gulp-typescript": "2.12.2",
     "gulp-watch": "^4.3.5",
     "infra-front": "github:entcore/infra-front#0.4.0",
+    "entcore-toolkit": "^1.0.1",
     "merge2": "^1.0.2",
     "source-map-loader": "^0.1.5",
     "toolkit": "git+https://git@github.com/entcore/toolkit.git#1.0.1",
