@@ -1,7 +1,7 @@
-﻿import { Selectable } from 'toolkit';
+﻿import { Selectable } from 'entcore-toolkit';
 import { Source } from './apps';
 import http from 'axios';
-import { Mix } from 'toolkit';
+import { Mix } from 'entcore-toolkit';
 import { services } from './community';
 
 interface Cell {

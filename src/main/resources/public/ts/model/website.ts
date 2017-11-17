@@ -1,6 +1,6 @@
 import { Page } from './page';
 import { Community, Service } from './community';
-import { Mix } from 'toolkit';
+import { Mix } from 'entcore-toolkit';
 import { Behaviours, sniplets, Rights, Shareable, idiom, cleanJSON } from 'entcore';
 import { _ } from 'entcore/libs/underscore/underscore';
 import { AppGenerator } from './apps';
