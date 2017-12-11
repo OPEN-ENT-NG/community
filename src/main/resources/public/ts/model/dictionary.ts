@@ -1,6 +1,6 @@
 ﻿import { Community } from './community';
 import { idiom } from 'entcore';
-import { _ } from 'entcore/libs/underscore/underscore';
+import { _ } from 'entcore';
 
 export interface User {
     id: string;

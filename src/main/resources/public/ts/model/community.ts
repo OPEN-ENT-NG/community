@@ -3,7 +3,7 @@ import { Rights, Shareable, model, notify } from 'entcore';
 import { Page } from './page';
 import { Website } from './website';
 import { User, Group } from './dictionary';
-import { _ } from 'entcore/libs/underscore/underscore';
+import { _ } from 'entcore';
 
 import http from 'axios';
 

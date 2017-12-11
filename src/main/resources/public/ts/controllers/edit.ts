@@ -1,6 +1,6 @@
 ﻿import { ng, template, idiom } from 'entcore';
 import { Dictionary } from '../model/dictionary';
-import { _ } from 'entcore/libs/underscore/underscore';
+import { _ } from 'entcore';
 import { Community, Library } from '../model/community';
 
 export let edit = ng.controller('EditController', [

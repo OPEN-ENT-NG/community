@@ -2,7 +2,7 @@ import { Page } from './page';
 import { Community, Service } from './community';
 import { Mix } from 'entcore-toolkit';
 import { Behaviours, sniplets, Rights, Shareable, idiom, cleanJSON } from 'entcore';
-import { _ } from 'entcore/libs/underscore/underscore';
+import { _ } from 'entcore';
 import { AppGenerator } from './apps';
 
 import http from 'axios';

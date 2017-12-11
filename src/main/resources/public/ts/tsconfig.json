@@ -6,13 +6,9 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "noImplicitAny": false,
-    "typeRoots": [
-      "../../../../../node_modules/@types"
-    ],
-    "types": ["core-js"]
-
+    "lib": ["es2015", "dom"]
   },
   "exclude": [
-    "node_modules"
+    "build", "node_modules"
   ]
 }

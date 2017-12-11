@@ -1,5 +1,5 @@
 ﻿import { ng, template, idiom, notify } from 'entcore';
-import { _ } from 'entcore/libs/underscore/underscore';
+import { _ } from 'entcore';
 import { Community, Library } from '../model/community';
 import { Dictionary } from '../model/dictionary';
 

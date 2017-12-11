@@ -34,3 +34,6 @@ developer.id
 **/dist
 **/.DS_Store
 **/view
+node_modules
+bower_components
+rev-manifest.json

@@ -1,4 +1,4 @@
-﻿import { model, routes, ng, idiom } from 'entcore/entcore';
+﻿import { model, routes, ng, idiom } from 'entcore';
 import { library } from './controllers/library';
 import { main } from './controllers/main';
 import { edit } from './controllers/edit';

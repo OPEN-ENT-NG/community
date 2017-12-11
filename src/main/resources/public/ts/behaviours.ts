@@ -1,5 +1,5 @@
 import { Behaviours } from 'entcore';
-import { _ } from 'entcore/libs/underscore/underscore';
+import { _ } from 'entcore';
 import http from 'axios';
 
 console.log('community behaviours loaded');
