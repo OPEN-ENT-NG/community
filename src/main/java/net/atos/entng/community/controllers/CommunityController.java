@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.wseduc.rs.*;
+import io.vertx.core.AsyncResult;
 import net.atos.entng.community.Community;
 import net.atos.entng.community.services.CommunityService;
 
@@ -38,14 +39,14 @@ import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
 import org.entcore.common.user.UserInfos;
 import org.entcore.common.user.UserUtils;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.http.HttpServerRequest;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.http.HttpServerRequest;
 import org.vertx.java.core.http.RouteMatcher;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.platform.Container;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+
 
 import fr.wseduc.rs.Delete;
 import fr.wseduc.rs.Get;
@@ -68,9 +69,9 @@ public class CommunityController extends BaseController {
 	private enum CommunityEvent { ACCESS }
 
 	@Override
-	public void init(Vertx vertx, Container container, RouteMatcher rm,
+	public void init(Vertx vertx, JsonObject config, RouteMatcher rm,
 			Map<String, fr.wseduc.webutils.security.SecuredAction> securedActions) {
-		super.init(vertx, container, rm, securedActions);
+		super.init(vertx, config, rm, securedActions);
 		eventStore = EventStoreFactory.getFactory().getEventStore(Community.class.getSimpleName());
 	}
 
@@ -112,22 +113,22 @@ public class CommunityController extends BaseController {
 			@Override
 			public void handle(JsonObject u) {
 				JsonObject p = new JsonObject()
-						.putString("title", body.getString("name"))
-						.putBoolean("hideInPages", true)
-						.putArray("pages", new JsonArray())
-						.putObject("referencedResources", new JsonObject());
+						.put("title", body.getString("name"))
+						.put("hideInPages", true)
+						.put("pages", new JsonArray())
+						.put("referencedResources", new JsonObject());
 				JsonObject pages = new JsonObject()
-						.putString("action", "create")
-						.putObject("user", u)
-						.putObject("page", p);
-				eb.send("communityPages", pages, new Handler<Message<JsonObject>>() {
+						.put("action", "create")
+						.put("user", u)
+						.put("page", p);
+				eb.send("communityPages", pages, new Handler<AsyncResult<Message<JsonObject>>>() {
 					@Override
-					public void handle(Message<JsonObject> message) {
-						final JsonObject result = message.body().getObject("result");
-						if ("ok".equals(message.body().getString("status")) && result != null &&
+					public void handle(AsyncResult<Message<JsonObject>> message) {
+						final JsonObject result = message.result().body().getJsonObject("result");
+						if ("ok".equals(message.result().body().getString("status")) && result != null &&
 								!result.getString("_id", "").trim().isEmpty()) {
 							final String pageId = result.getString("_id");
-							body.putString("pageId", pageId);
+							body.put("pageId", pageId);
 							communityService.create(body, user, new Handler<Either<String, JsonObject>>() {
 								@Override
 								public void handle(final Either<String, JsonObject> r) {
@@ -136,24 +137,24 @@ public class CommunityController extends BaseController {
 											public void handle(Either<String, JsonObject> event) {
 												if (event.isLeft()){
 													leftToResponse(request, event.left());
-													eb.send("communityPages", new JsonObject().putString("action", "delete")
-															.putString("pageId", pageId));
+													eb.send("communityPages", new JsonObject().put("action", "delete")
+															.put("pageId", pageId));
 													return;
 												}
-												r.right().getValue().putString("pageId", pageId);
+												r.right().getValue().put("pageId", pageId);
 												renderJson(request, r.right().getValue(), 201);
 											}
 										});
 										createPageMarkups(pageId);
 									} else {
 										leftToResponse(request, r.left());
-										eb.send("communityPages", new JsonObject().putString("action", "delete")
-												.putString("pageId", pageId));
+										eb.send("communityPages", new JsonObject().put("action", "delete")
+												.put("pageId", pageId));
 									}
 								}
 							});
 						} else {
-							renderError(request, message.body());
+							renderError(request, message.result().body());
 						}
 					}
 				});
@@ -164,24 +165,24 @@ public class CommunityController extends BaseController {
 
 	private void createPageMarkups(String pageId) {
 		JsonObject updatePage = new JsonObject()
-		.putString("action", "update")
-		.putString("pageId", pageId)
-		.putObject("page", new JsonObject()
-			.putObject("markups", new JsonObject()
-				.putArray("view", new JsonArray()
-					.addObject(new JsonObject()
-						.putString("label", "community.edit")
-						.putString("resourceRight", "share")
-						.putString("href", "/community#/edit/" + pageId))
-					.addObject(new JsonObject()
-						.putString("label", "community.back.to")
-						.putString("resourceRight", "read")
-						.putString("href", "/community#/list")))));
-		eb.send("communityPages", updatePage, new Handler<Message<JsonObject>>() {
+		.put("action", "update")
+		.put("pageId", pageId)
+		.put("page", new JsonObject()
+			.put("markups", new JsonObject()
+				.put("view", new JsonArray()
+					.add(new JsonObject()
+						.put("label", "community.edit")
+						.put("resourceRight", "share")
+						.put("href", "/community#/edit/" + pageId))
+					.add(new JsonObject()
+						.put("label", "community.back.to")
+						.put("resourceRight", "read")
+						.put("href", "/community#/list")))));
+		eb.send("communityPages", updatePage, new Handler<AsyncResult<Message<JsonObject>>>() {
 			@Override
-			public void handle(Message<JsonObject> message) {
-				if (!"ok".equals(message.body().getString("status"))) {
-					log.error(message.body().getString("message"));
+			public void handle(AsyncResult<Message<JsonObject>> message) {
+				if (!"ok".equals(message.result().body().getString("status"))) {
+					log.error(message.result().body().getString("message"));
 				}
 			}
 		});
@@ -211,28 +212,28 @@ public class CommunityController extends BaseController {
 			public void handle(final Either<String, JsonObject> r) {
 				if (r.isRight()) {
 					String pageId = r.right().getValue().getString("pageId");
-					r.right().getValue().removeField("pageId");
+					r.right().getValue().remove("pageId");
 					JsonObject updatePage = new JsonObject()
-							.putString("action", "update")
-							.putString("pageId", pageId)
-							.putObject("page", new JsonObject()
-								.putString("title", name)
-								.putBoolean("hideInPages", true)
-								.putObject("markups", new JsonObject()
-								.putArray("view", new JsonArray()
-									.addObject(new JsonObject()
-										.putString("label", "community.edit")
-										.putString("resourceRight", "share")
-										.putString("href", "/community#/edit/" + pageId))
-									.addObject(new JsonObject()
-										.putString("label", "community.back.to")
-										.putString("resourceRight", "read")
-										.putString("href", "/community#/list")))));
-					eb.send("communityPages", updatePage, new Handler<Message<JsonObject>>() {
+							.put("action", "update")
+							.put("pageId", pageId)
+							.put("page", new JsonObject()
+								.put("title", name)
+								.put("hideInPages", true)
+								.put("markups", new JsonObject()
+								.put("view", new JsonArray()
+									.add(new JsonObject()
+										.put("label", "community.edit")
+										.put("resourceRight", "share")
+										.put("href", "/community#/edit/" + pageId))
+									.add(new JsonObject()
+										.put("label", "community.back.to")
+										.put("resourceRight", "read")
+										.put("href", "/community#/list")))));
+					eb.send("communityPages", updatePage, new Handler<AsyncResult<Message<JsonObject>>>() {
 						@Override
-						public void handle(Message<JsonObject> message) {
-							if (!"ok".equals(message.body().getString("status"))) {
-								log.error(message.body().getString("message"));
+						public void handle(AsyncResult<Message<JsonObject>> message) {
+							if (!"ok".equals(message.result().body().getString("status"))) {
+								log.error(message.result().body().getString("message"));
 							}
 							renderJson(request, r.right().getValue());
 						}
@@ -252,9 +253,9 @@ public class CommunityController extends BaseController {
 			public void handle(Either<String, JsonObject> r) {
 				if (r.isRight()) {
 					JsonObject deletePage = new JsonObject()
-							.putString("action", "delete")
-							.putString("pageId", r.right().getValue().getString("pageId"))
-							.putBoolean("deleteResources", true);
+							.put("action", "delete")
+							.put("pageId", r.right().getValue().getString("pageId"))
+							.put("deleteResources", true);
 					eb.send("communityPages", deletePage);
 					ok(request);
 				} else {
@@ -306,37 +307,37 @@ public class CommunityController extends BaseController {
 												if (event.isRight()) {
 													//Populate notification parameters
 													JsonObject params = new JsonObject()
-															.putString("resourceName", event.right().getValue().getString("name", ""))
-															.putString("resourceUri", "/community#/view/" + id)
-															.putString("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
-															.putString("username", user.getUsername());
+															.put("resourceName", event.right().getValue().getString("name", ""))
+															.put("resourceUri", "/community#/view/" + id)
+															.put("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
+															.put("username", user.getUsername());
 
 													//Get user list
 													ArrayList<String> readList = new ArrayList<>();
 													ArrayList<String> contribList = new ArrayList<>();
 													ArrayList<String> managerList = new ArrayList<>();
-													for (String field : body.getFieldNames()) {
+													for (String field : body.fieldNames()) {
 														if ("read".equals(field))
-															readList.addAll(body.getArray(field).toList());
+															readList.addAll(body.getJsonArray(field).getList());
 														else if ("contrib".equals(field))
-															contribList.addAll(body.getArray(field).toList());
+															contribList.addAll(body.getJsonArray(field).getList());
 														else if ("manager".equals(field))
-															managerList.addAll(body.getArray(field).toList());
+															managerList.addAll(body.getJsonArray(field).getList());
 													}
 
 													if (readList.size() > 0) {
 														timeline.notifyTimeline(request, "community.share", user, readList,
-																request.params().get("id"), null, params.putString("shareType", "read"), true);
+																request.params().get("id"), null, params.put("shareType", "read"), true);
 													}
 													if (contribList.size() > 0) {
-														params.removeField("shareType");
+														params.remove("shareType");
 														timeline.notifyTimeline(request, "community.share", user, contribList,
-																request.params().get("id"), null, params.putString("shareType", "contrib"), true);
+																request.params().get("id"), null, params.put("shareType", "contrib"), true);
 													}
 													if (managerList.size() > 0) {
-														params.removeField("shareType");
+														params.remove("shareType");
 														timeline.notifyTimeline(request, "community.share", user, managerList,
-																request.params().get("id"), null, params.putString("shareType", "manager"), true);
+																request.params().get("id"), null, params.put("shareType", "manager"), true);
 													}
 												}
 											}
@@ -346,7 +347,7 @@ public class CommunityController extends BaseController {
 								Renders.renderJson(request, event.right().getValue(), 200);
 							} else {
 								JsonObject error = new JsonObject()
-										.putString("error", event.left().getValue());
+										.put("error", event.left().getValue());
 								Renders.renderJson(request, error, 400);
 							}
 						}
@@ -363,7 +364,7 @@ public class CommunityController extends BaseController {
 	public void listUsers(final HttpServerRequest request) {
 		List<String> t = request.params().getAll("type");
 		JsonArray types = (t != null && !t.isEmpty()) ?
-				new JsonArray(t.toArray()) : resourcesTypes; //new JsonArray(RightsController.allowedSharingRights.toArray());
+				new JsonArray(t) : resourcesTypes; //new JsonArray(RightsController.allowedSharingRights.toArray());
 		communityService.listUsers(request.params().get("id"), types, new Handler<Either<String, JsonObject>>() {
 			@Override
 			public void handle(final Either<String, JsonObject> event) {
@@ -373,7 +374,7 @@ public class CommunityController extends BaseController {
 					listVisible(request, I18n.acceptLanguage(request), new Handler<JsonObject>() {
 						@Override
 						public void handle(final JsonObject visibles) {
-							res.putObject("visibles", visibles);
+							res.put("visibles", visibles);
 							handler.handle(event);
 						}
 					});
@@ -404,7 +405,7 @@ public class CommunityController extends BaseController {
 					@Override
 					public void handle(JsonArray users) {
 						if (users != null) {
-							visibles.putArray("users", users);
+							visibles.put("users", users);
 						}
 						UserUtils.findVisibleProfilsGroups(eb, user.getUserId(), new Handler<JsonArray>() {
 							@Override
@@ -415,7 +416,7 @@ public class CommunityController extends BaseController {
 										JsonObject group = (JsonObject) g;
 										UserUtils.groupDisplayName(group, acceptLanguage);
 									}
-									visibles.putArray("groups", groups);
+									visibles.put("groups", groups);
 								}
 								handler.handle(visibles);
 							}

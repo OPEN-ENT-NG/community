@@ -22,12 +22,12 @@ package net.atos.entng.community.events;
 import static org.entcore.common.neo4j.Neo4jResult.validResultHandler;
 
 import org.entcore.common.neo4j.Neo4j;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.eventbus.EventBus;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.core.logging.Logger;
-import org.vertx.java.core.logging.impl.LoggerFactory;
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 import fr.wseduc.webutils.Either;
 
@@ -59,7 +59,7 @@ public class CommunityRepositoryEvents extends PagesRepositoryEvents {
 		super.deleteUsers(users);
         //FIXME: anonymization is not relevant
         // Users are already deleted in Graph - Control and delete communities with no managers
-		JsonObject params = new JsonObject().putString("type", "manager");
+		JsonObject params = new JsonObject().put("type", "manager");
 		String query = "MATCH (c:Community)<-[:DEPENDS]-(gm:CommunityGroup {type : {type}}) "
 					 + "OPTIONAL MATCH gm<-[:IN]-(um:User) "
 					 + "OPTIONAL MATCH c<-[r:DEPENDS]-(g:CommunityGroup)<-[r2:IN|COMMUNIQUE]-() "
@@ -74,16 +74,16 @@ public class CommunityRepositoryEvents extends PagesRepositoryEvents {
 					for (Object o : pageIds) {
 						if (!(o instanceof JsonObject)) continue;
 						JsonObject page = (JsonObject) o;
-						if (!page.containsField("pageId")) continue;
+						if (!page.containsKey("pageId")) continue;
 
 						// Delete the page
 						JsonObject deletePage = new JsonObject()
-							.putString("action", "delete")
-							.putString("pageId", page.getString("pageId"))
-							.putBoolean("deleteResources", true);
+							.put("action", "delete")
+							.put("pageId", page.getString("pageId"))
+							.put("deleteResources", true);
 						eb.send("communityPages", deletePage);
 					}
-					log.info("Deleted communities (community, page and resources) : " + pageIds.toList().toString());
+					log.info("Deleted communities (community, page and resources) : " + pageIds.getList().toString());
 				}
 				else {
 					log.error("Failed to delete communities : " + event.left().getValue());
