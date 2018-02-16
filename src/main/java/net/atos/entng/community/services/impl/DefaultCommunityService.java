@@ -31,10 +31,10 @@ import org.entcore.common.mongodb.MongoDbResult;
 import org.entcore.common.neo4j.Neo4j;
 import org.entcore.common.neo4j.StatementsBuilder;
 import org.entcore.common.user.UserInfos;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.*;
 
@@ -65,8 +65,8 @@ public class DefaultCommunityService implements CommunityService {
 				"cm-[:COMMUNIQUE]->cr, cm-[:COMMUNIQUE]->cc " +
 				"RETURN c.id as id, cr.id as read, cc.id as contrib, cm.id as manager";
 		JsonObject params = new JsonObject()
-				.putString("userId", user.getUserId())
-				.putObject("props", data.putString("id", UUID.randomUUID().toString()));
+				.put("userId", user.getUserId())
+				.put("props", data.put("id", UUID.randomUUID().toString()));
 		neo4j.execute(query, params, validUniqueResultHandler(handler));
 	}
 
@@ -84,14 +84,14 @@ public class DefaultCommunityService implements CommunityService {
 					"SET " + nodeSetPropertiesFromJson("c", data) + " " +
 					"RETURN c.id as id";
 		}
-		data.putString("id", id);
+		data.put("id", id);
 		neo4j.execute(query, data, validUniqueResultHandler(handler));
 	}
 
 	@Override
 	public void delete(String id, Handler<Either<String, JsonObject>> handler) {
 		StatementsBuilder sb = new StatementsBuilder();
-		JsonObject params = new JsonObject().putString("id", id);
+		JsonObject params = new JsonObject().put("id", id);
 		sb.add("MATCH (c:Community { id : {id}}) RETURN c.pageId as pageId", params);
 		String query =
 				"MATCH (c:Community { id : {id}})<-[r:DEPENDS]-(g:CommunityGroup) " +
@@ -107,7 +107,7 @@ public class DefaultCommunityService implements CommunityService {
 				"MATCH (u:User {id : {userId}})-[:IN]->(g:CommunityGroup)-[:DEPENDS]->(c:Community) " +
 				"RETURN c.id as id, c.name as name, c.description as description, " +
 				"c.icon as icon, c.pageId as pageId, COLLECT(g.type) as types, COLLECT(distinct {id: g.id, type: g.type, name: g.name}) as groups ";
-		JsonObject params = new JsonObject().putString("userId", user.getUserId());
+		JsonObject params = new JsonObject().put("userId", user.getUserId());
 		neo4j.execute(query, params, validResultHandler(handler));
 	}
 
@@ -117,7 +117,7 @@ public class DefaultCommunityService implements CommunityService {
 				"MATCH (u:User {id : {userId}})-[:IN]->(g:CommunityGroup)-[:DEPENDS]->(c:Community {id: {id}}) " +
 				"RETURN c.id as id, c.name as name, c.description as description, " +
 				"c.icon as icon, c.pageId as pageId, COLLECT(g.type) as types, COLLECT(distinct {id: g.id, type: g.type, name: g.name}) as groups ";
-		JsonObject params = new JsonObject().putString("userId", user.getUserId()).putString("id", id);
+		JsonObject params = new JsonObject().put("userId", user.getUserId()).put("id", id);
 		neo4j.execute(query, params, validUniqueResultHandler(handler));
 	};
 
@@ -128,18 +128,18 @@ public class DefaultCommunityService implements CommunityService {
 				"RETURN c.id as id, c.name as name, c.description as description, " +
 				"c.icon as icon, c.pageId as pageId, COLLECT(g.type) as types, " +
 				"COLLECT(distinct {id: g.id, type: g.type, name: g.name}) as groups ";
-		JsonObject params = new JsonObject().putString("id", id);
+		JsonObject params = new JsonObject().put("id", id);
 		neo4j.execute(query, params, validUniqueResultHandler(handler));
 	}
 
 	@Override
 	public void manageUsers(String id, JsonObject users, Handler<Either<String, JsonObject>> handler) {
 		StatementsBuilder sb = new StatementsBuilder();
-		JsonObject params = new JsonObject().putString("id", id);
+		JsonObject params = new JsonObject().put("id", id);
 
 		final Set<String> allUser = new HashSet<>();
-		for (String attr : users.getFieldNames()) {
-			allUser.addAll(users.getArray(attr, new JsonArray()).toList());
+		for (String attr : users.fieldNames()) {
+			allUser.addAll(users.getJsonArray(attr, new JsonArray()).getList());
 		}
 
 		//delete all relation and recreate
@@ -147,18 +147,18 @@ public class DefaultCommunityService implements CommunityService {
 				"MATCH (c:Community {id : {id}})<-[:DEPENDS]-(:CommunityGroup)<-[r:IN|COMMUNIQUE]-(u:User) " +
 						"WHERE u.id IN {delete} " +
 						"DELETE r";
-		sb.add(deleteQuery, params.copy().putArray("delete", new JsonArray(new ArrayList<Object>(allUser))));
+		sb.add(deleteQuery, params.copy().put("delete", new JsonArray(new ArrayList<Object>(allUser))));
 
 		final String query =
 				"MATCH (c:Community {id : {id}})<-[:DEPENDS]-(g:CommunityGroup {type: {type}}), (u:User) " +
 						"WHERE u.id IN {users} " +
 						"CREATE UNIQUE g<-[:IN]-u";
 
-		users.removeField("delete");
-		for (String attr : users.getFieldNames()) {
+		users.remove("delete");
+		for (String attr : users.fieldNames()) {
 			String q = ("contrib".equals(attr) || "manager".equals(attr)) ?
 					query + ", g<-[:COMMUNIQUE]-u" : query;
-			sb.add(q, params.copy().putString("type", attr).putArray("users", users.getArray(attr)));
+			sb.add(q, params.copy().put("type", attr).put("users", users.getJsonArray(attr)));
 		}
 		neo4j.executeTransaction(sb.build(), null, true, validEmptyHandler(handler));
 	}
@@ -168,20 +168,20 @@ public class DefaultCommunityService implements CommunityService {
 		String query =
 				"MATCH (:Community {id: {id}})<-[:DEPENDS]-(:CommunityGroup {type : {type}})<-[:IN]-(u:User) " +
 				"RETURN u.id as id, u.displayName as displayName ";
-		JsonObject params = new JsonObject().putString("id", id);
+		JsonObject params = new JsonObject().put("id", id);
 		StatementsBuilder sb = new StatementsBuilder();
 		for (Object o: types) {
 			if (!(o instanceof String)) continue;
-			sb.add(query, params.copy().putString("type", o.toString()));
+			sb.add(query, params.copy().put("type", o.toString()));
 		}
 		neo4j.executeTransaction(sb.build(), null, true, new Handler<Message<JsonObject>>() {
 			@Override
 			public void handle(Message<JsonObject> r) {
 				if ("ok".equals(r.body().getString("status"))) {
-					JsonArray results = r.body().getArray("results");
+					JsonArray results = r.body().getJsonArray("results");
 					JsonObject res = new JsonObject();
 					for (int i = 0; i < results.size(); i++) {
-						res.putArray(types.<String>get(i), results.<JsonArray>get(i));
+						res.put(types.getString(i), results.getJsonArray(i));
 					}
 					handler.handle(new Either.Right<String, JsonObject>(res));
 				} else {
@@ -194,15 +194,15 @@ public class DefaultCommunityService implements CommunityService {
 	@Override
 	public void updateShare(String pageId, String userId, JsonObject value, Handler<Either<String, JsonObject>> handler) {
 		JsonArray shared = new JsonArray();
-		shared.add(new JsonObject().putString("groupId", value.getString("read")).
-				putBoolean("net-atos-entng-community-controllers-PagesController|get", true));
-		shared.add(new JsonObject().putString("groupId", value.getString("contrib")).
-				putBoolean("net-atos-entng-community-controllers-PagesController|get", true).
-				putBoolean("net-atos-entng-community-controllers-PagesController|update", true));
-		shared.add(new JsonObject().putString("groupId", value.getString("manager")).
-				putBoolean("net-atos-entng-community-controllers-PagesController|get", true).
-				putBoolean("net-atos-entng-community-controllers-PagesController|update", true).
-				putBoolean("net-atos-entng-community-controllers-PagesController|delete", true));
+		shared.add(new JsonObject().put("groupId", value.getString("read")).
+				put("net-atos-entng-community-controllers-PagesController|get", true));
+		shared.add(new JsonObject().put("groupId", value.getString("contrib")).
+				put("net-atos-entng-community-controllers-PagesController|get", true).
+				put("net-atos-entng-community-controllers-PagesController|update", true));
+		shared.add(new JsonObject().put("groupId", value.getString("manager")).
+				put("net-atos-entng-community-controllers-PagesController|get", true).
+				put("net-atos-entng-community-controllers-PagesController|update", true).
+				put("net-atos-entng-community-controllers-PagesController|delete", true));
 
 		MongoUpdateBuilder updateQuery = new MongoUpdateBuilder().set("shared", shared);
 		QueryBuilder query = QueryBuilder.start("_id").is(pageId);

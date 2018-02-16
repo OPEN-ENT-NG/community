@@ -23,11 +23,11 @@ import fr.wseduc.webutils.http.Binding;
 import org.entcore.common.http.filter.ResourcesProvider;
 import org.entcore.common.neo4j.Neo4j;
 import org.entcore.common.user.UserInfos;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.http.HttpServerRequest;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public abstract class BaseCommunityFilter implements ResourcesProvider {
 
@@ -43,18 +43,18 @@ public abstract class BaseCommunityFilter implements ResourcesProvider {
 				"<-[:IN]-(:User { id : {userId}}) " +
 				"RETURN COUNT(*) > 0 as exists ";
 		JsonObject params = new JsonObject()
-				.putString("id", id)
-				.putString("userId", user.getUserId())
-				.putString("type", groupRoleType());
+				.put("id", id)
+				.put("userId", user.getUserId())
+				.put("type", groupRoleType());
 		request.pause();
 		Neo4j.getInstance().execute(query, params, new Handler<Message<JsonObject>>() {
 			@Override
 			public void handle(Message<JsonObject> r) {
 				request.resume();
-				JsonArray res = r.body().getArray("result");
+				JsonArray res = r.body().getJsonArray("result");
 				handler.handle(
 						"ok".equals(r.body().getString("status")) &&
-						res.size() == 1 && ((JsonObject) res.get(0)).getBoolean("exists", false)
+						res.size() == 1 && res.getJsonObject(0).getBoolean("exists", false)
 				);
 			}
 		});

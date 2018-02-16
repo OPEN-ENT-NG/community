@@ -2,7 +2,6 @@ package net.atos.entng.community.test.integration
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
-import io.gatling.http.request.StringBody
 import org.entcore.test.appregistry.Role
 import org.entcore.test.auth.Authenticate
 

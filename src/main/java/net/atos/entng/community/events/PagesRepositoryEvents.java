@@ -23,8 +23,8 @@
 package net.atos.entng.community.events;
 
 import org.entcore.common.service.impl.MongoDbRepositoryEvents;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.json.JsonArray;
+import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 
 public class PagesRepositoryEvents extends MongoDbRepositoryEvents {
 

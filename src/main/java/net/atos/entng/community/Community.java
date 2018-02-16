@@ -33,11 +33,11 @@ import org.entcore.common.notification.TimelineHelper;
 public class Community extends BaseServer {
 
 	@Override
-	public void start() {
+	public void start() throws Exception {
 		super.start();
 
 		MongoDbConf.getInstance().setCollection("communityPages");
-		TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.container);
+		TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.config);
 
 		// Set RepositoryEvents implementation used to process events published for transition
 		setRepositoryEvents(new CommunityRepositoryEvents(vertx.eventBus()));
