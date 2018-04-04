@@ -224,8 +224,8 @@ export class Community implements Shareable, Selectable {
 
     setRights() {
         this.rights.myRights = {
-            manager: this.types.indexOf('manager') !== -1,
-            contrib: this.types.indexOf('contrib') !== -1,
+            manager: this.types.indexOf('manager') !== -1 ? true : undefined,
+            contrib: this.types.indexOf('contrib') !== -1 ? true : undefined,
             read: true
         };
 
