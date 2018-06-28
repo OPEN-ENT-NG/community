@@ -187,6 +187,33 @@ public class PagesController extends MongoDbControllerHelper {
 		super.removeShare(request, false);
 	}
 
+	@Put("/pages/share/resource/:id")
+	@ApiDoc("Share a page.")
+	@ResourceFilter(ShareAndOwner.class)
+	@SecuredAction(value = "page.manager", type = ActionType.RESOURCE)
+	public void shareResource(final HttpServerRequest request) {
+		UserUtils.getUserInfos(eb, request, new Handler<UserInfos>() {
+			@Override
+			public void handle(final UserInfos user) {
+				if (user != null) {
+					final String id = request.params().get("id");
+					if(id == null || id.trim().isEmpty()) {
+						badRequest(request, "invalid.id");
+						return;
+					}
+
+					JsonObject params = new JsonObject()
+							.put("uri", "/userbook/annuaire#" + user.getUserId() + "#" + user.getType())
+							.put("username", user.getUsername())
+							.put("pageUri", "/community#/view/" + id);
+					params.put("resourceUri", params.getString("pageUri"));
+
+					shareResource(request, "pages.shared", false, params, "title");
+				}
+			}
+		});
+	}
+
 	@BusAddress("communityPages")
 	public void busApi(Message<JsonObject> message) {
 		String action = message.body().getString("action", "");
