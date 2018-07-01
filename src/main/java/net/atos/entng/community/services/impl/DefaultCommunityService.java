@@ -35,6 +35,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.entcore.common.validation.StringValidation;
 
 import java.util.*;
 
@@ -53,9 +54,9 @@ public class DefaultCommunityService implements CommunityService {
 	public void create(JsonObject data, UserInfos user, Handler<Either<String, JsonObject>> handler) {
 		String query =
 				"CREATE (c:Community {props}), " +
-				"c<-[:DEPENDS]-(cr:CommunityGroup:Group:Visible {name : c.name + '-read', type : 'read'}), " +
-				"c<-[:DEPENDS]-(cc:CommunityGroup:Group:Visible {name : c.name + '-contrib', type : 'contrib', users : ''}), " +
-				"c<-[:DEPENDS]-(cm:CommunityGroup:Group:Visible {name : c.name + '-manager', type : 'manager', users : ''}) " +
+				"c<-[:DEPENDS]-(cr:CommunityGroup:Group:Visible {name : c.name + '-read', type : 'read', displayNameSearchField: {dnsf}}), " +
+				"c<-[:DEPENDS]-(cc:CommunityGroup:Group:Visible {name : c.name + '-contrib', type : 'contrib', users : '', displayNameSearchField: {dnsf}}), " +
+				"c<-[:DEPENDS]-(cm:CommunityGroup:Group:Visible {name : c.name + '-manager', type : 'manager', users : '', displayNameSearchField: {dnsf}}) " +
 				"SET cr.id = id(cr)+'-'+timestamp(), " +
 				"cc.id = id(cc)+'-'+timestamp(), cm.id = id(cm)+'-'+timestamp() " +
 				"WITH c, cm, cr, cc " +
@@ -64,9 +65,11 @@ public class DefaultCommunityService implements CommunityService {
 				"cc-[:COMMUNIQUE]->cr, cc-[:COMMUNIQUE]->cm, " +
 				"cm-[:COMMUNIQUE]->cr, cm-[:COMMUNIQUE]->cc " +
 				"RETURN c.id as id, cr.id as read, cc.id as contrib, cm.id as manager";
+		final String dnsf = (data.getString("name") != null ? sanitize(data.getString("name")) : "");
 		JsonObject params = new JsonObject()
 				.put("userId", user.getUserId())
-				.put("props", data.put("id", UUID.randomUUID().toString()));
+				.put("props", data.put("id", UUID.randomUUID().toString()))
+				.put("dnsf", dnsf);
 		neo4j.execute(query, params, validUniqueResultHandler(handler));
 	}
 
@@ -77,8 +80,9 @@ public class DefaultCommunityService implements CommunityService {
 		if (name != null && !name.trim().isEmpty()) {
 			query = "MATCH (c:Community { id : {id}})<-[:DEPENDS]-(g:CommunityGroup) " +
 					"SET " + nodeSetPropertiesFromJson("c", data) +
-					", g.name = {name} + '-' + LAST(SPLIT(g.name, '-')) " +
+					", g.name = {name} + '-' + LAST(SPLIT(g.name, '-')), g.displayNameSearchField = {dnsf} " +
 					"RETURN DISTINCT c.id as id, c.pageId as pageId";
+			data.put("dnsf", sanitize(name));
 		} else {
 			query = "MATCH (c:Community { id : {id}}) " +
 					"SET " + nodeSetPropertiesFromJson("c", data) + " " +
@@ -86,6 +90,14 @@ public class DefaultCommunityService implements CommunityService {
 		}
 		data.put("id", id);
 		neo4j.execute(query, data, validUniqueResultHandler(handler));
+	}
+
+	public static String sanitize(String field) {
+		return StringValidation.removeAccents(field)
+				.replaceAll("\\s+", "")
+				.replaceAll("\\-","")
+				.replaceAll("'","")
+				.toLowerCase();
 	}
 
 	@Override
@@ -160,6 +172,13 @@ public class DefaultCommunityService implements CommunityService {
 					query + ", g<-[:COMMUNIQUE]-u" : query;
 			sb.add(q, params.copy().put("type", attr).put("users", users.getJsonArray(attr)));
 		}
+		final String query0 = "MATCH (c:Community {id : {id}})<-[:DEPENDS]-(g:CommunityGroup) SET g.nbUsers = 0;";
+		sb.add(query0, params);
+		final String queryNb =
+				"MATCH (c:Community {id : {id}})<-[:DEPENDS]-(g:CommunityGroup)<-[:IN]-(u:User) " +
+				"WITH g, count(distinct u) as cu " +
+				"SET g.nbUsers = cu;";
+		sb.add(queryNb, params);
 		neo4j.executeTransaction(sb.build(), null, true, validEmptyHandler(handler));
 	}
 
