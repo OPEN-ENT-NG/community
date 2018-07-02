@@ -34,10 +34,10 @@
 			<div ng-repeat="item in membersEditor.found | orderBy:'lastName' | limitTo:membersEditor.limit" >
 				<div class="row">
                     <em class="row">
-                        [[item.lastName]] [[item.firstName]]
+                        [[item.username]]
                         <em 
                             ng-repeat="profile in item.profiles" 
-                            class="low-importance cell reduce-block-two" 
+                            class="low-importance reduce-block-two" 
                             translate content="[[profile]]"></em>
                     </em>
                     <em ng-if="!item.isGroup" class="row">
