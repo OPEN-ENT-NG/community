@@ -59,7 +59,7 @@
     "community.members.group.tooltip.manager": "Ajouter tous les membres du groupe en tant que Gestionnaires",
     "community.members.tooltip.manager": "Ajouter en tant que Gestionnaire",
     "community.confirm.delete": "Voulez-vous vraiment supprimer la communauté ? Toutes les pages et les données des services liés seront également supprimés",
-    "community.notfound": "La communauté cherchée n'est pas accessible ou a été supprimée",
+    "community.notfound": "La communauté a été supprimée ou n'est pas accessible",
     "community.norights": "Vous n'avez pas de droits suffisants pour éditer cette communauté",
     "community.service.notcreated": "La création de la page a échoué pour le service ",
     "community.service.notupdated": "La mise à jour de la page a échoué pour le service ",
