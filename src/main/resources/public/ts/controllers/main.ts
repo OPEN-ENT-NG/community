@@ -12,14 +12,29 @@ export let main = ng.controller('MainController', ['$scope', '$location', 'model
             init: 10
         };
 
+        $scope.communityUnknown = false;
+
+        $scope.lightboxCommunityError = function () {
+            $scope.communityUnknown = true;
+        };
+
+        $scope.closeLightboxCommunityError = function () {
+            $scope.communityUnknown = false;
+            $scope.redirectTo('/community#/list');
+        };
+
         let openCommunity = async (id: string, titleLink: string = 'home') => {
             template.open('main', 'viewer');
             let communities = await Library.communities();
             $scope.communities = communities;
             $scope.community = communities.find((c) => c.id === id);
-            await $scope.community.website.open();
-            $scope.snipletResource = $scope.community.website;
-            $scope.page = $scope.community.website.pages.find((p) => p.titleLink === titleLink);
+            if ($scope.community !== undefined) {
+                await $scope.community.website.open();
+                $scope.snipletResource = $scope.community.website;
+                $scope.page = $scope.community.website.pages.find((p) => p.titleLink === titleLink);
+            } else {
+                $scope.lightboxCommunityError();
+            }
         };
 
         route({
