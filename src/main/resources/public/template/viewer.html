@@ -15,6 +15,9 @@
                 <a href="/community#/list"><i18n>community.mine</i18n></a> / [[community.name]]
             </h1>
         </app-title>
+        <lightbox show="communityUnknown == true" on-close="closeLightboxCommunityError()">
+            <span><i18n>community.notfound</i18n></span>
+        </lightbox>
     </div>
     <div class="cell right-magnet">
         <resource-right name="manager" resource="community">
