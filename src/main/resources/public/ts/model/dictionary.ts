@@ -8,6 +8,7 @@ export interface User {
     username: string;
     lastName: string;
     firstName: string;
+    roles: {}
 }
 
 export interface Group {

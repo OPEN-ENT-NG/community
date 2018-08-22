@@ -12,8 +12,7 @@ export let edit = ng.controller('EditController', [
         $scope.communities = Library.all;
 
         $scope.addMember = function (user, right) {
-            user.role = right || 'read';
-            $scope.community.addMember(user, user.role);
+            $scope.community.addMember(user, right || 'read');
             $scope.membersEditor.search = '';
             $scope.membersEditor.found = [];
         };
@@ -25,8 +24,8 @@ export let edit = ng.controller('EditController', [
             $scope.$apply();
         };
 
-        $scope.setMemberRole = (member) => {
-            $scope.community.addUsersToRole([member], member.role);
+        $scope.setMemberRole = (member, role) => {
+            $scope.community.addUsersToRole([member], role);
         };
 
         $scope.removeMember = function (member) {

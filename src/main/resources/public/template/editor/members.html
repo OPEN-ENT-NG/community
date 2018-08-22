@@ -12,16 +12,47 @@
 		<tbody>
 			<tr>
 				<td><i18n>community.members.me</i18n></td>
-				<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
-				<td><input type="radio" group="[[me.userId]]" disabled class="disabled"/></td>
-				<td><input type="radio" group="[[me.userId]]" disabled class="disabled" checked="true"/></td>
+				<td>
+					<label class="checkbox">
+						<input type="checkbox" group="[[me.userId]]" disabled class="disabled"/>
+						<span></span>
+					</label>
+				</td>
+				<td>
+					<label class="checkbox">					
+						<input type="checkbox" group="[[me.userId]]" disabled class="disabled"/>
+						<span></span>
+					</label>
+				</td>
+				<td>
+					<label class="checkbox">
+						<input type="checkbox" group="[[me.userId]]" disabled class="disabled" checked="true"/>
+						<span></span>
+					</label>
+				</td>
 				<td></td>
 			</tr>
 			<tr ng-repeat="member in community.membersList">
 				<td>[[member.displayName]]</td>
-				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="read" ng-change="setMemberRole(member)"/></td>
-				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="contrib" ng-change="setMemberRole(member)"/></td>
-				<td><input type="radio" group="[[member.id]]" ng-model="member.role" value="manager" ng-change="setMemberRole(member)"/></td>
+				<td>
+					<label class="checkbox">
+						<input type="checkbox" ng-model="member.roles['read']" ng-change="setMemberRole(member, 'read')"/>
+						<span></span>
+					</label>
+				</td>
+				<td>
+					<label class="checkbox">
+						<input type="checkbox" ng-model="member.roles['contrib']" ng-change="setMemberRole(member, 'contrib')"/>
+						<span></span>
+					</label>
+				</td>
+
+				<td>
+					<label class="checkbox">
+						<input type="checkbox" ng-model="member.roles['manager']" ng-change="setMemberRole(member, 'manager')"/>
+						<span></span>
+					</label>
+				</td>
 				<td class="drop-line" ng-click="removeMember(member)"></td>
 			</tr>
 		</tbody>

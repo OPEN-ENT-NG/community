@@ -60,6 +60,14 @@ export class Community implements Shareable, Selectable {
     pageId: string;
     membersList: User[]
 
+    roles: string[] = ['read', 'contrib', 'manager'];
+
+    rolesRequires: any = {
+        read: ['read'],
+        contrib: ['read'],
+        manager: ['read', 'contrib']
+    };
+
     constructor() {
         this.website = new Website(this);
         this.rights = new Rights(this);
@@ -139,7 +147,13 @@ export class Community implements Shareable, Selectable {
         for (let property in members) {
             if (members[property] instanceof Array) {
                 this.members[property] = members[property].filter((u) => u.id !== model.me.userId);
-                this.members[property].forEach((m) => m.role = property);
+                this.members[property].forEach((m) => {
+                    if(!m.roles) {
+                        m.roles = {};
+                    }
+                    m.roles[property] = true;
+                    this.toggleMemberRoles(m, property);
+                });
             }
             else {
                 this.members[property] = members[property];
@@ -162,23 +176,59 @@ export class Community implements Shareable, Selectable {
         }
     }
 
-    addUsersToRole(usersTab: string[], role: string){
-        let users:string[] = [];
-        if (usersTab && usersTab.length > 0) {
-            if (typeof usersTab[0] === "string") {
-                users = usersTab;
-            } else {
-                (<any>usersTab).forEach(function (user) {
-                    users.push(user.id);
-                })
+    private toggleMemberRoles(member, role) {
+        if(member) {
+            this.rolesRequires[role].forEach(r => {
+                if(member.roles[role] == true) {
+                    member.roles[r] = true;
+                } else {
+                    this.roles.forEach(globalRole => {
+                        if(!this.rolesRequires[role].includes(globalRole)) {
+                            member.roles[globalRole] = false;
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private toggleMembersRoles(members, role) {
+        if(members) {
+            members.forEach(member => {
+                this.toggleMemberRoles(member, role);
+            });
+        }
+    }
+
+    private getRoleMaxLevel(user: User) {
+        if(user) {
+            if(user.roles) {
+                if(user.roles['manager'] == true) {
+                    return 'manager';
+                } else if(user.roles['contrib'] == true) {
+                    return 'contrib';
+                } else {
+                    return 'read';
+                }
             }
         }
+    }
+
+    addUsersToRole(usersTab: User[], role: string){
+        this.toggleMembersRoles(usersTab, role);
+        let newRole = role;
+        if(usersTab.length == 1) {
+            // if deselect role, get new role max level
+            newRole = this.getRoleMaxLevel(usersTab[0]);
+        }
+
+        let users:string[] = usersTab.map(u => u.id);
 
         if(!this.membersDiff.delete){
             this.membersDiff.delete = [];
         }
-        if(!this.membersDiff[role]){
-            this.membersDiff[role] = [];
+        if(!this.membersDiff[newRole]){
+            this.membersDiff[newRole] = [];
         }
 
         for(let role in this.membersDiff){
@@ -193,9 +243,9 @@ export class Community implements Shareable, Selectable {
             )
             .map((u) => u)
         );
-        this.membersDiff[role] = this.membersDiff[role].concat(
+        this.membersDiff[newRole] = this.membersDiff[newRole].concat(
             users.filter(
-                (u) => this.membersDiff[role].indexOf(u) === -1
+                (u) => this.membersDiff[newRole].indexOf(u) === -1
             )
             .map((u) => u)
         );
@@ -203,7 +253,10 @@ export class Community implements Shareable, Selectable {
 
     addMember(user: User, role: string) {
         this.membersList.push(user);
-        this.addUsersToRole([user.id], role);
+        user.roles = {};
+        user.roles[role] = true;
+
+        this.addUsersToRole([user], role);
     }
 
     async addGroupMembers(group, role){
@@ -215,8 +268,9 @@ export class Community implements Shareable, Selectable {
                 return;
             }
 
-            user.role = role;
-            addingUsers.push(user.id);
+            user.roles = {};
+            user.roles[role] = true;
+            addingUsers.push(user);
             this.membersList.push(user);
         });
         await this.addUsersToRole(addingUsers, role);
