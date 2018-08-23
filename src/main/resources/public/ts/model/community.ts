@@ -2,7 +2,7 @@
 import { Rights, Shareable, model, notify } from 'entcore';
 import { Page } from './page';
 import { Website } from './website';
-import { User, Group } from './dictionary';
+import { User, Group, Bookmark } from './dictionary';
 import { _ } from 'entcore';
 
 import http from 'axios';
@@ -48,7 +48,7 @@ export class Community implements Shareable, Selectable {
         read?: User[],
         contrib?: User[],
         manager?: User[],
-        visibles?: { users: User[], groups: Group[] }
+        visibles?: { users: User[], groups: Group[], bookmarks: Bookmark[] }
     };
     membersDiff: {
         read: string[],
@@ -126,7 +126,10 @@ export class Community implements Shareable, Selectable {
             visibles: response.data
         };
 
-        this.members.visibles.users.forEach((u) => u.displayName = u.username);
+        this.members.visibles.users.forEach(u => {
+            u.displayName = u.username;
+            u.isUser = true;
+        });
         this.members.visibles.groups.forEach((g) => g.isGroup = true);
 
         this.membersList = [];
@@ -160,8 +163,17 @@ export class Community implements Shareable, Selectable {
             }
         }
 
-        this.members.visibles.users.forEach((u) => u.displayName = u.username);
+        this.members.visibles.users.forEach((u) => {
+            u.displayName = u.username;
+            u.isUser = true;
+        });
         this.members.visibles.groups.forEach((g) => g.isGroup = true);
+
+        let res = await http.get('/directory/sharebookmark/all');
+        this.members.visibles.bookmarks = res.data.map(bookmark => {
+            bookmark.isBookmark = true;
+            return bookmark;
+        });
 
         this.membersList = this.members.manager.concat(this.members.contrib).concat(this.members.read);
         await this.loadGroupsInfos();
@@ -274,6 +286,29 @@ export class Community implements Shareable, Selectable {
             this.membersList.push(user);
         });
         await this.addUsersToRole(addingUsers, role);
+    }
+
+    async addBookmarkMembers(bookmark, role) {
+        let response = await http.get('/directory/sharebookmark/' + bookmark.id);
+        let users = response.data.users;
+        let groups = response.data.groups;
+
+        let addingUsers = [];
+        users.forEach(user => {
+            if (model.me.userId === user.id || this.membersList.find((member) => member.id === user.id)) {
+                return;
+            }
+
+            user.roles = {};
+            user.roles[role] = true;
+            addingUsers.push(user);
+            this.membersList.push(user);
+        });
+        await this.addUsersToRole(addingUsers, role);
+
+        for (const group of groups) {
+            await this.addGroupMembers(group, role);
+        }
     }
 
     setRights() {

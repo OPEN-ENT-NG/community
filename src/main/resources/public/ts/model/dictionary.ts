@@ -8,12 +8,19 @@ export interface User {
     username: string;
     lastName: string;
     firstName: string;
-    roles: {}
+    roles: {};
+    isUser: boolean;
 }
 
 export interface Group {
     id: string;
     isGroup: boolean;
+    name: string;
+}
+
+export interface Bookmark {
+    id: string;
+    isBookmark: boolean;
     name: string;
 }
 
@@ -34,6 +41,10 @@ export class Dictionary {
                 let testName = idiom.removeAccents(user.lastName + ' ' + user.firstName).toLowerCase();
                 let testNameReversed = idiom.removeAccents(user.firstName + ' ' + user.lastName).toLowerCase();
                 return testName.indexOf(word) !== -1 || testNameReversed.indexOf(word) !== -1;
+            }),
+            community.members.visibles.bookmarks.filter((bookmark) => {
+                let testName = idiom.removeAccents(bookmark.name).toLowerCase();
+                return testName.indexOf(word) !== -1;
             })
         );
 

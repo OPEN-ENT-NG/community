@@ -24,6 +24,13 @@ export let edit = ng.controller('EditController', [
             $scope.$apply();
         };
 
+        $scope.addAllBookmarkMembers = async (bookmark, role) => {
+            $scope.membersEditor.search = '';
+            $scope.membersEditor.found = [];
+            await $scope.community.addBookmarkMembers(bookmark, role);
+            $scope.$apply();
+        };
+
         $scope.setMemberRole = (member, role) => {
             $scope.community.addUsersToRole([member], role);
         };

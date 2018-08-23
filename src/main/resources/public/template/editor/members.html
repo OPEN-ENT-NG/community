@@ -63,7 +63,7 @@
 		<input type="text" ng-model="membersEditor.search" ng-change="findUserOrGroup()" i18n-placeholder="community.members.search.placeholder" />
 		<div class="found-users-list">
 			<div ng-repeat="item in membersEditor.found | orderBy:'lastName' | limitTo:membersEditor.limit" >
-				<div class="row">
+				<div class="row vertical-spacing" ng-if="item.isUser">
                     <em class="row">
                         [[item.username]]
                         <em 
@@ -71,7 +71,7 @@
                             class="low-importance reduce-block-two" 
                             translate content="[[profile]]"></em>
                     </em>
-                    <em ng-if="!item.isGroup" class="row">
+                    <em class="row">
                         <a ng-click="addMember(item, 'read')" tooltip="community.members.tooltip.read">
                             <i18n>community.roles.read.single</i18n>
                         </a>&nbsp;
@@ -83,11 +83,11 @@
                         </a>
                     </em>
                 </div>
-                <div class="row vertical-spacing">
+                <div class="row vertical-spacing" ng-if="item.isGroup">
                     <em class="row">
                         [[item.name]]
                     </em>
-                    <em ng-if="item.isGroup" class="row">
+                    <em class="row">
                         <a ng-click="addAllGroupMembers(item, 'read')" tooltip="community.members.group.tooltip.read">
                             <i18n>community.roles.read</i18n>
                         </a>&nbsp;
@@ -100,7 +100,23 @@
                     </em>
                 </div>
                 
-				
+				<div class="row vertical-spacing" ng-if="item.isBookmark">
+					<i class="add-favorite no-hover cell"></i>
+					<em class="row">
+                        [[item.name]]
+                    </em>
+                    <em class="row">
+                        <a ng-click="addAllBookmarkMembers(item, 'read')" tooltip="community.members.group.tooltip.read">
+                            <i18n>community.roles.read</i18n>
+                        </a>&nbsp;
+                        <a ng-click="addAllBookmarkMembers(item, 'contrib')" tooltip="community.members.group.tooltip.contrib">
+                            <i18n>community.roles.contrib</i18n>
+                        </a>&nbsp;
+                        <a ng-click="addAllBookmarkMembers(item, 'manager')" tooltip="community.members.group.tooltip.manager">
+                            <i18n>community.roles.manager</i18n>
+                        </a>
+                    </em>
+                </div>
 			</div>
 			<a 
                ng-click="membersEditor.limit = membersEditor.limit + 5" 
