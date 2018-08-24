@@ -33,7 +33,16 @@
 				<td></td>
 			</tr>
 			<tr ng-repeat="member in community.membersList">
-				<td>[[member.displayName]]</td>
+				<td>
+					<div class="flex-row top-spacing-twice align-center">
+						<div class="cell round bg-white square-medium right-spacing"> 
+							<img ng-src="/userbook/avatar/[[member.id]]?thumbnail=100x100"/> 
+						</div>
+						<div> 
+							<span class="cell-ellipsis small-text block left-text">[[ member.displayName ]]</span> 
+						</div>
+					</div>
+				</td>
 				<td>
 					<label class="checkbox">
 						<input type="checkbox" ng-model="member.roles['read']" ng-change="setMemberRole(member, 'read')"/>
