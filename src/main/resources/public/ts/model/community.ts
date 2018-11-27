@@ -175,7 +175,12 @@ export class Community implements Shareable, Selectable {
             return bookmark;
         });
 
-        this.membersList = this.members.manager.concat(this.members.contrib).concat(this.members.read);
+        const alphabeticallySort = (a, b) => a.displayName.localeCompare(b.displayName);
+
+        this.membersList = this.members.manager.sort(alphabeticallySort)
+                    .concat(this.members.contrib.sort(alphabeticallySort))
+                    .concat(this.members.read.sort(alphabeticallySort));
+        
         await this.loadGroupsInfos();
     }
 
