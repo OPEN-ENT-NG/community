@@ -40,7 +40,7 @@ public class Community extends BaseServer {
 		TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.config);
 
 		// Set RepositoryEvents implementation used to process events published for transition
-		setRepositoryEvents(new CommunityRepositoryEvents(vertx.eventBus()));
+		setRepositoryEvents(new CommunityRepositoryEvents(vertx.eventBus(),vertx));
 
 		setDefaultResourceFilter(new ManagerFilter());
 		CommunityController communityController = new CommunityController(timeline);
