@@ -21,6 +21,7 @@ package net.atos.entng.community.events;
 
 import static org.entcore.common.neo4j.Neo4jResult.validResultHandler;
 
+import io.vertx.core.Vertx;
 import org.entcore.common.neo4j.Neo4j;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
@@ -37,14 +38,9 @@ public class CommunityRepositoryEvents extends PagesRepositoryEvents {
 	private final Neo4j neo4j = Neo4j.getInstance();
 	private final EventBus eb;
 
-	public CommunityRepositoryEvents(EventBus eb) {
+	public CommunityRepositoryEvents(EventBus eb, Vertx vertx) {
+		super(vertx);
 		this.eb = eb;
-	}
-
-	@Override
-	public void exportResources(String exportId, String userId, JsonArray groups, String exportPath, String locale, String host, final Handler<Boolean> handler) {
-		// TODO Implement export
-		log.error("Event [exportResources] is not implemented");
 	}
 
 	@Override
