@@ -58,9 +58,9 @@ public class CommunityRepositoryEvents extends PagesRepositoryEvents {
 		JsonObject params = new JsonObject().put("type", "manager");
 		String query = "MATCH (c:Community)<-[:DEPENDS]-(gm:CommunityGroup {type : {type}}) "
 					 + "OPTIONAL MATCH gm<-[:IN]-(um:User) "
-					 + "OPTIONAL MATCH c<-[r:DEPENDS]-(g:CommunityGroup)<-[r2:IN|COMMUNIQUE]-() "
-					 + "WITH c, c.pageId as pageId, gm, r, g, r2, COUNT(um) AS managers WHERE managers = 0 "
-					 + "DELETE c, r, g, r2 "
+					 + "WITH c, c.pageId as pageId, gm, COUNT(um) AS managers WHERE managers = 0 "
+					 + "OPTIONAL MATCH c<-[:DEPENDS]-(g:CommunityGroup) "
+					 + "DETACH DELETE c, g "
 					 + "RETURN DISTINCT pageId";
 		neo4j.execute(query, params, validResultHandler(new Handler<Either<String, JsonArray>>(){
 			@Override
