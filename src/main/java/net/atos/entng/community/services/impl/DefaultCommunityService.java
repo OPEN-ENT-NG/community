@@ -58,7 +58,7 @@ public class DefaultCommunityService implements CommunityService {
 				"c<-[:DEPENDS]-(cc:CommunityGroup:Group:Visible {name : c.name + '-contrib', type : 'contrib', users : '', displayNameSearchField: {dnsf}}), " +
 				"c<-[:DEPENDS]-(cm:CommunityGroup:Group:Visible {name : c.name + '-manager', type : 'manager', users : '', displayNameSearchField: {dnsf}}) " +
 				"SET cr.id = id(cr)+'-'+timestamp(), " +
-				"cc.id = id(cc)+'-'+timestamp(), cm.id = id(cm)+'-'+timestamp() " +
+				"cc.id = id(cc)+'-'+timestamp(), cm.id = id(cm)+'-'+timestamp(), cc.communiqueWith = [cm.id,cr.id], cm.communiqueWith = [cc.id,cr.id] " +
 				"WITH c, cm, cr, cc " +
 				"MATCH (u:User {id : {userId}}) " +
 				"CREATE u-[:IN]->cm, u-[:COMMUNIQUE]->cm, " +
