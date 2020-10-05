@@ -37,3 +37,5 @@ developer.id
 node_modules
 bower_components
 rev-manifest.json
+gradle/
+gradlew*
