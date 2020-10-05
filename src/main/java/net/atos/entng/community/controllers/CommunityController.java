@@ -34,6 +34,7 @@ import io.vertx.core.AsyncResult;
 import net.atos.entng.community.Community;
 import net.atos.entng.community.services.CommunityService;
 
+import org.entcore.common.events.EventHelper;
 import org.entcore.common.notification.TimelineHelper;
 import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
@@ -61,18 +62,18 @@ import fr.wseduc.webutils.http.Renders;
 import fr.wseduc.webutils.request.RequestUtils;
 
 public class CommunityController extends BaseController {
-
+	static final String RESOURCE_NAME = "community";
 	private CommunityService communityService;
 	private final TimelineHelper timeline;
 	private static final JsonArray resourcesTypes = new JsonArray().add("read").add("contrib").add("manager");
-	private EventStore eventStore;
-	private enum CommunityEvent { ACCESS }
+	private EventHelper eventHelper;
 
 	@Override
 	public void init(Vertx vertx, JsonObject config, RouteMatcher rm,
 			Map<String, fr.wseduc.webutils.security.SecuredAction> securedActions) {
 		super.init(vertx, config, rm, securedActions);
-		eventStore = EventStoreFactory.getFactory().getEventStore(Community.class.getSimpleName());
+		final EventStore eventStore = EventStoreFactory.getFactory().getEventStore(Community.class.getSimpleName());
+		this.eventHelper = new EventHelper(eventStore);
 	}
 
 	public CommunityController(TimelineHelper helper) {
@@ -85,7 +86,7 @@ public class CommunityController extends BaseController {
 		renderView(request);
 
 		// Create event "access to application Community" and store it, for module "statistics"
-		eventStore.createAndStoreEvent(CommunityEvent.ACCESS.name(), request);
+		eventHelper.onAccess(request);
 	}
 
 	@Post("")
@@ -146,6 +147,7 @@ public class CommunityController extends BaseController {
 											}
 										});
 										createPageMarkups(pageId);
+										eventHelper.onCreateResource(request, RESOURCE_NAME);
 									} else {
 										leftToResponse(request, r.left());
 										eb.send("communityPages", new JsonObject().put("action", "delete")
