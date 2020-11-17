@@ -64,6 +64,7 @@
     "community.service.notdeleted": "La suppression de la page a échoué pour le service ",
     "community.rights.notsynced": "La synchronisation du partage pour les services a échoué, les membres de la communauté ne pourront pas accéder aux contenus de certains services",
     "group.HeadTeacher": "Professeurs principaux de {0}.",
+    "group.Direction": "Directeurs de {0}.",
     "group.Func": "Personnels de fonction {0}.",
     "group.Discipline": "Enseignants de discipline {0}.",
     "group.AdminLocal": "Administrateurs locaux de {0}.",
