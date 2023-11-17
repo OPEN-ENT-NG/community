@@ -3,8 +3,10 @@
 <head>
 	<title>{{#i18n}}community.title{{/i18n}}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<script src="/community/public/dist/entcore/ng-app.js" type="text/javascript" id="context"></script>
-	<script src="/community/public/dist/application.js" type="text/javascript"></script>
+
+	<script src="/assets/js/entcore/ng-app.js?v=@@VERSION" id="context" type="text/javascript"></script>
+	<script type="text/javascript" src="/community/public/dist/application.js?v=@@VERSION"></script>
+	
 	<script type="text/ng-template" id="empty"></script>
 </head>
 <body ng-controller="MainController">
