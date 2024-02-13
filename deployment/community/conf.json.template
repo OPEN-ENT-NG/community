@@ -1,5 +1,5 @@
     {
-      "name": "net.atos~community~1.13.3",
+      "name": "net.atos~community~1.13.3-dev-sre-SNAPSHOT",
       "config": {
         "main" : "net.atos.entng.community.Community",
         "port" : 8078,
