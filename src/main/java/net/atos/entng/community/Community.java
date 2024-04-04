@@ -19,6 +19,7 @@
 
 package net.atos.entng.community;
 
+import io.vertx.core.Promise;
 import net.atos.entng.community.controllers.CommunityController;
 import net.atos.entng.community.controllers.PagesController;
 import net.atos.entng.community.events.CommunityRepositoryEvents;
@@ -33,8 +34,8 @@ import org.entcore.common.notification.TimelineHelper;
 public class Community extends BaseServer {
 
 	@Override
-	public void start() throws Exception {
-		super.start();
+	public void start(Promise<Void> startPromise) throws Exception {
+		super.start(startPromise);
 
 		MongoDbConf.getInstance().setCollection("communityPages");
 		TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.config);

@@ -122,7 +122,7 @@ public class CommunityController extends BaseController {
 						.put("action", "create")
 						.put("user", u)
 						.put("page", p);
-				eb.send("communityPages", pages, new Handler<AsyncResult<Message<JsonObject>>>() {
+				eb.request("communityPages", pages, new Handler<AsyncResult<Message<JsonObject>>>() {
 					@Override
 					public void handle(AsyncResult<Message<JsonObject>> message) {
 						final JsonObject result = message.result().body().getJsonObject("result");
@@ -180,7 +180,7 @@ public class CommunityController extends BaseController {
 						.put("label", "community.back.to")
 						.put("resourceRight", "read")
 						.put("href", "/community#/list")))));
-		eb.send("communityPages", updatePage, new Handler<AsyncResult<Message<JsonObject>>>() {
+		eb.request("communityPages", updatePage, new Handler<AsyncResult<Message<JsonObject>>>() {
 			@Override
 			public void handle(AsyncResult<Message<JsonObject>> message) {
 				if (!"ok".equals(message.result().body().getString("status"))) {
@@ -231,7 +231,7 @@ public class CommunityController extends BaseController {
 										.put("label", "community.back.to")
 										.put("resourceRight", "read")
 										.put("href", "/community#/list")))));
-					eb.send("communityPages", updatePage, new Handler<AsyncResult<Message<JsonObject>>>() {
+					eb.request("communityPages", updatePage, new Handler<AsyncResult<Message<JsonObject>>>() {
 						@Override
 						public void handle(AsyncResult<Message<JsonObject>> message) {
 							if (!"ok".equals(message.result().body().getString("status"))) {

@@ -19,13 +19,13 @@
 
 package net.atos.entng.community.services.impl;
 
-import com.mongodb.QueryBuilder;
 import fr.wseduc.mongodb.MongoDb;
 import fr.wseduc.mongodb.MongoQueryBuilder;
 import fr.wseduc.mongodb.MongoUpdateBuilder;
 import fr.wseduc.webutils.Either;
 import net.atos.entng.community.services.CommunityService;
 
+import org.bson.conversions.Bson;
 import org.entcore.common.mongodb.MongoDbConf;
 import org.entcore.common.mongodb.MongoDbResult;
 import org.entcore.common.neo4j.Neo4j;
@@ -39,6 +39,7 @@ import org.entcore.common.validation.StringValidation;
 
 import java.util.*;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.entcore.common.neo4j.Neo4jResult.validEmptyHandler;
 import static org.entcore.common.neo4j.Neo4jResult.validResultHandler;
 import static org.entcore.common.neo4j.Neo4jResult.validUniqueResultHandler;
@@ -224,7 +225,7 @@ public class DefaultCommunityService implements CommunityService {
 				put("net-atos-entng-community-controllers-PagesController|delete", true));
 
 		MongoUpdateBuilder updateQuery = new MongoUpdateBuilder().set("shared", shared);
-		QueryBuilder query = QueryBuilder.start("_id").is(pageId);
+		final Bson query = eq("_id", pageId);
 		mongo.update(conf.getCollection(), MongoQueryBuilder.build(query), updateQuery.build(), MongoDbResult.validActionResultHandler(handler));
 	}
 
