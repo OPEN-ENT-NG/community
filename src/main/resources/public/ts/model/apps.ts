@@ -74,6 +74,7 @@ AppGenerator.register({
                 wiki.createWiki(data, (createdWiki) => {
                     var wikiPage = {
                         isIndex: true,
+                        isVisible: true,
                         title: idiom.translate('community.services.wiki.homepage.title'),
                         content: idiom.translate('community.services.wiki.homepage.content')
                     };
