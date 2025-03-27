@@ -1,0 +1,23 @@
+env: 'dev'
+http:
+  host: '0.0.0.0'
+  port: 3002
+db:
+  mongo:
+    url: 'mongodb://nestjs:password@localhost:27017/nestjsbp?authSource=admin'
+    retry:
+      attempts: 0
+      delay: 500
+  postgres:
+    url: "postgresql://localhost:15432/mydatabase?stringtype=unspecified"
+    user: "myuser"
+    password: "secret"
+    debug: true
+nats:
+  url: 'nats://localhost:4222'
+  debug: true
+temporal:
+  address: 'localhost:7233'
+  namespace: 'default'
+log:
+  level: 'debug'
