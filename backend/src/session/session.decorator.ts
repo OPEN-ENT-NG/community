@@ -1,10 +1,11 @@
-
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { ENTUserSession } from 'src/common/session.types';
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { ENTUserSession } from "src/common/session.types";
 
 export const Session = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): ENTUserSession => {
+    /* eslint-disable @typescript-eslint/no-unsafe-assignment */
     const request = ctx.switchToHttp().getRequest();
-    return (<any>request)?.raw.entSession;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+    return request?.raw.entSession;
   },
 );

@@ -1,5 +1,5 @@
 export interface ENTUserSession {
-  userId: string; 
+  userId: string;
   login: string;
   email: string;
   username: string;
@@ -33,4 +33,3 @@ export interface ENTUserBookPersonReponse {
   structureNames: string[];
   authorizedActions: AuthorizedAction[];
 }
-

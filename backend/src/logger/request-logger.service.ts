@@ -1,14 +1,15 @@
-import { Injectable, Scope, Inject } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
-import pino, { ChildLoggerOptions } from 'pino';
-import { ENTUserSession } from '../common/session.types';
+import { Injectable, Scope, Inject } from "@nestjs/common";
+import { REQUEST } from "@nestjs/core";
+import { Request } from "express";
+import pino, { ChildLoggerOptions } from "pino";
+import { ENTUserSession } from "../common/session.types";
 
 @Injectable({ scope: Scope.REQUEST }) // Make the logger request-scoped
 export class RequestLogger {
   private logger: pino.Logger;
 
   constructor(@Inject(REQUEST) private readonly req: Request) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const session: ENTUserSession = (<any>req).raw.entSession;
     if (session) {
       // Create a child logger with contextual fields (e.g., userId)
@@ -40,9 +41,11 @@ export class RequestLogger {
     this.logger.debug(context, message);
   }
 
-  child<ChildCustomLevels extends string = never>(bindings: pino.Bindings, options?: ChildLoggerOptions<ChildCustomLevels>): RequestLogger {
+  child<ChildCustomLevels extends string = never>(
+    bindings: pino.Bindings,
+    options?: ChildLoggerOptions<ChildCustomLevels>,
+  ): RequestLogger {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return <any>this.logger.child(bindings, options);
   }
-
-
 }

@@ -1,6 +1,6 @@
 {
   "name": "@edifice.io/community-backend",
-  "version": "1.0-%branch%.%generateVersion%",
+  "version": "1.0.0-develop-pedago.0",
   "description": "",
   "author": "",
   "private": true,
