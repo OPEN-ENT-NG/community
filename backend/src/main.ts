@@ -1,25 +1,24 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { Logger } from 'nestjs-pino';
-import { v4 as uuidv4 } from 'uuid';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { Logger } from "nestjs-pino";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   FastifyAdapter,
   NestFastifyApplication,
-} from '@nestjs/platform-fastify';
-import { Http2ServerRequest } from 'http2';
-import { IncomingMessage } from 'http';
-import { ConfigService } from '@nestjs/config';
-import { setSwaggerConfig } from './config/swagger.config';
-import { ValidationPipe } from '@nestjs/common';
+} from "@nestjs/platform-fastify";
+import { Http2ServerRequest } from "http2";
+import { IncomingMessage } from "http";
+import { ConfigService } from "@nestjs/config";
+import { setSwaggerConfig } from "./config/swagger.config";
+import { ValidationPipe } from "@nestjs/common";
 
 async function bootstrap() {
-  
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({
       genReqId: (req: IncomingMessage | Http2ServerRequest) =>
-        <string>req.headers['x-correlation-id'] || uuidv4(),
+        <string>req.headers["x-correlation-id"] || uuidv4(),
     }),
     {
       cors: true,
@@ -38,10 +37,16 @@ async function bootstrap() {
 
   setSwaggerConfig(app, configService);
   const logger = app.get(Logger);
-  logger.log("Launching app....")
+  logger.log("Launching app....");
 
-  await app.listen(configService.get<number>('http.port', 3000), configService.get<string>('http.host', '0.0.0.0'));
-  logger.log(`✅ Application is running on: ${await app.getUrl()}`, 'Bootstrap');
+  await app.listen(
+    configService.get<number>("http.port", 3000),
+    configService.get<string>("http.host", "0.0.0.0"),
+  );
+  logger.log(
+    `✅ Application is running on: ${await app.getUrl()}`,
+    "Bootstrap",
+  );
 
   /*const natsUrl = configService.get<string>('nats.url', 'nats://localhost:4222');
   

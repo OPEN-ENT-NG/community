@@ -1,9 +1,12 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { IncomingMessage } from 'http';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { ENTUserBookPersonReponse, ENTUserSession } from 'src/common/session.types';
+import { Injectable, NestMiddleware } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { FastifyRequest, FastifyReply } from "fastify";
+import { IncomingMessage } from "http";
+import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
+import {
+  ENTUserBookPersonReponse,
+  ENTUserSession,
+} from "src/common/session.types";
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {
@@ -15,17 +18,23 @@ export class SessionMiddleware implements NestMiddleware {
     private readonly logger: PinoLogger,
   ) {
     this.entBaseUrl = configService.get<string>(
-      'ent.baseUrl',
-      'http://localhost:8090',
+      "ent.baseUrl",
+      "http://localhost:8090",
     );
   }
 
-  async use(req: FastifyRequest['raw'], res: FastifyReply['raw'], next: () => void) {
-    const oneSessionId = this.getOnSessionIdFromHeaders(req) || <string>req.headers['oneSessionId'];
+  async use(
+    req: FastifyRequest["raw"],
+    res: FastifyReply["raw"],
+    next: () => void,
+  ) {
+    const oneSessionId =
+      this.getOnSessionIdFromHeaders(req) ||
+      <string>req.headers["oneSessionId"];
 
     if (!oneSessionId) {
       res.statusCode = 401;
-      res.end(JSON.stringify({ message: 'not.authenticated' }));
+      res.end(JSON.stringify({ message: "not.authenticated" }));
       return;
     }
 
@@ -37,7 +46,7 @@ export class SessionMiddleware implements NestMiddleware {
       next();
     } else {
       res.statusCode = 401;
-      res.end(JSON.stringify({ message: 'invalid.session' }));
+      res.end(JSON.stringify({ message: "invalid.session" }));
     }
   }
 
@@ -46,13 +55,13 @@ export class SessionMiddleware implements NestMiddleware {
   }
 
   getOnSessionIdFromHeaders(req: IncomingMessage): string | undefined {
-    const cookies = req.headers.cookie || '';
-    if(cookies) {
-      const parts = cookies.split(';')
-      for(let cookie of parts) {
+    const cookies = req.headers.cookie || "";
+    if (cookies) {
+      const parts = cookies.split(";");
+      for (const cookie of parts) {
         const trimmed = cookie.trim();
-        const cookieValue = trimmed.slice(trimmed.indexOf('=') + 1);
-        if(trimmed.startsWith('oneSessionId')) {
+        const cookieValue = trimmed.slice(trimmed.indexOf("=") + 1);
+        if (trimmed.startsWith("oneSessionId")) {
           return cookieValue;
         }
       }
@@ -68,25 +77,28 @@ export class SessionMiddleware implements NestMiddleware {
     let session: ENTUserSession | undefined;
     try {
       const response = await fetch(`${this.entBaseUrl}/auth/oauth2/userinfo`, {
-        method: 'GET',
-        redirect: 'manual',
+        method: "GET",
+        redirect: "manual",
         headers,
       });
       if (response.ok) {
-        const apiPersonResponse = (await response.json()) as ENTUserBookPersonReponse;
-        if(apiPersonResponse) {
+        const apiPersonResponse =
+          (await response.json()) as ENTUserBookPersonReponse;
+        if (apiPersonResponse) {
           session = {
             userId: apiPersonResponse.userId,
             email: apiPersonResponse.email,
             login: apiPersonResponse.login,
-            username: apiPersonResponse.username
+            username: apiPersonResponse.username,
           };
         }
       } else {
-        this.logger.warn('Could not fetch session : ' + response);
+        this.logger.warn("Could not fetch session : " + response.status);
       }
     } catch (error) {
-      this.logger.warn('An error occurred while fetching oneSessionId : ' + error);
+      this.logger.warn(
+        "An error occurred while fetching oneSessionId : " + error,
+      );
     }
     return session;
   }
