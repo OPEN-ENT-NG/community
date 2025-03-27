@@ -1,0 +1,173 @@
+@startuml Community Model
+
+' Style et configuration
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classAttributeFontSize 11
+skinparam backgroundColor white
+skinparam arrowColor #666666
+skinparam classBorderColor #999999
+skinparam stereotypeCBackgroundColor #ADD1B2
+skinparam classBackgroundColor #FEFECE
+
+' Énumérations
+enum CommunityType {
+  CLASS
+  FREE
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum MembershipRole {
+  ADMIN
+  MEMBER
+}
+
+enum ResourceType {
+  IMAGE
+  VIDEO
+  SOUND
+  ENT
+  EXTERNAL_LINK
+}
+
+' Classes principales
+class Community {
+  +String image
+  +String title
+  +ZonedDateTime creationDate
+  +ZonedDateTime updateDate
+  +CommunityType type
+  +Integer schoolYearStart
+  +Integer schoolYearEnd
+  +String welcomeNote
+  +Boolean discussionEnabled
+  +ZonedDateTime archivedDate
+  +String secretCode
+}
+
+class User {
+  +Long id
+}
+
+class Invitation {
+  +ZonedDateTime invitationDate
+  +InvitationStatus status
+}
+
+class Membership {
+  +ZonedDateTime joinDate
+  +MembershipRole role
+  +ZonedDateTime lastVisitDate
+}
+
+class Message {
+  +String content
+  +ZonedDateTime publicationDate
+}
+
+class Announcement {
+  +String content
+  +ZonedDateTime publicationDate
+}
+
+class Course {
+  +String id
+}
+
+class Resource {
+  +ResourceType type
+  +String url
+  +String title
+  +ZonedDateTime addedDate
+  +Boolean openInNewTab
+  +String appName
+}
+
+class Folder {
+  +String name
+  +ZonedDateTime creationDate
+  +ZonedDateTime modificationDate
+  +Boolean isRoot
+}
+
+class Topic {
+  +String name
+  +ZonedDateTime creationDate
+  +Boolean locked
+  +Boolean hidden
+  +String theme
+}
+
+class TopicMessage {
+  +String content
+  +ZonedDateTime publicationDate
+  +ZonedDateTime modificationDate
+}
+
+' Vues matérialisées
+class CommunityStats <<readOnly>> {
+  +Integer totalMembers
+  +Integer acceptedMembers
+  +Integer totalAdmins
+  +Integer acceptedAdmins
+}
+
+class FolderStats <<readOnly>> {
+  +Long folderId
+  +Integer childCount
+}
+
+class TopicStats <<readOnly>> {
+  +Long topicId
+  +Integer messageCount
+  +ZonedDateTime lastMessageDate
+  +String lastFiveUserIds
+}
+
+' Relations OneToOne
+Community "1" -- "1" CommunityStats : stats >
+Folder "1" -- "1" FolderStats : stats >
+Topic "1" -- "1" TopicStats : stats >
+
+' Relations ManyToOne
+User "1" -- "*" Community : < creator
+User "1" -- "*" Community : < modifier
+User "1" -- "*" Community : < archiver
+
+Community "1" -- "*" Invitation : < community
+User "1" -- "*" Invitation : < user
+
+Community "1" -- "*" Membership : < community
+User "1" -- "*" Membership : < user
+User "1" -- "*" Membership : < inviter
+
+User "1" -- "*" Message : < author
+Community "1" -- "*" Message : < community
+
+User "1" -- "*" Announcement : < author
+Community "1" -- "*" Announcement : < community
+
+User "1" -- "*" Resource : < author
+Community "1" -- "*" Resource : < community
+
+User "1" -- "*" Folder : < creator
+User "1" -- "*" Folder : < modifier
+Folder "1" -- "*" Folder : < parent
+Community "1" -- "*" Folder : < community
+
+User "1" -- "*" Topic : < creator
+Community "1" -- "*" Topic : < community
+
+User "1" -- "*" TopicMessage : < author
+Topic "1" -- "*" TopicMessage : < topic
+
+' Relations ManyToMany
+Community "*" -- "*" Course : > courses
+Resource "*" -- "*" Folder : > folders
+
+@enduml
