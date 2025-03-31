@@ -5,9 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "scripts": {
+  "scripts": {},
+  "dependencies": {
+    "@nestjs/swagger": "^11.0.6",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1"
   },
-  "dependencies": {  },
   "jest": {
     "moduleFileExtensions": [
       "js",
