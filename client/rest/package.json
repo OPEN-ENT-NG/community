@@ -1,11 +1,15 @@
 {
-  "name": "@edifice.io/community-commons",
+  "name": "@edifice.io/community-client-rest",
   "version": "1.0.0-develop-pedago.0",
   "description": "",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "scripts": {},
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p ."
+  },
   "dependencies": {
     "@nestjs/swagger": "^11.0.6",
     "class-transformer": "^0.5.1",
@@ -31,5 +35,8 @@
   "engines": {
     "node": ">=22",
     "pnpm": ">=8"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
   }
 }
