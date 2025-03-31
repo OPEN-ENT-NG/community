@@ -14,6 +14,11 @@ import { CommunityModule } from "./community/community.module";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { createPostgresOptions } from "./config/postgres.config";
+import { FolderModule } from "./folder/folder.module";
+import { AnnouncementModule } from "./announcement/announcement.module";
+import { InvitationModule } from "./invitation/invitation.module";
+import { MembershipModule } from "./membership/membership.module";
+import { ResourceModule } from "./resource/resource.module";
 
 @Module({
   imports: [
@@ -38,7 +43,12 @@ import { createPostgresOptions } from "./config/postgres.config";
       driver: PostgreSqlDriver,
     }),
     MyLoggerModule,
+    AnnouncementModule,
     CommunityModule,
+    FolderModule,
+    InvitationModule,
+    MembershipModule,
+    ResourceModule,
   ],
   controllers: [AppController],
   providers: [AppService, RequestLogger],
