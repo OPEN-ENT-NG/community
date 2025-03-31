@@ -31,7 +31,7 @@
     ]
   },
   "dependencies": {
-    "@edifice.io/community-commons": "file:../commons",
+    "@edifice.io/community-commons": "file:../client/rest",
     "@edifice.io/bootstrap": "develop-pedago",
     "@edifice.io/client": "develop-pedago",
     "@edifice.io/react": "develop-pedago",
