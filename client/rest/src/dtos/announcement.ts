@@ -1,4 +1,9 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsDate, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { PaginationQueryDto } from "./base";
+import { UserDto } from "./community";
+import { Type } from "class-transformer";
 
 export class AnnouncementDto {
   @ApiProperty()
@@ -28,11 +33,6 @@ export class CreateAnnouncementDto {
   @IsString()
   content: string;
 }
-import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { PaginationQueryDto } from "./base";
-import { UserDto } from "./community";
-import { Type } from "class-transformer";
 
 export class UpdateAnnouncementDto {
   @ApiProperty({
