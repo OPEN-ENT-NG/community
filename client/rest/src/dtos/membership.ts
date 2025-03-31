@@ -1,4 +1,3 @@
-// src/membership/dto/create-membership.dto.ts
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEnum, IsOptional, IsString } from "class-validator";
 import { CommunitySummaryDto } from "./invitation";

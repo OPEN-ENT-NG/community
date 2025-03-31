@@ -1,4 +1,3 @@
-// src/invitation/dto/create-invitation.dto.ts
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsBoolean,
@@ -11,6 +10,7 @@ import {
 } from "class-validator";
 import { UserDto } from "./community";
 import { PaginationQueryDto } from "./base";
+import { Type } from "class-transformer";
 
 export enum InvitationStatus {
   PENDING = "PENDING",
@@ -131,10 +131,4 @@ export class InvitationStatsDto {
 
   @ApiProperty()
   rejected: number;
-}
-
-function Type(
-  arg0: () => DateConstructor
-): (target: SearchInvitationDto, propertyKey: "sentAfter") => void {
-  throw new Error("Function not implemented.");
 }
