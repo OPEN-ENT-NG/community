@@ -5,8 +5,8 @@ import { AppService } from "./app.service";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { createLoggerOptions } from "./config/logging.config";
 import configuration from "./config/configuration";
-import mongo from "./config/mongo";
-import { MongooseModule } from "@nestjs/mongoose";
+//import mongo from "./config/mongo";
+//import { MongooseModule } from "@nestjs/mongoose";
 import { SessionMiddleware } from "./session/session.middleware";
 import { RequestLogger } from "./logger/request-logger.service";
 import { LoggerModule as MyLoggerModule } from "./logger/logger.module";
@@ -31,11 +31,11 @@ import { ResourceModule } from "./resource/resource.module";
       inject: [ConfigService],
       useFactory: createLoggerOptions,
     }),
-    MongooseModule.forRootAsync({
+    /*MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: mongo,
-    }),
+    }),*/
     MikroOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -61,6 +61,7 @@ export class AppModule {
       .exclude(
         { path: "openapi", method: RequestMethod.GET },
         { path: "openapi-json", method: RequestMethod.GET },
+        { path: "openapi/*", method: RequestMethod.GET },
       )
       .forRoutes("*");
   }

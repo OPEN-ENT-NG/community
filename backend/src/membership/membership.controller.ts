@@ -24,18 +24,11 @@ import {
   HttpCode,
   Query,
 } from "@nestjs/common";
-import {
-  ApiTags,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-} from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { MembershipService } from "./membership.service";
 
 @ApiTags("Memberships")
 @Controller("api")
-@ApiBearerAuth()
 export class MembershipController {
   constructor(private readonly membershipService: MembershipService) {}
 

@@ -16,7 +16,6 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import {
-  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -34,7 +33,6 @@ import {
 
 @ApiTags("Announcements")
 @Controller("api/communities/:communityId/announcements")
-@ApiBearerAuth()
 export class AnnouncementController {
   constructor(private readonly announcementService: AnnouncementService) {}
 
