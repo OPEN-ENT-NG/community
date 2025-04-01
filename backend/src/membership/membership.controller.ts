@@ -2,12 +2,14 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  CreateMembershipBatchDto,
   CreateMembershipDto,
   JoinCommunityDto,
   LeaveCommunityOptionsDto,
   MembershipResponseDto,
   PageDto,
   PaginationQueryDto,
+  SearchMembershipResponseDto,
   UpdateMembershipDto,
 } from "@edifice.io/community-client-rest";
 import {
@@ -38,7 +40,7 @@ export class MembershipController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "List of members with pagination",
-    type: () => PageDto<MembershipResponseDto>,
+    type: () => SearchMembershipResponseDto,
   })
   async findByCommunity(
     @Param("communityId", ParseIntPipe) communityId: number,
@@ -49,7 +51,7 @@ export class MembershipController {
       }),
     )
     query: PaginationQueryDto,
-  ): Promise<PageDto<MembershipResponseDto>> {
+  ): Promise<PageDto<SearchMembershipResponseDto>> {
     throw new Error("Not implemented");
   }
 
@@ -65,6 +67,21 @@ export class MembershipController {
     @Param("communityId", ParseIntPipe) communityId: number,
     @Body() createMembershipDto: CreateMembershipDto,
   ): Promise<MembershipResponseDto> {
+    throw new Error("Not implemented");
+  }
+
+  @Post("communities/:communityId/members/batch")
+  @ApiOperation({ summary: "Add multiple members to a community" })
+  @ApiParam({ name: "communityId", description: "Community ID" })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: "Members added successfully",
+    type: [MembershipResponseDto],
+  })
+  async addMembers(
+    @Param("communityId", ParseIntPipe) communityId: number,
+    @Body() createMembershipsDto: CreateMembershipBatchDto,
+  ): Promise<MembershipResponseDto[]> {
     throw new Error("Not implemented");
   }
 
