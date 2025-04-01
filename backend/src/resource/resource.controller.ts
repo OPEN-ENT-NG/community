@@ -22,7 +22,6 @@ import {
 } from "@nestjs/common";
 import {
   ApiTags,
-  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiResponse,

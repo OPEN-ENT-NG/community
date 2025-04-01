@@ -23,7 +23,6 @@ import {
 } from "@nestjs/common";
 import {
   ApiTags,
-  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiParam,
@@ -33,7 +32,6 @@ import { InvitationService } from "./invitation.service";
 
 @ApiTags("Invitations")
 @Controller("api/invitations")
-@ApiBearerAuth()
 export class InvitationController {
   constructor(private readonly invitationService: InvitationService) {}
 

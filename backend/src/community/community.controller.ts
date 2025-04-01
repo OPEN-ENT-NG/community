@@ -18,7 +18,6 @@ import {
 } from "@nestjs/common";
 import { CommunityService } from "./community.service";
 import {
-  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -36,7 +35,6 @@ import {
 
 @ApiTags("Communities")
 @Controller("api/communities")
-@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}
