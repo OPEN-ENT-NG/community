@@ -1,7 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEnum, IsOptional, IsString } from "class-validator";
+import { ArrayMinSize, IsArray, IsEnum, IsOptional, IsString, ValidateNested } from "class-validator";
 import { CommunitySummaryDto } from "./invitation";
 import { UserDto } from "./community";
+import { FieldSelectionDto } from "./base";
+import { Type } from "class-transformer";
 export enum MembershipRole {
   ADMIN = "ADMIN",
   MEMBER = "MEMBER",
@@ -20,7 +22,7 @@ export class CreateMembershipDto {
     description: "User ID",
     example: 1,
   })
-  userId: number;
+  userId: string;
 
   @ApiProperty({
     description: "Role in the community",
@@ -69,4 +71,29 @@ export class LeaveCommunityOptionsDto {
     default: false,
   })
   removeSharedResources: boolean = false;
+}
+
+export class SearchMembershipResponseDto extends FieldSelectionDto {
+  @ApiPropertyOptional({
+    description: "List of memberships matching the search criteria",
+    isArray: true,
+    type: () => MembershipResponseDto,
+  })
+  invitations: MembershipResponseDto[];
+
+  @ApiPropertyOptional()
+  total: number;
+}
+
+export class CreateMembershipBatchDto {
+  @ApiProperty({
+    description: "List of members to add to the community",
+    isArray: true,
+    type: () => CreateMembershipDto,
+  })
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => CreateMembershipDto)
+  members: CreateMembershipDto[];
 }

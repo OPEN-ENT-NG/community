@@ -68,8 +68,7 @@ export class SearchInvitationDto extends PaginationQueryDto {
     description: "Community ID",
   })
   @IsOptional()
-  @IsUUID(4)
-  communityId?: string;
+  communityId?: number;
 
   @ApiPropertyOptional({
     description: "User ID",
