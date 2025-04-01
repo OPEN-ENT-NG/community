@@ -7,8 +7,8 @@ export function setSwaggerConfig(
   configService: ConfigService,
 ) {
   const config = new DocumentBuilder()
-    .setTitle("edfifice-nestjs-boilerplate")
-    .setDescription("API description of edfifice-nestjs-boilerplate")
+    .setTitle("@edifice.io/community-backend")
+    .setDescription("API description of community backend")
     .setVersion(<string>configService.get("version"))
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
