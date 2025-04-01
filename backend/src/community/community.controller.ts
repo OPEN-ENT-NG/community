@@ -27,6 +27,8 @@ import {
 import { SerializeOptions } from "@nestjs/common";
 import {
   CommunityResponseDto,
+  CommunitySecretCodeDto,
+  CommunityStatsDto,
   CreateCommunityDto,
   SearchCommunityRequestDto,
   SearchCommunityResponseDto,
@@ -98,12 +100,12 @@ export class CommunityController {
   @ApiResponse({
     status: 200,
     description: "Secret code retrieved (only for admins)",
-    type: CommunityResponseDto,
+    type: CommunitySecretCodeDto,
   })
   @SerializeOptions({ groups: ["admin", "secretCode"] })
   async getSecretCode(
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<CommunityResponseDto> {
+  ): Promise<CommunitySecretCodeDto> {
     throw new Error("Not implemented");
   }
 
@@ -155,11 +157,11 @@ export class CommunityController {
   @ApiResponse({
     status: 200,
     description: "Community statistics",
-    type: CommunityResponseDto,
+    type: CommunityStatsDto,
   })
   async getStats(
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<CommunityResponseDto> {
+  ): Promise<CommunityStatsDto> {
     throw new Error("Not implemented");
   }
 }

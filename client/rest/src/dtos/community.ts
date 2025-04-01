@@ -202,8 +202,12 @@ export class SearchCommunityRequestDto extends PaginationQueryDto {
 }
 
 export class SearchCommunityResponseDto extends FieldSelectionDto {
-  @ApiPropertyOptional()
-  communities: any[];
+  @ApiPropertyOptional({
+    description: 'List of communities matching the search criteria',
+    isArray: true,
+    type: () => CommunityResponseDto,
+  })
+  communities: CommunityResponseDto[];
 
   @ApiPropertyOptional()
   total: number;
@@ -287,4 +291,11 @@ export class CommunityResponseDto {
   getSecretCode(): string | null {
     return this.secretCode || null;
   }
+}
+
+export class CommunitySecretCodeDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  secretCode: string;
 }
