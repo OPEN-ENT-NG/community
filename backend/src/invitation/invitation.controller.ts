@@ -7,6 +7,7 @@ import {
   InvitationStatsDto,
   PageDto,
   SearchInvitationDto,
+  SearchInvitationResponseDto,
   UpdateInvitationStatusDto,
 } from "@edifice.io/community-client-rest";
 import {
@@ -40,7 +41,7 @@ export class InvitationController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "List of invitations with pagination",
-    type: PageDto,
+    type: SearchInvitationResponseDto,
   })
   async findAll(
     @Query(
@@ -50,7 +51,7 @@ export class InvitationController {
       }),
     )
     query: SearchInvitationDto,
-  ): Promise<PageDto<InvitationResponseDto>> {
+  ): Promise<PageDto<SearchInvitationResponseDto>> {
     throw new Error("Not implemented");
   }
 

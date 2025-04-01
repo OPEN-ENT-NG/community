@@ -9,7 +9,7 @@ import {
   IsUUID,
 } from "class-validator";
 import { UserDto } from "./community";
-import { PaginationQueryDto } from "./base";
+import { FieldSelectionDto, PaginationQueryDto } from "./base";
 import { Type } from "class-transformer";
 
 export enum InvitationStatus {
@@ -116,7 +116,7 @@ export class InvitationResponseDto {
   community: CommunitySummaryDto;
 
   @ApiProperty()
-  user: UserDto;
+  sentBy: UserDto;
 }
 
 export class InvitationStatsDto {
@@ -131,4 +131,16 @@ export class InvitationStatsDto {
 
   @ApiProperty()
   rejected: number;
+}
+
+export class SearchInvitationResponseDto extends FieldSelectionDto {
+  @ApiPropertyOptional({
+    description: 'List of invitations matching the search criteria',
+    isArray: true,
+    type: () => InvitationResponseDto,
+  })
+  invitations: InvitationResponseDto[];
+
+  @ApiPropertyOptional()
+  total: number;
 }
