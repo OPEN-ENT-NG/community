@@ -1,0 +1,51 @@
+@startuml Removing_ENT_Resource_from_Community
+
+actor "User" as user
+participant "ResourceController" as controller
+participant "ResourceService" as service
+participant "MessageBroker" as broker
+participant "ApplicationShareListener" as appListener
+database "Database" as db
+
+note over user, controller: User removes a resource from community
+
+user -> controller: DELETE /api/communities/{communityId}/resources/{resourceId}
+activate controller
+
+controller -> service: removeResource(communityId, resourceId)
+activate service
+
+service -> broker: removeCommunityFromShareGroups(communityId, resourceId, appName)
+activate broker
+
+broker -> appListener: removeShareGroups(resourceId, communityId)
+activate appListener
+
+appListener -> appListener: removeGroupFromResourceShares(resourceId, communityId)
+appListener --> broker: shareRemovalConfirmation
+deactivate appListener
+
+alt successful share removal
+    broker --> service: shareRemovalSuccess
+    deactivate broker
+    
+    service -> db: deleteResource(resourceId)
+    activate db
+    db --> service: deletionConfirmation
+    deactivate db
+    
+    service --> controller: successResponse
+    controller --> user: 204 No Content (Resource removed successfully)
+
+else share removal failed
+    broker --> service: shareRemovalFailure
+    deactivate broker
+    
+    service --> controller: errorResponse
+    controller --> user: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml

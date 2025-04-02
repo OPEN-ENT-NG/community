@@ -1,0 +1,70 @@
+@startuml Community_Creation_Sequence
+
+actor "User" as user
+participant "CommunityController" as controller
+participant "CommunityService" as service
+participant "MessageBroker" as broker
+participant "DirectoryMicroservice" as directory
+database "Database" as db
+
+note over user, controller: User creates a new community
+
+user -> controller: POST /api/communities
+activate controller
+note right of user: { communityInfo, initialInvitations }
+
+controller -> service: createCommunity(communityDto, invitationsDto)
+activate service
+
+service -> service: validateCommunityData()
+
+service -> db: saveCommunity(communityData)
+activate db
+db --> service: communityId
+deactivate db
+
+service -> db: saveInitialInvitations(invitationsData)
+activate db
+db --> service: invitationsIds
+deactivate db
+
+service -> broker: createManualGroup(communityId, communityName)
+activate broker
+
+broker -> directory: requestGroupCreation(communityId, communityName)
+activate directory
+
+directory -> directory: createManualGroupIfNotExists(communityId, communityName)
+
+directory --> broker: groupCreationResult
+deactivate directory
+
+alt successful group creation
+    broker --> service: groupCreationSuccess
+    deactivate broker
+    
+    service --> controller: communityResponse
+    controller --> user: 201 Created (Community created successfully)
+
+else group creation failed
+    broker --> service: groupCreationFailure
+    deactivate broker
+    
+    service -> db: deleteCommunity(communityId)
+    activate db
+    db --> service: deletionConfirmation
+    deactivate db
+    
+    service -> db: deleteInvitations(invitationsIds)
+    activate db
+    db --> service: deletionConfirmation
+    deactivate db
+    
+    service --> controller: errorResponse
+    controller --> user: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml

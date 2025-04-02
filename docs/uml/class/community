@@ -1,4 +1,4 @@
-@startuml CommunityModel
+@startuml Community_Model
 
 ' Style et configuration
 skinparam classFontSize 12

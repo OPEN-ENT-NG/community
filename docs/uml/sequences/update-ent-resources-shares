@@ -1,0 +1,52 @@
+@startuml Updating_Resource_Share_in_Community
+
+actor "User" as user
+participant "ResourceController" as controller
+participant "ResourceService" as service
+participant "MessageBroker" as broker
+participant "ApplicationShareListener" as appListener
+database "Database" as db
+
+note over user, controller: User updates resource share permissions (reader to contributor)
+
+user -> controller: PATCH /api/communities/{communityId}/resources/{resourceId}/share
+activate controller
+note right of user: { shareType: "contributor" }
+
+controller -> service: updateResourceShare(communityId, resourceId, shareDto)
+activate service
+
+service -> db: validateResourceExists(resourceId, communityId)
+activate db
+db --> service: resourceInfo
+deactivate db
+
+service -> broker: updateCommunitySharePermission(communityId, resourceId, shareType, appName)
+activate broker
+
+broker -> appListener: updateSharePermission(resourceId, communityId, shareType)
+activate appListener
+
+appListener -> appListener: modifyGroupSharePermission(resourceId, communityId, "contributor")
+appListener --> broker: shareUpdateConfirmation
+deactivate appListener
+
+alt successful permission update
+    broker --> service: shareUpdateSuccess
+    deactivate broker
+    
+    service --> controller: successResponse
+    controller --> user: 200 OK (Share permissions updated successfully)
+
+else permission update failed
+    broker --> service: shareUpdateFailure
+    deactivate broker
+    
+    service --> controller: errorResponse
+    controller --> user: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml
