@@ -53,7 +53,16 @@ export class MembershipResponseDto {
   role: MembershipRole;
 
   @ApiPropertyOptional()
-  lastVisitDate?: Date;
+  lastVisitAnnouncementsDate?: Date;
+
+  @ApiPropertyOptional()
+  lastVisitResourcesDate?: Date;
+
+  @ApiPropertyOptional()
+  lastVisitWikiDate?: Date;
+
+  @ApiPropertyOptional()
+  lastVisitDiscussionsDate?: Date;
 
   @ApiProperty()
   community: CommunitySummaryDto;
