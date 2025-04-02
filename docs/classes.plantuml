@@ -62,7 +62,10 @@ class Invitation {
 class Membership {
   +ZonedDateTime joinDate
   +MembershipRole role
-  +ZonedDateTime lastVisitDate
+  +ZonedDateTime lastVisitAnnouncementsDate
+  +ZonedDateTime lastVisitResourcesDate
+  +ZonedDateTime lastVisitWikiDate
+  +ZonedDateTime lastVisitDiscussionsDate
 }
 
 class Message {
@@ -129,10 +132,19 @@ class TopicStats <<readOnly>> {
   +String lastFiveUserIds
 }
 
+class CommunityActivityStats <<readOnly>> {
+  +Long communityId
+  +ZonedDateTime lastAnnouncementUpdateDate
+  +ZonedDateTime lastResourceUpdateDate
+  +ZonedDateTime lastWikiUpdateDate
+  +ZonedDateTime lastDiscussionUpdateDate
+}
+
 ' Relations OneToOne
 Community "1" -- "1" CommunityStats : stats >
 Folder "1" -- "1" FolderStats : stats >
 Topic "1" -- "1" TopicStats : stats >
+Community "1" -- "1" CommunityActivityStats : stats >
 
 ' Relations ManyToOne
 User "1" -- "*" Community : < creator
