@@ -152,4 +152,18 @@ export class ResourceController {
   ): Promise<void> {
     throw new Error("Not implemented");
   }
+
+  @Post("visit")
+  @ApiOperation({ summary: "Mark resources as visited" })
+  @ApiParam({ name: "communityId", description: "Community ID" })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: "Resources marked as visited successfully",
+  })
+  async markAsVisited(
+    @Param("communityId", ParseIntPipe) communityId: number,
+  ): Promise<void> {
+    throw new Error("Not implemented");
+  }
 }

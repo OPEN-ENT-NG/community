@@ -9,6 +9,8 @@ import {
   Query,
   ValidationPipe,
   HttpStatus,
+  Post,
+  HttpCode,
 } from "@nestjs/common";
 import { DiscussionsService } from "./discussions.service";
 import {
@@ -54,6 +56,20 @@ export class DiscussionsController {
     @Param("communityId", ParseIntPipe) communityId: number,
     @Query("postedAfterDate") postedAfterDate: Date,
   ): Promise<CountDiscussionMessageDto> {
+    throw new Error("Not implemented");
+  }
+
+  @Post("visit")
+  @ApiOperation({ summary: "Mark discussions as visited" })
+  @ApiParam({ name: "communityId", description: "Community ID" })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: "Discussions marked as visited successfully",
+  })
+  async markAsVisited(
+    @Param("communityId", ParseIntPipe) communityId: number,
+  ): Promise<void> {
     throw new Error("Not implemented");
   }
 }
