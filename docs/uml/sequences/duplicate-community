@@ -1,0 +1,87 @@
+@startuml Duplicate_Community_Sequence
+
+actor "Admin" as admin
+participant "CommunityController" as controller
+participant "CommunityService" as service
+participant "MembershipService" as membershipService
+participant "ResourceService" as resourceService
+database "Database" as db
+
+note over admin, controller: Admin duplicates a community
+
+admin -> controller: POST /api/communities/{communityId}/duplicate
+activate controller
+
+controller -> service: duplicateCommunity(communityId)
+activate service
+
+service -> db: getCommunityDetails(communityId)
+activate db
+db --> service: communityDetails
+deactivate db
+
+service -> db: beginTransaction()
+activate db
+db --> service: transactionId
+deactivate db
+
+service -> db: createCommunityDuplicate(communityDetails)
+activate db
+db --> service: newCommunityId
+deactivate db
+
+service -> membershipService: duplicateAdminMembers(communityId, newCommunityId)
+activate membershipService
+
+membershipService -> db: getAdminMembers(communityId)
+activate db
+db --> membershipService: adminMembersList
+deactivate db
+
+membershipService -> db: createMemberships(adminMembersList, newCommunityId)
+activate db
+db --> membershipService: newMembershipsIds
+deactivate db
+
+membershipService --> service: adminMembershipDuplicationResult
+deactivate membershipService
+
+service -> resourceService: duplicateResourceLinks(communityId, newCommunityId)
+activate resourceService
+
+resourceService -> db: getCommunityResources(communityId)
+activate db
+db --> resourceService: resourcesList
+deactivate db
+
+resourceService -> db: createResourceLinks(resourcesList, newCommunityId)
+activate db
+db --> resourceService: newResourceLinksIds
+deactivate db
+
+resourceService --> service: resourceLinksDuplicationResult
+deactivate resourceService
+
+alt successful duplication
+    service -> db: commitTransaction(transactionId)
+    activate db
+    db --> service: commitConfirmation
+    deactivate db
+    
+    service --> controller: duplicatedCommunityResponse
+    controller --> admin: 201 Created (Community duplicated successfully)
+
+else duplication failed
+    service -> db: rollbackTransaction(transactionId)
+    activate db
+    db --> service: rollbackConfirmation
+    deactivate db
+    
+    service --> controller: errorResponse
+    controller --> admin: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml

@@ -15,6 +15,7 @@ activate controller
 controller -> service: removeResource(communityId, resourceId)
 activate service
 
+' Communication with ApplicationShareListener
 service -> broker: removeCommunityFromShareGroups(communityId, resourceId, appName)
 activate broker
 
@@ -24,6 +25,16 @@ activate appListener
 appListener -> appListener: removeGroupFromResourceShares(resourceId, communityId)
 appListener --> broker: shareRemovalConfirmation
 deactivate appListener
+
+' Notify ExplorerService
+service -> broker: notifyResourceRemovedFromCommunity(communityId, resourceId, appName)
+
+broker -> "ExplorerService" as explorer: updateResourceVisibility(resourceId, communityId, true)
+
+activate explorer
+explorer -> explorer: setResourceVisibility(resourceId, true)
+explorer --> broker: visibilityUpdateConfirmation
+deactivate explorer
 
 alt successful share removal
     broker --> service: shareRemovalSuccess
