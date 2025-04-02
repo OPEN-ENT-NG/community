@@ -20,6 +20,7 @@ activate db
 db --> service: resourceId
 deactivate db
 
+' Communication with ApplicationShareListener
 service -> broker: addCommunityToShareGroups(communityId, resourceId, appName)
 activate broker
 
@@ -29,6 +30,16 @@ activate appListener
 appListener -> appListener: addGroupToResourceShares(resourceId, communityId)
 appListener --> broker: shareUpdateConfirmation
 deactivate appListener
+
+' Notify ExplorerService
+service -> broker: notifyResourceAddedToCommunity(communityId, resourceId, appName)
+
+broker -> "ExplorerService" as explorer: updateResourceVisibility(resourceId, communityId, false)
+
+activate explorer
+explorer -> explorer: setResourceVisibility(resourceId, false)
+explorer --> broker: visibilityUpdateConfirmation
+deactivate explorer
 
 alt successful share update
     broker --> service: shareUpdateSuccess

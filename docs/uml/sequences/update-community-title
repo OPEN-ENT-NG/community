@@ -1,0 +1,57 @@
+@startuml Update_Community_Title_Sequence
+
+actor "Admin" as admin
+participant "CommunityController" as controller
+participant "CommunityService" as service
+participant "MessageBroker" as broker
+participant "DirectoryMicroservice" as directory
+database "Database" as db
+
+note over admin, controller: Admin updates community title
+
+admin -> controller: PATCH /api/communities/{communityId}
+activate controller
+note right of admin: { title: "New Community Title" }
+
+controller -> service: updateCommunity(communityId, updateDto)
+activate service
+
+service -> db: validateCommunityExists(communityId)
+activate db
+db --> service: communityInfo
+deactivate db
+
+service -> broker: updateManualGroupName(communityId, newTitle)
+activate broker
+
+broker -> directory: requestGroupNameUpdate(communityId, newTitle)
+activate directory
+
+directory -> directory: updateGroupNameIfExists(communityId, newTitle)
+directory --> broker: groupUpdateConfirmation
+deactivate directory
+
+alt successful group update
+    broker --> service: groupUpdateSuccess
+    deactivate broker
+    
+    service -> db: updateCommunityTitle(communityId, newTitle)
+    activate db
+    db --> service: updateConfirmation
+    deactivate db
+    
+    service --> controller: updatedCommunityResponse
+    controller --> admin: 200 OK (Community title updated successfully)
+
+else group update failed
+    broker --> service: groupUpdateFailure
+    deactivate broker
+    
+    service --> controller: errorResponse
+    controller --> admin: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml
