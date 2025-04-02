@@ -9,6 +9,8 @@ import {
   Query,
   ValidationPipe,
   HttpStatus,
+  Post,
+  HttpCode,
 } from "@nestjs/common";
 import { WikiService } from "./wiki.service";
 import {
@@ -45,6 +47,20 @@ export class WikiController {
     @Query("publishedAfter", new ValidationPipe({ transform: true }))
     publishedAfter?: Date,
   ): Promise<CountWikiPagesDto> {
+    throw new Error("Not implemented");
+  }
+
+  @Post("visit")
+  @ApiOperation({ summary: "Mark wiki pages as visited" })
+  @ApiParam({ name: "communityId", description: "Community ID" })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: "Wiki pages marked as visited successfully",
+  })
+  async markAsVisited(
+    @Param("communityId", ParseIntPipe) communityId: number,
+  ): Promise<void> {
     throw new Error("Not implemented");
   }
 }
