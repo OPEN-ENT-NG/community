@@ -1,0 +1,68 @@
+@startuml Accept_Community_Invitation_Sequence
+
+actor "User" as user
+participant "InvitationController" as controller
+participant "InvitationService" as invitationService
+participant "MembershipService" as membershipService
+participant "MessageBroker" as broker
+participant "DirectoryMicroservice" as directory
+database "Database" as db
+
+note over user, controller: User accepts a community invitation
+
+user -> controller: POST /api/invitations/{invitationId}/accept
+activate controller
+
+controller -> invitationService: acceptInvitation(invitationId, userId)
+activate invitationService
+
+invitationService -> db: getInvitationDetails(invitationId)
+activate db
+db --> invitationService: invitation (with communityId)
+deactivate db
+
+invitationService -> broker: addMemberToManualGroup(userId, communityId)
+activate broker
+
+broker -> directory: requestAddMember(userId, communityId)
+activate directory
+
+directory -> directory: addMemberToGroupIfExists(userId, communityId)
+directory --> broker: memberAdditionConfirmation
+deactivate directory
+
+alt successful member addition
+    broker --> invitationService: memberAdditionSuccess
+    deactivate broker
+    
+    invitationService -> db: updateInvitationStatus(invitationId, "ACCEPTED")
+    activate db
+    db --> invitationService: updateConfirmation
+    deactivate db
+    
+    invitationService -> membershipService: createMembership(userId, communityId)
+    activate membershipService
+    
+    membershipService -> db: saveMembership(userId, communityId)
+    activate db
+    db --> membershipService: membershipId
+    deactivate db
+    
+    membershipService --> invitationService: membershipResult
+    deactivate membershipService
+    
+    invitationService --> controller: successResponse
+    controller --> user: 200 OK (Successfully joined the community)
+
+else member addition failed
+    broker --> invitationService: memberAdditionFailure
+    deactivate broker
+    
+    invitationService --> controller: errorResponse
+    controller --> user: 500 Internal Server Error
+end
+
+deactivate invitationService
+deactivate controller
+
+@enduml

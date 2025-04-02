@@ -1,0 +1,63 @@
+@startuml Leave_Community_Sequence
+
+actor "User" as user
+participant "CommunityController" as controller
+participant "CommunityService" as service
+participant "MembershipService" as membershipService
+participant "MessageBroker" as broker
+participant "DirectoryMicroservice" as directory
+database "Database" as db
+
+note over user, controller: User leaves a community
+
+user -> controller: POST /api/communities/{communityId}/leave
+activate controller
+
+controller -> service: leaveCommunity(communityId, userId)
+activate service
+
+service -> db: validateMembership(userId, communityId)
+activate db
+db --> service: membershipInfo
+deactivate db
+
+service -> broker: removeMemberFromManualGroup(userId, communityId)
+activate broker
+
+broker -> directory: requestRemoveMember(userId, communityId)
+activate directory
+
+directory -> directory: removeUserFromGroup(userId, communityId)
+directory --> broker: memberRemovalConfirmation
+deactivate directory
+
+alt successful member removal
+    broker --> service: memberRemovalSuccess
+    deactivate broker
+    
+    service -> membershipService: removeMembership(userId, communityId)
+    activate membershipService
+    
+    membershipService -> db: deleteMembership(userId, communityId)
+    activate db
+    db --> membershipService: deletionConfirmation
+    deactivate db
+    
+    membershipService --> service: membershipRemovalResult
+    deactivate membershipService
+    
+    service --> controller: successResponse
+    controller --> user: 204 No Content (Successfully left the community)
+
+else member removal failed
+    broker --> service: memberRemovalFailure
+    deactivate broker
+    
+    service --> controller: errorResponse
+    controller --> user: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml

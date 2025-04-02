@@ -1,0 +1,55 @@
+@startuml Adding_ENT_Resource_to_Community
+
+actor "User" as user
+participant "ResourceController" as controller
+participant "ResourceService" as service
+participant "MessageBroker" as broker
+participant "ApplicationShareListener" as appListener
+database "Database" as db
+
+note over user, controller: User adds a resource to community
+
+user -> controller: POST /api/communities/{communityId}/resources
+activate controller
+
+controller -> service: addResource(communityId, resourceDto)
+activate service
+
+service -> db: saveResource(resource)
+activate db
+db --> service: resourceId
+deactivate db
+
+service -> broker: addCommunityToShareGroups(communityId, resourceId, appName)
+activate broker
+
+broker -> appListener: updateShareGroups(resourceId, communityId)
+activate appListener
+
+appListener -> appListener: addGroupToResourceShares(resourceId, communityId)
+appListener --> broker: shareUpdateConfirmation
+deactivate appListener
+
+alt successful share update
+    broker --> service: shareUpdateSuccess
+    deactivate broker
+    service --> controller: resourceResponse
+    controller --> user: 201 Created (Resource added successfully)
+
+else share update failed
+    broker --> service: shareUpdateFailure
+    deactivate broker
+    
+    service -> db: deleteResource(resourceId)
+    activate db
+    db --> service: deletionConfirmation
+    deactivate db
+    
+    service --> controller: errorResponse
+    controller --> user: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml

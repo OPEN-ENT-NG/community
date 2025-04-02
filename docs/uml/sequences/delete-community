@@ -1,0 +1,63 @@
+@startuml Community_Deletion_Sequence
+
+actor "User" as user
+participant "CommunityController" as controller
+participant "CommunityService" as service
+participant "MessageBroker" as broker
+participant "DirectoryMicroservice" as directory
+participant "DirectoryListener" as listener
+database "Database" as db
+
+note over user, controller: User deletes a community
+
+user -> controller: DELETE /api/communities/{communityId}
+activate controller
+
+controller -> service: deleteCommunity(communityId)
+activate service
+
+service -> db: validateCommunityExists(communityId)
+activate db
+db --> service: communityInfo
+deactivate db
+
+service -> broker: deleteManualGroup(communityId)
+activate broker
+
+broker -> directory: requestGroupDeletion(communityId)
+activate directory
+
+broker -> listener: notifyGroupDeletionRequest(communityId)
+activate listener
+
+listener -> listener: deleteManualGroupIfExists(communityId)
+listener --> broker: groupDeletionConfirmation
+deactivate listener
+
+directory --> broker: groupDeletionResult
+deactivate directory
+
+alt successful group deletion
+    broker --> service: groupDeletionSuccess
+    deactivate broker
+    
+    service -> db: deleteCommunityData(communityId)
+    activate db
+    db --> service: deletionConfirmation
+    deactivate db
+    
+    service --> controller: successResponse
+    controller --> user: 204 No Content (Community deleted successfully)
+
+else group deletion failed
+    broker --> service: groupDeletionFailure
+    deactivate broker
+    
+    service --> controller: errorResponse
+    controller --> user: 500 Internal Server Error
+end
+
+deactivate service
+deactivate controller
+
+@enduml
