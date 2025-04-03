@@ -1,0 +1,224 @@
+@startuml Community_SQL_Model
+
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <u>x</u>
+!define foreign_key(x) <i>x</i>
+!define enum(x) class x << (E,#A9DCDF) >>
+
+enum "community_type" as community_type << enum >> {
+  CLASS
+  FREE
+}
+
+enum "invitation_status" as invitation_status << enum >> {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum "membership_role" as membership_role << enum >> {
+  ADMIN
+  MEMBER
+}
+
+enum "resource_type" as resource_type << enum >> {
+  IMAGE
+  VIDEO
+  SOUND
+  ENT
+  EXTERNAL_LINK
+}
+
+table(community) {
+  primary_key(id) BIGSERIAL
+  image VARCHAR(255)
+  title VARCHAR(255) NOT NULL
+  creation_date TIMESTAMP WITH TIME ZONE NOT NULL
+  update_date TIMESTAMP WITH TIME ZONE
+  type community_type NOT NULL
+  school_year_start INTEGER
+  school_year_end INTEGER
+  welcome_note TEXT
+  discussion_enabled BOOLEAN NOT NULL DEFAULT TRUE
+  archived_date TIMESTAMP WITH TIME ZONE
+  secret_code VARCHAR(64)
+  foreign_key(creator_id) BIGINT NOT NULL
+  foreign_key(modifier_id) BIGINT
+  foreign_key(archiver_id) BIGINT
+}
+
+table(users) {
+  primary_key(id) BIGSERIAL
+  -- autres attributs utilisateur --
+}
+
+table(invitation) {
+  primary_key(id) BIGSERIAL
+  invitation_date TIMESTAMP WITH TIME ZONE NOT NULL
+  status invitation_status NOT NULL
+  foreign_key(community_id) BIGINT NOT NULL
+  foreign_key(user_id) BIGINT NOT NULL
+}
+
+table(membership) {
+  primary_key(id) BIGSERIAL
+  join_date TIMESTAMP WITH TIME ZONE NOT NULL
+  role membership_role NOT NULL
+  last_visit_announcements_date TIMESTAMP WITH TIME ZONE
+  last_visit_resources_date TIMESTAMP WITH TIME ZONE
+  last_visit_wiki_date TIMESTAMP WITH TIME ZONE
+  last_visit_discussions_date TIMESTAMP WITH TIME ZONE
+  foreign_key(community_id) BIGINT NOT NULL
+  foreign_key(user_id) BIGINT NOT NULL
+  foreign_key(inviter_id) BIGINT
+}
+
+table(message) {
+  primary_key(id) BIGSERIAL
+  content TEXT NOT NULL
+  publication_date TIMESTAMP WITH TIME ZONE NOT NULL
+  foreign_key(author_id) BIGINT NOT NULL
+  foreign_key(community_id) BIGINT NOT NULL
+}
+
+table(announcement) {
+  primary_key(id) BIGSERIAL
+  content TEXT NOT NULL
+  publication_date TIMESTAMP WITH TIME ZONE NOT NULL
+  foreign_key(author_id) BIGINT NOT NULL
+  foreign_key(community_id) BIGINT NOT NULL
+}
+
+table(course) {
+  primary_key(id) VARCHAR(255) NOT NULL
+  -- autres attributs du cours --
+}
+
+table(resource) {
+  primary_key(id) BIGSERIAL
+  type resource_type NOT NULL
+  url VARCHAR(1024) NOT NULL
+  title VARCHAR(255) NOT NULL
+  added_date TIMESTAMP WITH TIME ZONE NOT NULL
+  open_in_new_tab BOOLEAN NOT NULL DEFAULT FALSE
+  app_name VARCHAR(128)
+  foreign_key(author_id) BIGINT NOT NULL
+  foreign_key(community_id) BIGINT NOT NULL
+}
+
+table(folder) {
+  primary_key(id) BIGSERIAL
+  name VARCHAR(255) NOT NULL
+  creation_date TIMESTAMP WITH TIME ZONE NOT NULL
+  modification_date TIMESTAMP WITH TIME ZONE
+  is_root BOOLEAN NOT NULL DEFAULT FALSE
+  foreign_key(creator_id) BIGINT NOT NULL
+  foreign_key(modifier_id) BIGINT
+  foreign_key(parent_id) BIGINT
+  foreign_key(community_id) BIGINT NOT NULL
+}
+
+table(topic) {
+  primary_key(id) BIGSERIAL
+  name VARCHAR(255) NOT NULL
+  creation_date TIMESTAMP WITH TIME ZONE NOT NULL
+  locked BOOLEAN NOT NULL DEFAULT FALSE
+  hidden BOOLEAN NOT NULL DEFAULT FALSE
+  theme VARCHAR(128)
+  foreign_key(creator_id) BIGINT NOT NULL
+  foreign_key(community_id) BIGINT NOT NULL
+}
+
+table(topic_message) {
+  primary_key(id) BIGSERIAL
+  content TEXT NOT NULL
+  publication_date TIMESTAMP WITH TIME ZONE NOT NULL
+  modification_date TIMESTAMP WITH TIME ZONE
+  foreign_key(author_id) BIGINT NOT NULL
+  foreign_key(topic_id) BIGINT NOT NULL
+}
+
+' Tables de liaison M:N
+table(community_course) {
+  primary_key(community_id) BIGINT
+  primary_key(course_id) VARCHAR(255)
+}
+
+table(resource_folder) {
+  primary_key(resource_id) BIGINT
+  primary_key(folder_id) BIGINT
+}
+
+' Vues matérialisées
+table(community_stats) {
+  primary_key(community_id) BIGINT
+  total_members INTEGER NOT NULL DEFAULT 0
+  accepted_members INTEGER NOT NULL DEFAULT 0
+  total_admins INTEGER NOT NULL DEFAULT 0
+  accepted_admins INTEGER NOT NULL DEFAULT 0
+}
+
+table(folder_stats) {
+  primary_key(folder_id) BIGINT
+  child_count INTEGER NOT NULL DEFAULT 0
+}
+
+table(topic_stats) {
+  primary_key(topic_id) BIGINT
+  message_count INTEGER NOT NULL DEFAULT 0
+  last_message_date TIMESTAMP WITH TIME ZONE
+  last_five_user_ids VARCHAR(255)
+}
+
+table(community_activity_stats) {
+  primary_key(community_id) BIGINT
+  last_announcement_update_date TIMESTAMP WITH TIME ZONE
+  last_resource_update_date TIMESTAMP WITH TIME ZONE
+  last_wiki_update_date TIMESTAMP WITH TIME ZONE
+  last_discussion_update_date TIMESTAMP WITH TIME ZONE
+}
+
+' Relations
+community }|--|| users : "creator_id"
+community }o--o| users : "modifier_id"
+community }o--o| users : "archiver_id"
+
+invitation }|--|| community : "community_id"
+invitation }|--|| users : "user_id"
+
+membership }|--|| community : "community_id"
+membership }|--|| users : "user_id"
+membership }o--o| users : "inviter_id"
+
+message }|--|| users : "author_id"
+message }|--|| community : "community_id"
+
+announcement }|--|| users : "author_id"
+announcement }|--|| community : "community_id"
+
+resource }|--|| users : "author_id"
+resource }|--|| community : "community_id"
+
+folder }|--|| users : "creator_id"
+folder }o--o| users : "modifier_id"
+folder }o--o| folder : "parent_id"
+folder }|--|| community : "community_id"
+
+topic }|--|| users : "creator_id"
+topic }|--|| community : "community_id"
+
+topic_message }|--|| users : "author_id"
+topic_message }|--|| topic : "topic_id"
+
+community_course }|--|| community : "community_id"
+community_course }|--|| course : "course_id"
+
+resource_folder }|--|| resource : "resource_id"
+resource_folder }|--|| folder : "folder_id"
+
+community_stats ||--|| community : "community_id"
+folder_stats ||--|| folder : "folder_id"
+topic_stats ||--|| topic : "topic_id"
+community_activity_stats ||--|| community : "community_id"
+
+@enduml
