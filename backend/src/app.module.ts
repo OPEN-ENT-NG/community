@@ -67,6 +67,6 @@ export class AppModule {
         { path: "openapi-json", method: RequestMethod.GET },
         { path: "openapi/*", method: RequestMethod.GET },
       )
-      .forRoutes("*");
+      .forRoutes("/api/*");
   }
 }
