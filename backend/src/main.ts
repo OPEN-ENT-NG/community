@@ -42,18 +42,17 @@ async function bootstrap() {
   setSwaggerConfig(app, configService);
 
   // Path to frontend
-  const frontendPath = join(__dirname, "..", "frontend-build");
-  // Register via fastifyStatic
+  const frontendPath = join(__dirname, "..", "..", "client", "frontend-build");
+
   await app.register(fastifyStatic, {
     root: frontendPath,
-    prefix: "/static/",
-    decorateReply: false,
+    prefix: "/",
+    decorateReply: true,
   });
   const fastifyInstance = app.getHttpAdapter().getInstance();
 
-  // Capture all requests except /api
   fastifyInstance.get(
-    "/*",
+    "/",
     async (request: FastifyRequest, reply: FastifyReply) => {
       if (!request.url.startsWith("/api")) {
         app.get(Logger).log(`Serving frontend for ${request.url}`, "Static");
