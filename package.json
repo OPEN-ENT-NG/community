@@ -1,22 +1,16 @@
 {
   "name": "community",
   "scripts": {
-    "clean:frontend": "rm -rf frontend/dist frontend/node_modules",
+    "clean:frontend": "rm -rf frontend/dist frontend/node_modules client/frontend-build",
     "clean:backend": "rm -rf backend/dist backend/node_modules",
     "clean:client-rest": "rm -rf client/rest/dist client/rest/node_modules",
     "clean": "pnpm run clean:frontend && pnpm run clean:backend && pnpm run clean:client-rest",
-
-    "copy:frontend": "rm -rf backend/dist/frontend-build && cp -r frontend/dist backend/dist/frontend-build",
-
     "prepare:client-rest": "cd client/rest && pnpm install && pnpm build",
     "prepare:frontend": "cd frontend && pnpm install",
     "prepare:backend": "cd backend && pnpm install",
     "prepare": "pnpm run prepare:client-rest && pnpm run prepare:frontend && pnpm run prepare:backend",
-
     "build:frontend": "cd frontend && pnpm run build",
     "build:backend": "cd backend && pnpm run build",
-    "build:final": "pnpm run copy:frontend",
-
-    "build": "pnpm run build:frontend && pnpm run build:backend && pnpm run build:final"
+    "build": "pnpm run build:frontend && pnpm run build:backend"
   }
 }

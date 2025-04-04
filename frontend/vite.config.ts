@@ -40,15 +40,15 @@ export default ({ mode }: { mode: string }) => {
 
   /* Replace "/" the name of your application (e.g : blog | mindmap | collaborativewall) */
   return defineConfig({
-    base: mode === 'production' ? '/community' : '',
+    base: mode === "production" ? "/community" : "",
     root: __dirname,
-    cacheDir: './node_modules/.vite/community',
+    cacheDir: "./node_modules/.vite/community",
 
     resolve: {
       alias: {
-        '@images': resolve(
+        "@images": resolve(
           __dirname,
-          'node_modules/@edifice.io/bootstrap/dist/images',
+          "node_modules/@edifice.io/bootstrap/dist/images",
         ),
       },
     },
@@ -59,32 +59,32 @@ export default ({ mode }: { mode: string }) => {
          * Allow the server to access the node_modules folder (for the images)
          * This is a solution to allow the server to access the images and fonts of the bootstrap package for 1D theme
          */
-        allow: ['../../'],
+        allow: ["../../"],
       },
       proxy: {
-        '/applications-list': proxyObj,
-        '/conf/public': proxyObj,
-        '^/(?=help-1d|help-2d)': proxyObj,
-        '^/(?=assets)': proxyObj,
-        '^/(?=theme|locale|i18n|skin)': proxyObj,
-        '^/(?=auth|appregistry|archive|cas|userbook|directory|communication|conversation|portal|session|timeline|workspace|infra)':
+        "/applications-list": proxyObj,
+        "/conf/public": proxyObj,
+        "^/(?=help-1d|help-2d)": proxyObj,
+        "^/(?=assets)": proxyObj,
+        "^/(?=theme|locale|i18n|skin)": proxyObj,
+        "^/(?=auth|appregistry|archive|cas|userbook|directory|communication|conversation|portal|session|timeline|workspace|infra)":
           proxyObj,
-        '/xiti': proxyObj,
-        '/analyticsConf': proxyObj,
-        '/explorer': proxyObj,
-        '/wiki': proxyObj,
-        '/community': proxyObj,
-        '/resources-applications': proxyObj,
+        "/xiti": proxyObj,
+        "/analyticsConf": proxyObj,
+        "/explorer": proxyObj,
+        "/wiki": proxyObj,
+        "/community": proxyObj,
+        "/resources-applications": proxyObj,
       },
       port: 4200,
       headers,
-      host: 'localhost',
+      host: "localhost",
     },
 
     preview: {
       port: 4300,
       headers,
-      host: 'localhost',
+      host: "localhost",
     },
 
     plugins: [
@@ -96,13 +96,13 @@ export default ({ mode }: { mode: string }) => {
     ],
 
     build: {
-      outDir: './dist',
+      outDir: "../client/frontend-build",
       emptyOutDir: true,
       reportCompressedSize: true,
       commonjsOptions: {
         transformMixedEsModules: true,
       },
-      assetsDir: 'public',
+      assetsDir: "public",
       chunkSizeWarningLimit: 5000,
       rollupOptions: {
         output: {
@@ -114,17 +114,17 @@ export default ({ mode }: { mode: string }) => {
     test: {
       watch: false,
       globals: true,
-      environment: 'jsdom',
-      include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-      setupFiles: ['./src/mocks/setup.ts'],
-      reporters: ['default'],
+      environment: "jsdom",
+      include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+      setupFiles: ["./src/mocks/setup.ts"],
+      reporters: ["default"],
       coverage: {
-        reportsDirectory: './coverage/community',
-        provider: 'v8',
+        reportsDirectory: "./coverage/community",
+        provider: "v8",
       },
       server: {
         deps: {
-          inline: ['@edifice.io/react'],
+          inline: ["@edifice.io/react"],
         },
       },
     },
