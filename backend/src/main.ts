@@ -13,10 +13,6 @@ import { ConfigService } from "@nestjs/config";
 import { setSwaggerConfig } from "./config/swagger.config";
 import { ValidationPipe } from "@nestjs/common";
 
-import { join } from "path";
-import fastifyStatic from "@fastify/static";
-import { FastifyRequest, FastifyReply } from "fastify";
-
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -40,28 +36,6 @@ async function bootstrap() {
   );
 
   setSwaggerConfig(app, configService);
-
-  // Path to frontend
-  const frontendPath = join(__dirname, "..", "..", "client", "frontend-build");
-
-  await app.register(fastifyStatic, {
-    root: frontendPath,
-    prefix: "/",
-    decorateReply: true,
-  });
-  const fastifyInstance = app.getHttpAdapter().getInstance();
-
-  fastifyInstance.get(
-    "/",
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      if (!request.url.startsWith("/api")) {
-        app.get(Logger).log(`Serving frontend for ${request.url}`, "Static");
-        return reply.sendFile("index.html", frontendPath);
-      }
-
-      reply.status(404).send({ message: "Not Found" });
-    },
-  );
 
   const logger = app.get(Logger);
   logger.log("Launching app....");

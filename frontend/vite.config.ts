@@ -40,7 +40,7 @@ export default ({ mode }: { mode: string }) => {
 
   /* Replace "/" the name of your application (e.g : blog | mindmap | collaborativewall) */
   return defineConfig({
-    base: mode === "production" ? "/community" : "",
+    base: mode === "production" ? "./" : "",
     root: __dirname,
     cacheDir: "./node_modules/.vite/community",
 
@@ -74,6 +74,7 @@ export default ({ mode }: { mode: string }) => {
         "/explorer": proxyObj,
         "/wiki": proxyObj,
         "/community": proxyObj,
+        "/community/api": proxyObj,
         "/resources-applications": proxyObj,
       },
       port: 4200,
