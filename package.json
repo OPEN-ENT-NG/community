@@ -1,6 +1,7 @@
 {
   "name": "community",
   "scripts": {
+    "start": "",
     "clean:frontend": "rm -rf frontend/dist frontend/node_modules client/frontend-build",
     "clean:backend": "rm -rf backend/dist backend/node_modules",
     "clean:client-rest": "rm -rf client/rest/dist client/rest/node_modules",

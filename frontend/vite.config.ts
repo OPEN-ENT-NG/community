@@ -96,7 +96,7 @@ export default ({ mode }: { mode: string }) => {
     ],
 
     build: {
-      outDir: "../client/frontend-build",
+      outDir: "dist",
       emptyOutDir: true,
       reportCompressedSize: true,
       commonjsOptions: {
