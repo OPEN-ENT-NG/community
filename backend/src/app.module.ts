@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
+import { ServeStaticModule } from "@nestjs/serve-static";
 import { LoggerModule } from "nestjs-pino";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -21,6 +22,7 @@ import { MembershipModule } from "./membership/membership.module";
 import { ResourceModule } from "./resource/resource.module";
 import { WikiModule } from "./wiki/wiki.module";
 import { DiscussionsModule } from "./discussions/discussions.module";
+import { getStaticAssetsPath } from "./config/helpers";
 
 @Module({
   imports: [
@@ -53,6 +55,11 @@ import { DiscussionsModule } from "./discussions/discussions.module";
     MembershipModule,
     ResourceModule,
     WikiModule,
+    ServeStaticModule.forRoot({
+      rootPath: getStaticAssetsPath(),
+      serveRoot: "/public",
+      exclude: ["/api*"],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, RequestLogger],

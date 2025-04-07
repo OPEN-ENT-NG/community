@@ -2,7 +2,7 @@
   "name": "community",
   "scripts": {
     "start": "",
-    "clean:frontend": "rm -rf frontend/dist frontend/node_modules client/frontend-build",
+    "clean:frontend": "rm -rf frontend/dist frontend/node_modules",
     "clean:backend": "rm -rf backend/dist backend/node_modules",
     "clean:client-rest": "rm -rf client/rest/dist client/rest/node_modules",
     "clean": "pnpm run clean:frontend && pnpm run clean:backend && pnpm run clean:client-rest",
