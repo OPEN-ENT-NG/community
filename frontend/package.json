@@ -1,6 +1,6 @@
 {
   "name": "@edifice.io/community-frontend",
-  "version": "1.0.0-develop-pedago.0",
+  "version": "1.0.0-%branch%.%generateVersion%",
   "private": true,
   "license": "GPL-3.0",
   "author": "Edifice",
