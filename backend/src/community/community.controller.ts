@@ -33,6 +33,7 @@ import {
   SearchCommunityRequestDto,
   SearchCommunityResponseDto,
   UpdateCommunityDto,
+  mocks,
 } from "@edifice.io/community-client-rest";
 
 @ApiTags("Communities")
@@ -57,7 +58,9 @@ export class CommunityController {
     )
     query: SearchCommunityRequestDto,
   ): Promise<SearchCommunityResponseDto> {
-    throw new Error("Not implemented");
+    return Promise.resolve<SearchCommunityResponseDto>(
+      mocks.createMockSearchCommunityResponse(10),
+    );
   }
 
   @Post()

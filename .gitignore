@@ -40,3 +40,5 @@ rev-manifest.json
 gradle/
 gradlew*
 **/frontend-build
+.vscode/
+**/.env

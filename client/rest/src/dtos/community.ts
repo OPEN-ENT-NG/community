@@ -14,7 +14,7 @@ import {
 } from "class-validator";
 import { FieldSelectionDto, PaginationQueryDto } from "./base";
 
-enum CommunityType {
+export enum CommunityType {
   CLASS = "CLASS",
   FREE = "FREE",
 }

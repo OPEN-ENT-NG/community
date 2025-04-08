@@ -22,7 +22,7 @@ import { MembershipModule } from "./membership/membership.module";
 import { ResourceModule } from "./resource/resource.module";
 import { WikiModule } from "./wiki/wiki.module";
 import { DiscussionsModule } from "./discussions/discussions.module";
-import { getStaticAssetsPath } from "./config/helpers";
+import { getStaticAssetsPath } from "./config/static-assets.helper";
 
 @Module({
   imports: [
@@ -46,6 +46,19 @@ import { getStaticAssetsPath } from "./config/helpers";
       useFactory: createPostgresOptions,
       driver: PostgreSqlDriver,
     }),
+    ServeStaticModule.forRoot(
+      {
+        rootPath: getStaticAssetsPath(),
+        serveRoot: "/public",
+        exclude: ["/api*"],
+      },
+      {
+        rootPath: getStaticAssetsPath(),
+        serveRoot: "/community/public",
+        exclude: ["/api*"],
+        serveStaticOptions: { decorateReply: false },
+      },
+    ),
     MyLoggerModule,
     AnnouncementModule,
     CommunityModule,
@@ -55,11 +68,6 @@ import { getStaticAssetsPath } from "./config/helpers";
     MembershipModule,
     ResourceModule,
     WikiModule,
-    ServeStaticModule.forRoot({
-      rootPath: getStaticAssetsPath(),
-      serveRoot: "/public",
-      exclude: ["/api*"],
-    }),
   ],
   controllers: [AppController],
   providers: [AppService, RequestLogger],

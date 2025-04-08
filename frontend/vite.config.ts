@@ -28,10 +28,11 @@ export default ({ mode }: { mode: string }) => {
   const proxyObj = hasEnvFile
     ? {
         target: envs.VITE_RECETTE,
-        changeOrigin: true,
+        changeOrigin: envs.VITE_RECETTE?.includes('localhost')? false : true,
         headers: {
           cookie: `oneSessionId=${envs.VITE_ONE_SESSION_ID};authenticated=true; XSRF-TOKEN=${envs.VITE_XSRF_TOKEN}`,
         },
+        rewrite: (path: string) => path.replace(/^\/community\/api/, '/api'),
       }
     : {
         target: 'http://localhost:8090',
@@ -40,7 +41,7 @@ export default ({ mode }: { mode: string }) => {
 
   /* Replace "/" the name of your application (e.g : blog | mindmap | collaborativewall) */
   return defineConfig({
-    base: mode === "production" ? "./" : "",
+    base: mode === "production" ? "/community" : "",
     root: __dirname,
     cacheDir: "./node_modules/.vite/community",
 

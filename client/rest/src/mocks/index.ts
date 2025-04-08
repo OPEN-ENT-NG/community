@@ -1,0 +1,1 @@
+export * from "./search-community-response.mock";
