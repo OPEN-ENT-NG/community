@@ -6,7 +6,6 @@ import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { FastifyReply } from "fastify";
 import { getStaticAssetsPath } from "./config/helpers";
 
-// Todo : optimiser avec memory plutôt que createReadStream
 @Controller()
 export class AppController implements OnModuleInit {
   
