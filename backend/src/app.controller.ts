@@ -1,5 +1,5 @@
 import { join } from "path";
-import { createReadStream, readFileSync } from "fs";
+import { readFileSync } from "fs";
 import { Controller, Get, OnModuleInit, Res } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { ApiExcludeEndpoint } from "@nestjs/swagger";
