@@ -32,7 +32,7 @@ export default ({ mode }: { mode: string }) => {
         headers: {
           cookie: `oneSessionId=${envs.VITE_ONE_SESSION_ID};authenticated=true; XSRF-TOKEN=${envs.VITE_XSRF_TOKEN}`,
         },
-        rewrite: (path: string) => path.replace(/^\/community\/api/, '/api'),
+        //rewrite: (path: string) => path.replace(/^\/community\/api/, '/api'),
       }
     : {
         target: 'http://localhost:8090',

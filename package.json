@@ -11,7 +11,7 @@
     "prepare:backend": "cd backend && pnpm install",
     "prepare": "pnpm run prepare:client-rest && pnpm run prepare:frontend && pnpm run prepare:backend",
     "build:frontend": "cd frontend && pnpm run build",
-    "build:backend": "cd backend && pnpm run build",
+    "build:backend": "cd backend && pnpm run build && pnpm run prebuild",
     "build": "pnpm run build:frontend && pnpm run build:backend"
   }
 }

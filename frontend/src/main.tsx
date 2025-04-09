@@ -1,88 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom/client';
-import { SearchCommunityResponseDto, CommunityResponseDto } from "@edifice.io/community-client-rest";
+import React, { StrictMode } from "react";
 
+import { EdificeThemeProvider } from "@edifice.io/react";
+import { createRoot } from "react-dom/client";
 
-const App: React.FC = () => {
-  const [communities, setCommunities] = useState<CommunityResponseDto[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+import { RouterProvider } from "react-router-dom";
+import "./i18n";
+import { Providers, queryClient } from "./providers";
+import { router } from "./routes";
 
-  useEffect(() => {
-    const fetchCommunities = async () => {
-      try {
-        setLoading(true);
-        const response: SearchCommunityResponseDto = await (await fetch('/community/api/communities')).json();
-        console.log('API Response:', response);
-        setCommunities(response.communities || []);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching communities:', err);
-        setError(err instanceof Error ? err.message : 'Une erreur est survenue lors du chargement des communautés');
-      } finally {
-        setLoading(false);
-      }
-    };
+import "@edifice.io/bootstrap/dist/index.css";
 
-    fetchCommunities();
-  }, []);
+const rootElement = document.getElementById("root");
+const root = createRoot(rootElement!);
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <p>Chargement des communautés...</p>
-      </div>
-    );
-  }
+if (process.env.NODE_ENV !== "production") {
+  import("@axe-core/react").then((axe) => {
+    axe.default(React, root, 1000);
+  });
+}
 
-  if (error) {
-    return (
-      <div className="error-container">
-        <h2>Erreur</h2>
-        <p>{error}</p>
-        <button onClick={() => window.location.reload()}>Réessayer</button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="communities-container">
-      <h1>Liste des communautés</h1>
-      
-      {communities.length === 0 ? (
-        <p>Aucune communauté trouvée.</p>
-      ) : (
-        <ul className="communities-list">
-          {communities.map((community) => (
-            <li key={community.id} className="community-item">
-              <div className="community-card">
-                {community.image && (
-                  <img 
-                    src={community.image} 
-                    alt={`${community.title}`} 
-                    className="community-image" 
-                  />
-                )}
-                <div className="community-info">
-                  <h3>{community.title}</h3>
-                  <p>Type: {community.type}</p>
-                  <p>Créée le: {new Date(community.creationDate).toLocaleDateString()}</p>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-      
-      <div className="debug-info">
-        <p>Total: {communities.length} communautés</p>
-        <button onClick={() => console.log(communities)}>
-          Log data to console
-        </button>
-      </div>
-    </div>
-  );
-};  
-
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(<App />);
+root.render(
+  <StrictMode>
+    <Providers>
+      <EdificeThemeProvider>
+        <RouterProvider router={router(queryClient)} />
+      </EdificeThemeProvider>
+    </Providers>
+  </StrictMode>
+);
