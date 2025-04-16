@@ -21,3 +21,5 @@ temporal:
   namespace: 'default'
 log:
   level: 'debug'
+ent:
+  baseUrl: 'https://recette-ode2.opendigitaleducation.com'

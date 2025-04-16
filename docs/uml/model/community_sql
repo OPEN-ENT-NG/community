@@ -49,12 +49,12 @@ table(community) {
 
 table(users) {
   primary_key(id) BIGSERIAL
-  -- autres attributs utilisateur --
 }
 
 table(invitation) {
   primary_key(id) BIGSERIAL
   invitation_date TIMESTAMP WITH TIME ZONE NOT NULL
+  modification_date TIMESTAMP WITH TIME ZONE
   status invitation_status NOT NULL
   foreign_key(community_id) BIGINT NOT NULL
   foreign_key(user_id) BIGINT NOT NULL
@@ -85,13 +85,13 @@ table(announcement) {
   primary_key(id) BIGSERIAL
   content TEXT NOT NULL
   publication_date TIMESTAMP WITH TIME ZONE NOT NULL
+  modification_date TIMESTAMP WITH TIME ZONE
   foreign_key(author_id) BIGINT NOT NULL
   foreign_key(community_id) BIGINT NOT NULL
 }
 
 table(course) {
   primary_key(id) VARCHAR(255) NOT NULL
-  -- autres attributs du cours --
 }
 
 table(resource) {
