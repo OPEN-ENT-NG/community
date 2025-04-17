@@ -1,0 +1,77 @@
+import { join } from "path";
+import { readFileSync } from "fs";
+import {
+  Controller,
+  Get,
+  Inject,
+  OnModuleInit,
+  Req,
+  Res,
+} from "@nestjs/common";
+import { ApiExcludeEndpoint } from "@nestjs/swagger";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { getStaticAssetsPath } from "./utils/static-assets.utils";
+import {
+  FetchTranslationsResponseDTO,
+  I18nTranslationsFetchClient,
+} from "@edifice.io/edifice-ent-client";
+import { NATS_CLIENT } from "./nats";
+import { ClientProxy } from "@nestjs/microservices";
+
+/**
+ * Controller responsible for serving the frontend application
+ * Handles all routes that don't match API or static file patterns
+ */
+@Controller()
+export class FrontendController implements OnModuleInit {
+  private indexHtmlContent: string;
+  constructor(@Inject(NATS_CLIENT) private readonly natsClient: ClientProxy) {}
+  onModuleInit() {
+    // Read the frontend index file at startup and cache its content
+    const indexPath = join(getStaticAssetsPath(), "..", "index.html");
+    this.indexHtmlContent = readFileSync(indexPath, "utf8");
+  }
+
+  @Get("i18n")
+  @ApiExcludeEndpoint()
+  async translations(
+    @Req() request: FastifyRequest,
+  ): Promise<FetchTranslationsResponseDTO> {
+    // Create a new instance of the I18nTranslationsFetchClient
+    const client = new I18nTranslationsFetchClient(this.natsClient);
+
+    // Convert the request headers to a format suitable for the NATS client
+    const formattedHeaders: Record<string, Record<string, unknown>> = {};
+
+    // Transform the headers from a flat structure to a nested one
+    Object.entries(request.headers).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formattedHeaders[key] = { value };
+      }
+    });
+
+    const result = await client.request({
+      headers: formattedHeaders,
+    });
+    return result;
+  }
+
+  /**
+   * Root path handler
+   */
+  @Get("")
+  @ApiExcludeEndpoint()
+  serveRoot(@Res() res: FastifyReply): void {
+    res.type("text/html").send(this.indexHtmlContent);
+  }
+
+  /**
+   * Catch-all route handler for all other paths
+   * This single route will handle both single-level and nested paths
+   */
+  @Get("*")
+  @ApiExcludeEndpoint()
+  serveWildcard(@Res() res: FastifyReply): void {
+    res.type("text/html").send(this.indexHtmlContent);
+  }
+}

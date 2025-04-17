@@ -12,7 +12,8 @@ db:
     url: "postgresql://localhost:15432/ong?stringtype=unspecified"
     user: "web-education"
     password: "We_1234"
-    debug: true
+    debug: false
+    schema: "community"
 nats:
   url: 'nats://localhost:4222'
   debug: true
@@ -21,5 +22,6 @@ temporal:
   namespace: 'default'
 log:
   level: 'debug'
-ent:
-  baseUrl: 'https://recette-ode2.opendigitaleducation.com'
+swagger:
+  title: '@edifice.io/community-backend'
+  description: 'API description of community backend'

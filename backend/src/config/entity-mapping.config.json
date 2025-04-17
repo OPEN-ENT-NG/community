@@ -1,0 +1,13 @@
+{
+  "community": "community",
+  "invitation": "membership",
+  "membership": "membership",
+  "message": "message",
+  "announcement": "announcement",
+  "course": "wiki",
+  "resource": "resource",
+  "folder": "folder",
+  "topic": "topic",
+  "topic-message": "topic",
+  "users": "common"
+}
