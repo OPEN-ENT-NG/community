@@ -11,9 +11,6 @@ importers:
       '@edifice.io/community-client-rest':
         specifier: file:../client/rest
         version: file:../client/rest(@fastify/static@8.1.1)(@nestjs/common@11.0.20(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.20(@nestjs/common@11.0.20(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.0.20)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)
-      '@edifice.io/edifice-ent-client':
-        specifier: latest
-        version: 1.0.0-develop
       '@fastify/middie':
         specifier: ^9.0.3
         version: 9.0.3
@@ -427,11 +424,11 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
 
-  '@edifice.io/bootstrap@2.2.2-develop-pedago.20250416164543':
-    resolution: {integrity: sha512-2luVbCIyD9pFLUNj8027329SQc02Nt4uXtfEa7xbgyyfLJVpmZ7VsGCqVGmOuAREHTUxc/dcu/NVa6GXNjCRNg==}
+  '@edifice.io/bootstrap@2.2.2-develop-pedago.20250417154221':
+    resolution: {integrity: sha512-02Y9FzHz4b+Sygz8sDbsXR1qXu+Y9FQTJ79hQYRZpHV8pigGSF6K2A/bUNQ7/0avz4DDO3GqQvMhtpvTVvx46Q==}
 
-  '@edifice.io/client@2.2.2-develop-pedago.20250416164543':
-    resolution: {integrity: sha512-eNvxHFYZ6hUGZtbtbJmq/DCrCnxyZymySEN/+KQjxO5gPirh6civtdX6OhDCDDTxuqZ0psys0qqsxDL0Kve4Mw==}
+  '@edifice.io/client@2.2.2-develop-pedago.20250417154221':
+    resolution: {integrity: sha512-Jgr7V+2DcJtS5pF4VSkVFN33N01hlJ3zAk9/xEJuRy1Ga0ngqAtmATNaduD4ZytS61QvLwLpPs+broSArIHSLg==}
 
   '@edifice.io/community-client-rest@file:../client/rest':
     resolution: {directory: ../client/rest, type: directory}
@@ -441,12 +438,8 @@ packages:
     resolution: {directory: ../frontend, type: directory}
     engines: {node: '20'}
 
-  '@edifice.io/edifice-ent-client@1.0.0-develop':
-    resolution: {integrity: sha512-SXxKX77XYKvxqogPJVcD+XrMBcjg+cCdzUgsSa17EMUQyZpPTh1ZySLJsFVfwmzVNgdwl3hj0esxYmDaZnNk8w==}
-    engines: {node: '22'}
-
-  '@edifice.io/react@2.2.2-develop-pedago.20250416164543':
-    resolution: {integrity: sha512-L1tgxRcxXdCnOcFPQ4MOnX7xUvJQSyPSB87VZbB3VqufLTltCyE9Rh4AJ4tS7+3KzTGmYsZ4/LRsf667nA6Byw==}
+  '@edifice.io/react@2.2.2-develop-pedago.20250417154221':
+    resolution: {integrity: sha512-rEaJq9RTKmJvMInu1nZ+JJ8qhHIUnVSZE1CVOts0l9fEhXeP+e0dL450a72Uk85PxwiB2BLyhB0C5ZPIEZ8jEg==}
     peerDependencies:
       '@react-spring/web': ^9.7.5
       '@tanstack/react-query': 5.62.7
@@ -455,11 +448,11 @@ packages:
       react-hook-form: ^7.53.0
       react-i18next: ^14.1.0
 
-  '@edifice.io/tiptap-extensions@2.2.2-develop-pedago.20250416164543':
-    resolution: {integrity: sha512-Y36xhixhHTiP5hLNeRzcYiMFQk/66KDUL4yOseIALLwohvfMDnbQtU5kvDg3QEdQXoq3YUGSbIm5+p8eo8k26w==}
+  '@edifice.io/tiptap-extensions@2.2.2-develop-pedago.20250417154221':
+    resolution: {integrity: sha512-njQOAWulATTE/GUDrbn78OAFVCjjEQVbLN7sqviYgEWXa0hmFeeCcD/5nthNEW7eIS/R4mKLqCRNO1Ma//OlcQ==}
 
-  '@edifice.io/utilities@2.2.2-develop-pedago.20250416164543':
-    resolution: {integrity: sha512-pafNnaHUMgJvBRGRV2jNzqI5Jr/A49HwWAutVsModgUtsLCbiTL2WMAkClzMGPslJelEq3jH+Zcu4Fx8iEGl1Q==}
+  '@edifice.io/utilities@2.2.2-develop-pedago.20250417154221':
+    resolution: {integrity: sha512-b55W6LkMkpDwMnLib3ROgY4FsSX1+9qY4gIOMdJjshCl798wtb2VXq7uTuTgObMDvFv3muV89YQuVUneARQ16g==}
 
   '@electron/get@2.0.3':
     resolution: {integrity: sha512-Qkzpg2s9GnVV2I2BjRksUi43U5e6+zaQMcjoJy0C+C5oxaKl+fmckGDQFtRpZpZV0NQekuZZ+tGz7EA9TVnQtQ==}
@@ -725,8 +718,8 @@ packages:
     resolution: {integrity: sha512-nnR5nmL6lxF8YBqb6gWvEgLdLh/Fn+kvAdX5hUOnt48sNSb0riz/93ASd2E5gvanPA41X6Yp25bIfGRp1SMb2g==}
     engines: {node: '>=12.10.0'}
 
-  '@grpc/proto-loader@0.7.13':
-    resolution: {integrity: sha512-AiXO/bfe9bmxBjxxtYxFAXGZvMaN5s8kO+jBHAJCON8rJoB5YS/D6X7ZNc6XQkuHNmyl4CYaMI1fJ/Gn27RGGw==}
+  '@grpc/proto-loader@0.7.14':
+    resolution: {integrity: sha512-oS0FyK8eGNBJC6aB/qsS4LOxCYQlBniNzp6W8IdjlRVRGs0FOK9dS84OV+kXGaZf8Ozeos8fbUMJUGGzSpOCzQ==}
     engines: {node: '>=6'}
     hasBin: true
 
@@ -3661,8 +3654,8 @@ packages:
     resolution: {integrity: sha512-2Zks0hf1VLFYI1kbh0I5jP3KHHyCHpkfyHBzsSXRFgl/Bg9mWYfMW8oD+PdMPlEwy5HNsR9JutYy6pMeOh61nw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  exsolve@1.0.4:
-    resolution: {integrity: sha512-xsZH6PXaER4XoV+NiT7JHp1bJodJVT+cxeSH1G0f0tlT0lJqYuHUP3bUx2HtfTDvOagMINYp8rsqusxud3RXhw==}
+  exsolve@1.0.5:
+    resolution: {integrity: sha512-pz5dvkYYKQ1AHVrgOzBKWeP4u4FRb3a6DNK2ucr0OoNwYIU4QWsJ+NM36LLzORT+z845MzKHHhpXiUF5nvQoJg==}
 
   ext-list@2.2.2:
     resolution: {integrity: sha512-u+SQgsubraE6zItfVA0tBuCBhfU9ogSRnsvygI7wht9TS510oLkBRXBsqopeUG/GBOIQyKZO9wjTqIu/sf5zFA==}
@@ -4674,6 +4667,9 @@ packages:
   long@5.3.1:
     resolution: {integrity: sha512-ka87Jz3gcx/I7Hal94xaN2tZEOPoUOEVftkQqZx2EeQRN7LGdfLlI3FvZ+7WDplm+vK2Urx9ULrvSowtdCieng==}
 
+  long@5.3.2:
+    resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
+
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
@@ -5349,8 +5345,8 @@ packages:
   prosemirror-state@1.4.3:
     resolution: {integrity: sha512-goFKORVbvPuAQaXhpbemJFRKJ2aixr+AZMGiquiqKxaucC6hlpHNZHWgz5R7dS4roHiwq9vDctE//CZ++o0W1Q==}
 
-  prosemirror-tables@1.7.0:
-    resolution: {integrity: sha512-dc9+u4aqT+biw3J/v7p5LyH8uqqXSAjdszfLtrCnDbpMr1F+Gsjtkdiij/1p8qM1gBOCfQeiahhk2pOO9Aa8xA==}
+  prosemirror-tables@1.7.1:
+    resolution: {integrity: sha512-eRQ97Bf+i9Eby99QbyAiyov43iOKgWa7QCGly+lrDt7efZ1v8NWolhXiB43hSDGIXT1UXgbs4KJN3a06FGpr1Q==}
 
   prosemirror-trailing-node@3.0.0:
     resolution: {integrity: sha512-xiun5/3q0w5eRnGYfNlW1uU9W6x5MoFKWwq/0TIRgt09lv7Hcser2QYV8t4muXbEr+Fwo0geYn79Xs4GKywrRQ==}
@@ -6789,7 +6785,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       tslib: 2.8.1
 
-  '@dnd-kit/modifiers@7.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@18.3.1)':
+  '@dnd-kit/modifiers@7.0.0(@dnd-kit/core@6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@dnd-kit/core': 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dnd-kit/utilities': 3.2.2(react@18.3.1)
@@ -6808,14 +6804,14 @@ snapshots:
       react: 18.3.1
       tslib: 2.8.1
 
-  '@edifice.io/bootstrap@2.2.2-develop-pedago.20250416164543':
+  '@edifice.io/bootstrap@2.2.2-develop-pedago.20250417154221':
     dependencies:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.2(@popperjs/core@2.11.8)
 
-  '@edifice.io/client@2.2.2-develop-pedago.20250416164543':
+  '@edifice.io/client@2.2.2-develop-pedago.20250417154221':
     dependencies:
-      '@edifice.io/utilities': 2.2.2-develop-pedago.20250416164543
+      '@edifice.io/utilities': 2.2.2-develop-pedago.20250417154221
       axios: 1.8.4
       core-js: 3.41.0
     transitivePeerDependencies:
@@ -6834,10 +6830,10 @@ snapshots:
 
   '@edifice.io/community-frontend@file:../frontend(2tk5eloc5cixxsznbeqlp4nfca)':
     dependencies:
-      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250416164543
-      '@edifice.io/client': 2.2.2-develop-pedago.20250416164543
+      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250417154221
+      '@edifice.io/client': 2.2.2-develop-pedago.20250417154221
       '@edifice.io/community-client-rest': file:../client/rest(@fastify/static@8.1.1)(@nestjs/common@11.0.20(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.20(@nestjs/common@11.0.20(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.0.20)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)
-      '@edifice.io/react': 2.2.2-develop-pedago.20250416164543(rbzfk2qnmlpcmsi7y7u3k62uhe)
+      '@edifice.io/react': 2.2.2-develop-pedago.20250417154221(rbzfk2qnmlpcmsi7y7u3k62uhe)
       '@react-spring/web': 9.7.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query': 5.62.7(react@18.3.1)
       '@uidotdev/usehooks': 2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -6892,16 +6888,14 @@ snapshots:
       - terser
       - typescript
 
-  '@edifice.io/edifice-ent-client@1.0.0-develop': {}
-
-  '@edifice.io/react@2.2.2-develop-pedago.20250416164543(rbzfk2qnmlpcmsi7y7u3k62uhe)':
+  '@edifice.io/react@2.2.2-develop-pedago.20250417154221(rbzfk2qnmlpcmsi7y7u3k62uhe)':
     dependencies:
       '@dnd-kit/core': 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dnd-kit/sortable': 8.0.0(@dnd-kit/core@6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@dnd-kit/utilities': 3.2.2(react@18.3.1)
-      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250416164543
-      '@edifice.io/tiptap-extensions': 2.2.2-develop-pedago.20250416164543(@types/node@22.14.0)(rollup@4.40.0)(terser@5.39.0)(typescript@5.8.3)
-      '@edifice.io/utilities': 2.2.2-develop-pedago.20250416164543
+      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250417154221
+      '@edifice.io/tiptap-extensions': 2.2.2-develop-pedago.20250417154221(@types/node@22.14.0)(rollup@4.40.0)(terser@5.39.0)(typescript@5.8.3)
+      '@edifice.io/utilities': 2.2.2-develop-pedago.20250417154221
       '@floating-ui/react': 0.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@pixi/mixin-get-child-by-name': 7.4.2(@pixi/display@7.4.2(@pixi/core@7.4.2))
       '@pixi/react': 7.1.2(exznktwpb7mh7u2gng7ha2hoxe)
@@ -6981,14 +6975,14 @@ snapshots:
       - terser
       - typescript
 
-  '@edifice.io/react@2.2.2-develop-pedago.20250416164543(tkmu4q3ipy5xcootz7ii4eizwy)':
+  '@edifice.io/react@2.2.2-develop-pedago.20250417154221(tkmu4q3ipy5xcootz7ii4eizwy)':
     dependencies:
       '@dnd-kit/core': 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dnd-kit/sortable': 8.0.0(@dnd-kit/core@6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@dnd-kit/utilities': 3.2.2(react@18.3.1)
-      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250416164543
-      '@edifice.io/tiptap-extensions': 2.2.2-develop-pedago.20250416164543(@types/node@22.14.0)(rollup@4.40.0)(terser@5.39.0)(typescript@5.8.3)
-      '@edifice.io/utilities': 2.2.2-develop-pedago.20250416164543
+      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250417154221
+      '@edifice.io/tiptap-extensions': 2.2.2-develop-pedago.20250417154221(@types/node@22.14.0)(rollup@4.40.0)(terser@5.39.0)(typescript@5.8.3)
+      '@edifice.io/utilities': 2.2.2-develop-pedago.20250417154221
       '@floating-ui/react': 0.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@pixi/mixin-get-child-by-name': 7.4.2(@pixi/display@7.4.2(@pixi/core@7.4.2))
       '@pixi/react': 7.1.2(exznktwpb7mh7u2gng7ha2hoxe)
@@ -7068,9 +7062,9 @@ snapshots:
       - terser
       - typescript
 
-  '@edifice.io/tiptap-extensions@2.2.2-develop-pedago.20250416164543(@types/node@22.14.0)(rollup@4.40.0)(terser@5.39.0)(typescript@5.8.3)':
+  '@edifice.io/tiptap-extensions@2.2.2-develop-pedago.20250417154221(@types/node@22.14.0)(rollup@4.40.0)(terser@5.39.0)(typescript@5.8.3)':
     dependencies:
-      '@edifice.io/utilities': 2.2.2-develop-pedago.20250416164543
+      '@edifice.io/utilities': 2.2.2-develop-pedago.20250417154221
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
       '@tiptap/extension-bold': 2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))
       '@tiptap/extension-document': 2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))
@@ -7104,7 +7098,7 @@ snapshots:
       - terser
       - typescript
 
-  '@edifice.io/utilities@2.2.2-develop-pedago.20250416164543': {}
+  '@edifice.io/utilities@2.2.2-develop-pedago.20250417154221': {}
 
   '@electron/get@2.0.3':
     dependencies:
@@ -7337,14 +7331,14 @@ snapshots:
 
   '@grpc/grpc-js@1.13.2':
     dependencies:
-      '@grpc/proto-loader': 0.7.13
+      '@grpc/proto-loader': 0.7.14
       '@js-sdsl/ordered-map': 4.4.2
     optional: true
 
-  '@grpc/proto-loader@0.7.13':
+  '@grpc/proto-loader@0.7.14':
     dependencies:
       lodash.camelcase: 4.3.0
-      long: 5.3.1
+      long: 5.3.2
       protobufjs: 7.5.0
       yargs: 17.7.2
     optional: true
@@ -9124,7 +9118,7 @@ snapshots:
       prosemirror-schema-basic: 1.2.4
       prosemirror-schema-list: 1.5.1
       prosemirror-state: 1.4.3
-      prosemirror-tables: 1.7.0
+      prosemirror-tables: 1.7.1
       prosemirror-trailing-node: 3.0.0(prosemirror-model@1.25.0)(prosemirror-state@1.4.3)(prosemirror-view@1.39.1)
       prosemirror-transform: 1.10.3
       prosemirror-view: 1.39.1
@@ -10666,7 +10660,7 @@ snapshots:
       jest-message-util: 29.7.0
       jest-util: 29.7.0
 
-  exsolve@1.0.4: {}
+  exsolve@1.0.5: {}
 
   ext-list@2.2.2:
     dependencies:
@@ -11931,6 +11925,9 @@ snapshots:
 
   long@5.3.1: {}
 
+  long@5.3.2:
+    optional: true
+
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
@@ -12201,10 +12198,10 @@ snapshots:
   ode-explorer@2.2.0-develop-pedago.202504101606(vewuympxjrwy7orjw7gf4rroce):
     dependencies:
       '@dnd-kit/core': 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@dnd-kit/modifiers': 7.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@18.3.1)
-      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250416164543
-      '@edifice.io/client': 2.2.2-develop-pedago.20250416164543
-      '@edifice.io/react': 2.2.2-develop-pedago.20250416164543(tkmu4q3ipy5xcootz7ii4eizwy)
+      '@dnd-kit/modifiers': 7.0.0(@dnd-kit/core@6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+      '@edifice.io/bootstrap': 2.2.2-develop-pedago.20250417154221
+      '@edifice.io/client': 2.2.2-develop-pedago.20250417154221
+      '@edifice.io/react': 2.2.2-develop-pedago.20250417154221(tkmu4q3ipy5xcootz7ii4eizwy)
       '@react-spring/web': 9.7.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query': 5.62.7(react@18.3.1)
       clsx: 2.1.1
@@ -12520,7 +12517,7 @@ snapshots:
   pkg-types@2.1.0:
     dependencies:
       confbox: 0.2.2
-      exsolve: 1.0.4
+      exsolve: 1.0.5
       pathe: 2.0.3
 
   pluralize@8.0.0: {}
@@ -12673,7 +12670,7 @@ snapshots:
       prosemirror-transform: 1.10.3
       prosemirror-view: 1.39.1
 
-  prosemirror-tables@1.7.0:
+  prosemirror-tables@1.7.1:
     dependencies:
       prosemirror-keymap: 1.2.2
       prosemirror-model: 1.25.0
@@ -12727,7 +12724,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/node': 22.14.1
-      long: 5.3.1
+      long: 5.3.2
     optional: true
 
   proxy-from-env@1.1.0: {}

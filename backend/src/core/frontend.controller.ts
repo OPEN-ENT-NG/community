@@ -12,11 +12,9 @@ import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { getStaticAssetsPath } from "./utils/static-assets.utils";
 import {
-  FetchTranslationsResponseDTO,
-  I18nTranslationsFetchClient,
+  EntNatsServiceClient,
+  FetchTranslationsResponseDTO
 } from "@edifice.io/edifice-ent-client";
-import { NATS_CLIENT } from "./nats";
-import { ClientProxy } from "@nestjs/microservices";
 
 /**
  * Controller responsible for serving the frontend application
@@ -25,7 +23,7 @@ import { ClientProxy } from "@nestjs/microservices";
 @Controller()
 export class FrontendController implements OnModuleInit {
   private indexHtmlContent: string;
-  constructor(@Inject(NATS_CLIENT) private readonly natsClient: ClientProxy) {}
+  constructor(@Inject() private readonly natsClient: EntNatsServiceClient) {}
   onModuleInit() {
     // Read the frontend index file at startup and cache its content
     const indexPath = join(getStaticAssetsPath(), "..", "index.html");
@@ -37,9 +35,6 @@ export class FrontendController implements OnModuleInit {
   async translations(
     @Req() request: FastifyRequest,
   ): Promise<FetchTranslationsResponseDTO> {
-    // Create a new instance of the I18nTranslationsFetchClient
-    const client = new I18nTranslationsFetchClient(this.natsClient);
-
     // Convert the request headers to a format suitable for the NATS client
     const formattedHeaders: Record<string, Record<string, unknown>> = {};
 
@@ -50,7 +45,7 @@ export class FrontendController implements OnModuleInit {
       }
     });
 
-    const result = await client.request({
+    const result = await this.natsClient.i18nTranslationsFetch({
       headers: formattedHeaders,
     });
     return result;
