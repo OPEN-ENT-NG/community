@@ -36,12 +36,12 @@ export class FrontendController implements OnModuleInit {
     @Req() request: FastifyRequest,
   ): Promise<FetchTranslationsResponseDTO> {
     // Convert the request headers to a format suitable for the NATS client
-    const formattedHeaders: Record<string, Record<string, unknown>> = {};
+    const formattedHeaders: Record<string, string> = {};
 
     // Transform the headers from a flat structure to a nested one
     Object.entries(request.headers).forEach(([key, value]) => {
       if (value !== undefined) {
-        formattedHeaders[key] = { value };
+        formattedHeaders[key] = <string>value;
       }
     });
 
