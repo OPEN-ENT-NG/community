@@ -7,8 +7,8 @@ export function setSwaggerConfig(
   configService: ConfigService,
 ) {
   const config = new DocumentBuilder()
-    .setTitle("@edifice.io/community-backend")
-    .setDescription(`API description of community backend`)
+    .setTitle(<string>configService.get("swagger.title"))
+    .setDescription(<string>configService.get("swagger.description"))
     .setVersion(<string>configService.get("version"))
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);

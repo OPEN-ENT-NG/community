@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { LoggerModule } from "src/logger/logger.module";
+import { LoggerModule } from "@core/index";
 import { WikiService } from "./wiki.service";
 import { WikiController } from "./wiki.controller";
 

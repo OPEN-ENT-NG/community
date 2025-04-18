@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { CommunityService } from "./community.service";
 import { CommunityController as CommunityController } from "./community.controller";
-import { LoggerModule } from "src/logger/logger.module";
+import { LoggerModule } from "@core/index";
 
 @Module({
   imports: [LoggerModule /*MikroOrmModule.forFeature([])*/],

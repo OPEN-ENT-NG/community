@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { ENTUserSession } from "src/common/session.types";
+import { ENTUserSession } from "@core/session/session.types";
 
 export const Session = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): ENTUserSession => {

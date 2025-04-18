@@ -3,10 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { IncomingMessage } from "http";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
-import {
-  ENTUserBookPersonReponse,
-  ENTUserSession,
-} from "src/common/session.types";
+import { ENTUserBookPersonReponse, ENTUserSession } from "./session.types";
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {

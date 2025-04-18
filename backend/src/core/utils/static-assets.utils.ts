@@ -20,7 +20,6 @@ export function getStaticAssetsPath(): string {
 
   // Define path to public directory (for production)
   const productionAssetsPath = join(process.cwd(), "public");
-
   // Return appropriate path based on environment
   return isDevelopmentMode ? developmentAssetsPath : productionAssetsPath;
 }

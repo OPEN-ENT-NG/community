@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { LoggerModule } from "src/logger/logger.module";
+import { LoggerModule } from "@core/index";
 import { AnnouncementService } from "./announcement.service";
 import { AnnouncementController } from "./announcement.controller";
 
