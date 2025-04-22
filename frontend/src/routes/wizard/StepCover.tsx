@@ -1,7 +1,7 @@
 import { Heading } from "@edifice.io/react";
 
-export const StepCustom = () => {
+export const StepCover = () => {
   return <Heading>Step Custom</Heading>;
 };
 
-export default StepCustom;
+export default StepCover;

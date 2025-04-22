@@ -1,7 +1,7 @@
 import { Heading } from "@edifice.io/react";
 
-export const StepForm = () => {
+export const StepParams = () => {
   return <Heading>Step Form</Heading>;
 };
 
-export default StepForm;
+export default StepParams;

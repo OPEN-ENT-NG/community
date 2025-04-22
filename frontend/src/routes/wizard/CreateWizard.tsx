@@ -1,13 +1,18 @@
 import { Routes, Route } from "react-router-dom";
 import { WizardLayout } from "./WizardLayout";
 import { StepType } from "./StepType";
-import { StepForm } from "./StepForm";
-import { StepCustom } from "./StepCustom";
+import StepParams from "./StepParams";
+import StepCover from "./StepCover";
 import { WizardContext } from "./WizardContext";
 import { useMemo } from "react";
 import useWizard from "~/hooks/useWizard";
 
-const wizardSteps = ["type", "form", "custom", "members"];
+const wizardSteps = [
+  "step-type",
+  "step-params",
+  "step-cover",
+  "step-invitations",
+];
 
 function CreateWizard() {
   const { wizardData, updateWizardData, resetWizardData } = useWizard();
@@ -24,7 +29,7 @@ function CreateWizard() {
     <WizardContext.Provider value={value}>
       <Routes>
         <Route
-          path="type"
+          path="step-type"
           element={
             <WizardLayout steps={wizardSteps}>
               <StepType />
@@ -32,22 +37,22 @@ function CreateWizard() {
           }
         />
         <Route
-          path="form"
+          path="step-params"
           element={
             <WizardLayout steps={wizardSteps}>
-              <StepForm />
+              <StepParams />
             </WizardLayout>
           }
         />
         <Route
-          path="custom"
+          path="step-cover"
           element={
             <WizardLayout steps={wizardSteps}>
-              <StepCustom />
+              <StepCover />
             </WizardLayout>
           }
         />
-        <Route path="members" element={<p>members</p>} />
+        <Route path="step-invitations" element={<p>members</p>} />
       </Routes>
     </WizardContext.Provider>
   );

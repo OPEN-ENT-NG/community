@@ -15,7 +15,7 @@ export const WizardLayout = ({
   return (
     <Grid className="flex-grow-1 my-64">
       <Grid.Col sm="7" md="7" lg="7" xl="7">
-        <div className="d-flex h-100 flex-column">
+        <Flex direction="column" className="h-100">
           {children}
           <Flex justify="between" className="mt-auto">
             <Button
@@ -35,7 +35,7 @@ export const WizardLayout = ({
               Suivant
             </Button>
           </Flex>
-        </div>
+        </Flex>
       </Grid.Col>
       <Grid.Col sm="5" md="5" lg="5" xl="5" className="rounded-5">
         {/* Changer l'image lorsqu'on aura l'image d'illu /> */}
