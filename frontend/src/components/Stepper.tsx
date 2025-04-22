@@ -24,15 +24,10 @@ function Step({
 
 export default function Stepper({ steps, current = steps[0] }: { steps: string[], current: string | undefined}) {
   return (
-    <div className="p-8">
-      <Flex gap="8">
-        {steps.map(label => (
-          <Step
-            key={label}
-            active={label === current}
-          />
-        ))}
-      </Flex>
-    </div>
+    <Flex gap="8">
+      {steps.map((label) => (
+        <Step key={label} active={label === current} />
+      ))}
+    </Flex>
   );
 }
