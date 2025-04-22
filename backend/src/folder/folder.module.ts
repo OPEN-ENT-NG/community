@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { LoggerModule } from "src/logger/logger.module";
+import { LoggerModule } from "@core/index";
 import { FolderService } from "./folder.service";
 import { FolderController } from "./folder.controller";
 
