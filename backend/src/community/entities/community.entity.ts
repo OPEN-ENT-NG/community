@@ -1,19 +1,72 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import {
+  Collection,
+  Entity,
+  Enum,
+  ManyToMany,
+  ManyToOne,
+  type Opt,
+  PrimaryKey,
+  Property,
+} from "@mikro-orm/core";
+import { Course } from "@app/wiki/entities/course.entity";
+import { Users } from "@app/common/entities/users.entity";
 
-@Entity({ tableName: "community", schema: "community" })
+@Entity({ schema: "community" })
 export class Community {
   @PrimaryKey()
-  id!: number; // Auto-incremented primary key
+  id!: bigint;
 
-  @Property({ length: 100 })
-  title!: string; // String with max length of 100
+  @Property({ nullable: true })
+  image?: string;
 
-  @Property({ length: 1000 })
-  description!: string; // String with max length of 1000
+  @Property()
+  title!: string;
 
-  @Property({ default: "now()" })
-  createdAt: Date = new Date(); // Automatically set the creation date
+  @Property()
+  creationDate!: Date;
 
-  @Property({ onUpdate: () => new Date(), nullable: true })
-  updatedAt?: Date; // Automatically update on changes
+  @Property({ nullable: true })
+  updateDate?: Date;
+
+  @Enum({ items: () => CommunityType })
+  type!: CommunityType;
+
+  @Property({ nullable: true })
+  schoolYearStart?: number;
+
+  @Property({ nullable: true })
+  schoolYearEnd?: number;
+
+  @Property({ type: "text", nullable: true })
+  welcomeNote?: string;
+
+  @Property({ type: "boolean" })
+  discussionEnabled: boolean & Opt = true;
+
+  @Property({ nullable: true })
+  archivedDate?: Date;
+
+  @Property({ length: 64, nullable: true })
+  secretCode?: string;
+
+  @ManyToOne({ entity: () => Users })
+  creator!: Users;
+
+  @ManyToOne({ entity: () => Users, nullable: true })
+  modifier?: Users;
+
+  @ManyToOne({ entity: () => Users, nullable: true })
+  archiver?: Users;
+
+  @ManyToMany({
+    entity: () => Course,
+    joinColumn: "community_id",
+    inverseJoinColumn: "course_id",
+  })
+  course = new Collection<Course>(this);
+}
+
+export enum CommunityType {
+  CLASS = "CLASS",
+  FREE = "FREE",
 }

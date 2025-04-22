@@ -2,7 +2,7 @@ import { Injectable, Scope, Inject } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
 import pino, { ChildLoggerOptions } from "pino";
-import { ENTUserSession } from "../common/session.types";
+import { ENTUserSession } from "../session/session.types";
 
 @Injectable({ scope: Scope.REQUEST }) // Make the logger request-scoped
 export class RequestLogger {
