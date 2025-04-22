@@ -2,6 +2,7 @@ import { Button, Flex, Grid, Image } from "@edifice.io/react";
 import imageLayout from "../../assets/images/imageLayout.png";
 import { IconRafterLeft, IconRafterRight } from "@edifice.io/react/icons";
 import useStepNavigation from "~/hooks/useStepNavigations";
+import Stepper from "~/components/Stepper";
 
 export const WizardLayout = ({
   children,
@@ -16,6 +17,7 @@ export const WizardLayout = ({
     <Grid className="flex-grow-1 my-64">
       <Grid.Col sm="7" md="7" lg="7" xl="7">
         <Flex direction="column" className="h-100">
+          <Stepper steps={steps} current={currentStep} />
           {children}
           <Flex justify="between" className="mt-auto">
             <Button
