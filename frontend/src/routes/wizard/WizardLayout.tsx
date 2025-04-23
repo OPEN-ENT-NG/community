@@ -15,9 +15,9 @@ export const WizardLayout = ({
 
   return (
     <Grid className="flex-grow-1 my-64">
-      <Grid.Col sm="7" md="7" lg="7" xl="7">
+      <Grid.Col sm="7" md="7" lg="7" xl="7" className="px-32">
         <Flex direction="column" className="h-100">
-          <Stepper steps={steps} current={currentStep} />
+          <Stepper steps={steps} current={currentStep} className="mb-48" />
           {children}
           <Flex justify="between" className="mt-auto">
             <Button
