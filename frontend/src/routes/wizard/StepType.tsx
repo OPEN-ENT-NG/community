@@ -1,9 +1,14 @@
 import { Heading } from "@edifice.io/react";
-import { useState } from "react";
 import RadioCard from "~/components/RadioCard";
+import useWizard from "~/hooks/useWizard";
 
 export const StepType = () => {
-  const [selectedType, setSelectedType] = useState("classe");
+  const { wizardData, updateWizardData } = useWizard();
+
+  const setSelectedType = (type: string) => {
+    const updatedData = { ...wizardData, type };
+    updateWizardData(updatedData);
+  };
 
   return (
     <>
@@ -16,7 +21,7 @@ export const StepType = () => {
         label="Pour une classe"
         value="classe"
         description="Recréez votre classe pour diffuser facilement des documents et ressources aux élèves, leur communiquer des informations essentielles, etc."
-        selectedValue={selectedType}
+        selectedValue={wizardData.type}
         onChange={setSelectedType}
       />
       <RadioCard
@@ -24,7 +29,7 @@ export const StepType = () => {
         label="Pour une thématique"
         value="theme"
         description="Créez une communauté pour le club de lecture, les éco-délégués, les équipes éducatives, l'association sportive, etc."
-        selectedValue={selectedType}
+        selectedValue={wizardData.type}
         onChange={setSelectedType}
       />
     </>

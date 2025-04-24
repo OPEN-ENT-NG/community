@@ -8,7 +8,7 @@ export const WizardLayout = ({
   children,
   steps,
 }: {
-  children: any;
+  children: React.ReactElement;
   steps: string[];
 }) => {
   const { currentStep, nextStep, backStep } = useStepNavigation(steps);
