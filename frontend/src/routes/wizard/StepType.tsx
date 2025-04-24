@@ -1,13 +1,11 @@
 import { Heading } from "@edifice.io/react";
 import RadioCard from "~/components/RadioCard";
-import useWizard from "~/hooks/useWizard";
+import { useWizardContext } from "./WizardContext";
 
 export const StepType = () => {
-  const { wizardData, updateWizardData } = useWizard();
-
+  const { wizardData, updateWizardData } = useWizardContext();
   const setSelectedType = (type: string) => {
-    const updatedData = { ...wizardData, type };
-    updateWizardData(updatedData);
+    updateWizardData({ type });
   };
 
   return (
