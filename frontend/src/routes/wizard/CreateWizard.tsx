@@ -6,6 +6,7 @@ import StepCover from "./StepCover";
 import { WizardContext } from "./WizardContext";
 import { useMemo } from "react";
 import useWizard from "~/hooks/useWizard";
+import SideImage from "./SideImage";
 
 const wizardSteps = [
   "step-type",
@@ -22,7 +23,7 @@ function CreateWizard() {
       updateWizardData,
       resetWizardData,
     }),
-    [wizardData, updateWizardData, resetWizardData]
+    [wizardData, updateWizardData, resetWizardData],
   );
 
   return (
@@ -31,7 +32,7 @@ function CreateWizard() {
         <Route
           path="step-type"
           element={
-            <WizardLayout steps={wizardSteps}>
+            <WizardLayout steps={wizardSteps} sideElement={<SideImage />}>
               <StepType />
             </WizardLayout>
           }
@@ -39,7 +40,7 @@ function CreateWizard() {
         <Route
           path="step-params"
           element={
-            <WizardLayout steps={wizardSteps}>
+            <WizardLayout steps={wizardSteps} sideElement={<SideImage />}>
               <StepParams />
             </WizardLayout>
           }
@@ -47,7 +48,7 @@ function CreateWizard() {
         <Route
           path="step-cover"
           element={
-            <WizardLayout steps={wizardSteps}>
+            <WizardLayout steps={wizardSteps} sideElement={<SideImage />}>
               <StepCover />
             </WizardLayout>
           }
