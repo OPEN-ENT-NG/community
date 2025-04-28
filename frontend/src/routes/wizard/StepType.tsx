@@ -1,12 +1,14 @@
-import { Heading } from "@edifice.io/react";
+import { Heading, useBreakpoint } from "@edifice.io/react";
 import RadioCard from "~/components/RadioCard";
 import { useWizardContext } from "./WizardContext";
+import SideImage from "./SideImage";
 
 export const StepType = () => {
   const { wizardData, updateWizardData } = useWizardContext();
   const setSelectedType = (type: string) => {
     updateWizardData({ type });
   };
+  const { lg } = useBreakpoint();
 
   return (
     <>
@@ -14,6 +16,7 @@ export const StepType = () => {
       <p className="text-gray-700 mb-48">
         Quel type de communauté souhaitez-vous créer ?
       </p>
+      {!lg && <SideImage />}
       <RadioCard
         className="mb-24"
         label="Pour une classe"
