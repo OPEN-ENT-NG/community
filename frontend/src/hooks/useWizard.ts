@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { WIZARD_STORAGE_KEY } from "~/config/constants";
-
-export interface WizardData {
-  type: string;
-  //Ajouter les champs nécessaires à save dans le localStorage
-}
+import { WizardData } from "~/models/community";
 
 export interface useWizardProps {
   wizardData: WizardData;
@@ -13,7 +9,15 @@ export interface useWizardProps {
 }
 
 const defaultData: WizardData = {
-  type: "classe",
+  communityType: {
+    type: "classe",
+  },
+  communityParams: {
+    title: "",
+    note: "",
+    startYear: "",
+    endYear: "",
+  },
 };
 
 const useWizard = () => {
@@ -40,6 +44,7 @@ const useWizard = () => {
 
   return {
     wizardData,
+    setWizardData,
     updateWizardData,
     resetWizardData,
   };

@@ -2,11 +2,12 @@ import { Heading, useBreakpoint } from "@edifice.io/react";
 import RadioCard from "~/components/RadioCard";
 import { useWizardContext } from "./WizardContext";
 import SideImage from "./SideImage";
+import ButtonFooter from "./ButtonFooter";
 
 export const StepType = () => {
   const { wizardData, updateWizardData } = useWizardContext();
   const setSelectedType = (type: string) => {
-    updateWizardData({ type });
+    updateWizardData({ communityType: { type } });
   };
   const { lg } = useBreakpoint();
 
@@ -22,7 +23,7 @@ export const StepType = () => {
         label="Pour une classe"
         value="classe"
         description="Recréez votre classe pour diffuser facilement des documents et ressources aux élèves, leur communiquer des informations essentielles, etc."
-        selectedValue={wizardData.type}
+        selectedValue={wizardData.communityType.type}
         onChange={setSelectedType}
       />
       <RadioCard
@@ -30,9 +31,10 @@ export const StepType = () => {
         label="Pour une thématique"
         value="theme"
         description="Créez une communauté pour le club de lecture, les éco-délégués, les équipes éducatives, l'association sportive, etc."
-        selectedValue={wizardData.type}
+        selectedValue={wizardData.communityType.type}
         onChange={setSelectedType}
       />
+      <ButtonFooter />
     </>
   );
 };

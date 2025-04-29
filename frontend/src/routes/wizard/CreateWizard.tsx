@@ -7,16 +7,11 @@ import { WizardContext } from "./WizardContext";
 import { useMemo } from "react";
 import useWizard from "~/hooks/useWizard";
 import SideImage from "./SideImage";
-
-const wizardSteps = [
-  "step-type",
-  "step-params",
-  "step-cover",
-  "step-invitations",
-];
+import { WIZARD_STEPS } from "~/config/constants";
 
 function CreateWizard() {
   const { wizardData, updateWizardData, resetWizardData } = useWizard();
+
   const value = useMemo(
     () => ({
       wizardData,
@@ -30,25 +25,25 @@ function CreateWizard() {
     <WizardContext.Provider value={value}>
       <Routes>
         <Route
-          path="step-type"
+          path={WIZARD_STEPS[0]}
           element={
-            <WizardLayout steps={wizardSteps} sideElement={<SideImage />}>
+            <WizardLayout sideElement={<SideImage />}>
               <StepType />
             </WizardLayout>
           }
         />
         <Route
-          path="step-params"
+          path={WIZARD_STEPS[1]}
           element={
-            <WizardLayout steps={wizardSteps} sideElement={<SideImage />}>
+            <WizardLayout sideElement={<SideImage />}>
               <StepParams />
             </WizardLayout>
           }
         />
         <Route
-          path="step-cover"
+          path={WIZARD_STEPS[2]}
           element={
-            <WizardLayout steps={wizardSteps} sideElement={<SideImage />}>
+            <WizardLayout sideElement={<SideImage />}>
               <StepCover />
             </WizardLayout>
           }
