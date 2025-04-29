@@ -19,6 +19,7 @@ import useStepNavigation from "~/hooks/useStepNavigations";
 import { flushSync } from "react-dom";
 import ButtonFooter from "./ButtonFooter";
 import useDataListYears from "~/hooks/useDataListYears";
+import { useEffect } from "react";
 
 export const StepParams = () => {
   const { wizardData, updateWizardData } = useWizard();
@@ -40,6 +41,13 @@ export const StepParams = () => {
     });
     nextStep();
   };
+
+  useEffect(() => {
+    setValue("title", wizardData.communityParams.title ?? "", {
+      shouldDirty: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wizardData]);
 
   return (
     <>
