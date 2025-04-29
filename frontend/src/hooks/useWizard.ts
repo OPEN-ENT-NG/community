@@ -12,14 +12,14 @@ export interface useWizardProps {
   resetWizardData: () => void;
 }
 
+const defaultData: WizardData = {
+  type: "classe",
+};
+
 const useWizard = () => {
   const [wizardData, setWizardData] = useState<WizardData>(() => {
     const saved = localStorage.getItem(WIZARD_STORAGE_KEY);
-    return saved
-      ? JSON.parse(saved)
-      : {
-          communityType: "",
-        };
+    return saved ? JSON.parse(saved) : defaultData;
   });
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const useWizard = () => {
 
   const resetWizardData = () => {
     localStorage.removeItem(WIZARD_STORAGE_KEY);
-    setWizardData({ type: "" });
+    setWizardData(defaultData);
   };
 
   return {
