@@ -1,24 +1,27 @@
 // src/hooks/useStepNavigation.js
 import { useNavigate, useLocation } from "react-router-dom";
+import { WIZARD_STEPS } from "~/config/constants";
 
-export default function useStepNavigation(steps: string[]) {
+export default function useStepNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const currentPath = location.pathname;
-  const currentStep = steps.findIndex((step) => currentPath.includes(step));
+  const currentStep = WIZARD_STEPS.findIndex((step) =>
+    currentPath.includes(step)
+  );
 
   const nextStep = () => {
     const nextIndex = currentStep + 1;
-    if (nextIndex < steps.length) {
-      navigate(`/create/${steps[nextIndex]}`);
+    if (nextIndex < WIZARD_STEPS.length) {
+      navigate(`/create/${WIZARD_STEPS[nextIndex]}`);
     }
   };
 
   const backStep = () => {
     const prevIndex = currentStep - 1;
     if (prevIndex >= 0) {
-      navigate(`/create/${steps[prevIndex]}`);
+      navigate(`/create/${WIZARD_STEPS[prevIndex]}`);
     }
   };
 
