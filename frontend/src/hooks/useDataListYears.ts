@@ -1,6 +1,9 @@
 import { useEffect, useMemo } from "react";
 import { UseFormWatch, UseFormSetValue } from "react-hook-form";
-import { MAX_COMMUNITY_YEARS_LENGTH } from "~/config/constants";
+import {
+  COMMUNITY_YEARS_SUBSTRACTION,
+  MAX_COMMUNITY_YEARS_LENGTH,
+} from "~/config/constants";
 import { CommunityParams } from "~/models/community";
 
 interface UseAcademicYearsProps {
@@ -16,7 +19,7 @@ export default function useDataListYears({
   startFieldName = "startYear",
   endFieldName = "endYear",
 }: UseAcademicYearsProps) {
-  const baseYear = new Date().getFullYear() - 5;
+  const baseYear = new Date().getFullYear() - COMMUNITY_YEARS_SUBSTRACTION;
 
   const startYears = useMemo(
     () =>
