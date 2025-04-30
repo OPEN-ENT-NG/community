@@ -6,19 +6,12 @@ import {
 } from "~/config/constants";
 import { CommunityParams } from "~/models/community";
 
-interface UseAcademicYearsProps {
+interface DataListYears {
   watch: UseFormWatch<CommunityParams>;
   setValue: UseFormSetValue<CommunityParams>;
-  startFieldName?: keyof CommunityParams;
-  endFieldName?: keyof CommunityParams;
 }
 
-export default function useDataListYears({
-  watch,
-  setValue,
-  startFieldName = "startYear",
-  endFieldName = "endYear",
-}: UseAcademicYearsProps) {
+export default function useDataListYears({ watch, setValue }: DataListYears) {
   const baseYear = new Date().getFullYear() - COMMUNITY_YEARS_SUBSTRACTION;
 
   // Generate years from the base year to the maximum length
@@ -30,7 +23,7 @@ export default function useDataListYears({
     [baseYear]
   );
 
-  const rawStart = watch(startFieldName);
+  const rawStart = watch("startYear");
   const startYear =
     rawStart && startYears.includes(rawStart) ? rawStart : startYears[0];
 
@@ -47,7 +40,7 @@ export default function useDataListYears({
     [startYear, lastYearNum]
   );
 
-  const rawEnd = watch(endFieldName);
+  const rawEnd = watch("endYear");
 
   // Set the end year to the last element of endYears if rawEnd is not valid
   const endYear = rawEnd && endYears.includes(rawEnd) ? rawEnd : endYears[0];
@@ -55,9 +48,9 @@ export default function useDataListYears({
   // Set default values for start and end years if they are not valid
   useEffect(() => {
     if (!rawStart || !startYears.includes(rawStart)) {
-      setValue(startFieldName, startYear);
+      setValue("startYear", startYear);
     }
-  }, [rawStart, startYear, setValue, startFieldName, startYears]);
+  }, [rawStart, startYear, setValue, startYears]);
 
   // Set default value for end year if it is not valid or less than start year
   useEffect(() => {
@@ -66,9 +59,9 @@ export default function useDataListYears({
       !endYears.includes(rawEnd) ||
       parseInt(rawEnd, 10) < parseInt(startYear, 10)
     ) {
-      setValue(endFieldName, endYear);
+      setValue("endYear", endYear);
     }
-  }, [rawEnd, endYear, startYear, setValue, endFieldName, endYears]);
+  }, [rawEnd, endYear, startYear, setValue, endYears]);
 
   return { startYears, endYears, startYear, endYear };
 }
