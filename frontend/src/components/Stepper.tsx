@@ -1,5 +1,6 @@
 import { Flex } from "@edifice.io/react";
 import clsx from "clsx";
+import { WIZARD_STEPS } from "~/config/constants";
 
 function Step({ active = false }: { active?: boolean }) {
   const style = {
@@ -16,17 +17,15 @@ function Step({ active = false }: { active?: boolean }) {
 }
 
 export default function Stepper({
-  steps,
   current = 0,
   className = "",
 }: {
-  steps: string[];
   current: number | undefined;
   className: string;
 }) {
   return (
     <Flex gap="8" className={className}>
-      {steps.map((label, index) => (
+      {WIZARD_STEPS.map((label, index) => (
         <Step key={label} active={index === current} />
       ))}
     </Flex>
