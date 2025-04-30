@@ -11,9 +11,9 @@ export const SideImage = () => {
 
   useEffect(() => {
     setImageCommunity(() =>
-      wizardData.type === "classe" ? imageClasse : imageTheme,
+      wizardData.communityType.type === "classe" ? imageClasse : imageTheme
     );
-  }, [wizardData.type]);
+  }, [wizardData.communityType.type]);
 
   const className = lg
     ? "w-100 h-100"

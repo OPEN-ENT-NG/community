@@ -1,7 +1,6 @@
 import { Flex, Grid, useBreakpoint } from "@edifice.io/react";
 import useStepNavigation from "~/hooks/useStepNavigations";
 import Stepper from "~/components/Stepper";
-import ButtonFooter from "./ButtonFooter";
 
 export const WizardLayout = ({
   children,
