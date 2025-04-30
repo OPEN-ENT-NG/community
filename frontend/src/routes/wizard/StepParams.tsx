@@ -5,6 +5,7 @@ import {
   Label,
   Select,
   TextArea,
+  useBreakpoint,
 } from "@edifice.io/react";
 import { Form } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -20,10 +21,13 @@ import { flushSync } from "react-dom";
 import ButtonFooter from "./ButtonFooter";
 import useDataListYears from "~/hooks/useDataListYears";
 import { useEffect } from "react";
+import WizardHeader from "~/components/WizardHeader";
+import SideImage from "./SideImage";
 
 export const StepParams = () => {
   const { wizardData, updateWizardData } = useWizard();
   const { nextStep } = useStepNavigation();
+  const { lg } = useBreakpoint();
 
   const { watch, register, control, setValue, handleSubmit } =
     useForm<CommunityParams>({
@@ -35,7 +39,7 @@ export const StepParams = () => {
     setValue,
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: CommunityParams) => {
     flushSync(() => {
       updateWizardData({ communityParams: data });
     });
@@ -51,6 +55,11 @@ export const StepParams = () => {
 
   return (
     <>
+      <WizardHeader
+        title="Nouvelle communauté"
+        subTitle="Paramètres de la communauté"
+      />
+      {!lg && <SideImage />}
       <Form id="formCommunity" role="form" onSubmit={handleSubmit(onSubmit)}>
         <FormControl id="inputForm" className="mb-24" isRequired>
           <Label>Nom de la communauté</Label>

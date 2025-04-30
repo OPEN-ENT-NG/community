@@ -1,8 +1,9 @@
-import { Heading, useBreakpoint } from "@edifice.io/react";
+import { useBreakpoint } from "@edifice.io/react";
 import RadioCard from "~/components/RadioCard";
 import { useWizardContext } from "./WizardContext";
 import SideImage from "./SideImage";
 import ButtonFooter from "./ButtonFooter";
+import WizardHeader from "~/components/WizardHeader";
 
 export const StepType = () => {
   const { wizardData, updateWizardData } = useWizardContext();
@@ -13,10 +14,10 @@ export const StepType = () => {
 
   return (
     <>
-      <Heading>Nouvelle communauté</Heading>
-      <p className="text-gray-700 mb-48">
-        Quel type de communauté souhaitez-vous créer ?
-      </p>
+      <WizardHeader
+        title="Nouvelle communauté"
+        subTitle="Quel type de communauté souhaitez-vous créer ?"
+      />
       {!lg && <SideImage />}
       <RadioCard
         className="mb-24"
