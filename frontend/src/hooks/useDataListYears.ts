@@ -21,6 +21,7 @@ export default function useDataListYears({
 }: UseAcademicYearsProps) {
   const baseYear = new Date().getFullYear() - COMMUNITY_YEARS_SUBSTRACTION;
 
+  // Generate years from the base year to the maximum length
   const startYears = useMemo(
     () =>
       Array.from({ length: MAX_COMMUNITY_YEARS_LENGTH }, (_, i) =>
@@ -33,7 +34,10 @@ export default function useDataListYears({
   const startYear =
     rawStart && startYears.includes(rawStart) ? rawStart : startYears[0];
 
+  // Calculate the last year number based on the last element of startYears
   const lastYearNum = parseInt(startYears[startYears.length - 1], 10);
+
+  // Generate end years from the start year to the last year number
   const endYears = useMemo(
     () =>
       Array.from(
@@ -44,14 +48,18 @@ export default function useDataListYears({
   );
 
   const rawEnd = watch(endFieldName);
+
+  // Set the end year to the last element of endYears if rawEnd is not valid
   const endYear = rawEnd && endYears.includes(rawEnd) ? rawEnd : endYears[0];
 
+  // Set default values for start and end years if they are not valid
   useEffect(() => {
     if (!rawStart || !startYears.includes(rawStart)) {
       setValue(startFieldName, startYear);
     }
   }, [rawStart, startYear, setValue, startFieldName, startYears]);
 
+  // Set default value for end year if it is not valid or less than start year
   useEffect(() => {
     if (
       !rawEnd ||
