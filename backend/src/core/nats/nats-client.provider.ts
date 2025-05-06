@@ -6,13 +6,15 @@ import {
   Transport,
   NatsOptions,
 } from "@nestjs/microservices";
+import { SafeNatsDeserializer } from "./safe-nats.deserializer";
+import { Logger } from "nestjs-pino";
 
 export const NATS_CLIENT = "NATS_CLIENT";
 
 export const NatsClientProvider: Provider = {
   provide: NATS_CLIENT,
-  useFactory: (configService: ConfigService): ClientProxy => {
-    // Créer les options en utilisant le type spécifique NatsOptions
+  useFactory: (configService: ConfigService, logger: Logger): ClientProxy => {
+    // Create options using the specific NatsOptions type
     const options: NatsOptions = {
       transport: Transport.NATS,
       options: {
@@ -22,10 +24,18 @@ export const NatsClientProvider: Provider = {
         user: configService.get<string>("nats.user"),
         pass: configService.get<string>("nats.pass"),
         token: configService.get<string>("nats.token"),
+        // Add reconnect options for better reliability
+        reconnect: true,
+        reconnectTimeWait: 2000,
+        maxReconnectAttempts: 10,
+        // Add error handling for parsing
+        preserveBuffers: true,
+        deserializer: new SafeNatsDeserializer(logger),
       },
     };
 
-    return ClientProxyFactory.create(options);
+    const client = ClientProxyFactory.create(options);
+    return client;
   },
-  inject: [ConfigService],
+  inject: [ConfigService, Logger],
 };
