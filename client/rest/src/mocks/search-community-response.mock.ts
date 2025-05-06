@@ -5,16 +5,25 @@ import {
   SearchCommunityResponseDto,
   UserDto,
 } from "../dtos";
+import { v4 as uuidv4 } from 'uuid';
+
+/**
+ * Generates a random UUID
+ * @returns A random UUID string
+ */
+export function randomUuid(): string {
+  return uuidv4();
+}
 
 /**
  * Creates a mock user with the given ID
  * @param id - User ID
  * @returns A mock UserDto
  */
-export function createMockUser(id: number): UserDto {
+export function createMockUser(id: string): UserDto {
   return {
     id,
-    displayName: `User ${id}`,
+    displayName: `User ${id.substring(0, 6)}`,
   };
 }
 
@@ -37,7 +46,7 @@ export function createMockCommunityStats(): CommunityStatsDto {
  * @returns A mock CommunityResponseDto
  */
 export function createMockCommunity(id: number): CommunityResponseDto {
-  const creator = createMockUser(Math.floor(Math.random() * 1000) + 1);
+  const creator = createMockUser(randomUuid());
   const now = new Date();
   const lastMonth = new Date(now);
   lastMonth.setMonth(now.getMonth() - 1);
@@ -82,11 +91,11 @@ export function createMockCommunity(id: number): CommunityResponseDto {
     const archiveDate = new Date(now);
     archiveDate.setDate(now.getDate() - 15);
     community.archivedDate = archiveDate;
-    community.archiver = createMockUser(Math.floor(Math.random() * 1000) + 1);
+    community.archiver = createMockUser(randomUuid());
   }
 
   if (Math.random() > 0.6) {
-    community.modifier = createMockUser(Math.floor(Math.random() * 1000) + 1);
+    community.modifier = createMockUser(randomUuid());
   }
 
   community.stats = createMockCommunityStats();
