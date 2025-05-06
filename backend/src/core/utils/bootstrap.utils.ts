@@ -69,6 +69,7 @@ export async function createApp(
     new ValidationPipe({
       transform: true,
       whitelist: true,
+      transformOptions: { enableImplicitConversion: true },
     }),
   );
   const configService = app.get(ConfigService);

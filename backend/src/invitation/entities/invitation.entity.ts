@@ -2,7 +2,7 @@ import { Entity, Enum, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
 import { Users } from "@app/common/entities/users.entity";
 
-@Entity({ schema: "community" })
+@Entity({ tableName: "invitation" })
 export class Invitation {
   @PrimaryKey()
   id!: bigint;
@@ -13,14 +13,17 @@ export class Invitation {
   @Property({ nullable: true })
   modificationDate?: Date;
 
-  @Enum({ items: () => InvitationStatus })
+  @Enum(() => InvitationStatus)
   status!: InvitationStatus;
 
-  @ManyToOne({ entity: () => Community, index: "idx_invitation_community_id" })
+  @ManyToOne(() => Community)
   community!: Community;
 
-  @ManyToOne({ entity: () => Users, index: "idx_invitation_user_id" })
+  @ManyToOne(() => Users)
   user!: Users;
+
+  @ManyToOne(() => Users)
+  inviter!: Users;
 }
 
 export enum InvitationStatus {

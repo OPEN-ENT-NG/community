@@ -215,7 +215,7 @@ export class SearchCommunityResponseDto extends FieldSelectionDto {
 
 export class UserDto {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   displayName: string;

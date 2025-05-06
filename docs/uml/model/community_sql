@@ -49,6 +49,9 @@ table(community) {
 
 table(users) {
   primary_key(id) BIGSERIAL
+  ent_id UUID NOT NULL
+  display_name VARCHAR(255)
+  CONSTRAINT users_ent_id_unique UNIQUE (ent_id)
 }
 
 table(invitation) {
@@ -58,6 +61,7 @@ table(invitation) {
   status invitation_status NOT NULL
   foreign_key(community_id) BIGINT NOT NULL
   foreign_key(user_id) BIGINT NOT NULL
+  foreign_key(inviter_id) BIGINT NOT NULL
 }
 
 table(membership) {
@@ -185,6 +189,7 @@ community }o--o| users : "archiver_id"
 
 invitation }|--|| community : "community_id"
 invitation }|--|| users : "user_id"
+invitation }|--|| users : "inviter_id"
 
 membership }|--|| community : "community_id"
 membership }|--|| users : "user_id"

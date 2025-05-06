@@ -15,6 +15,9 @@ import {
   ValidationPipe,
   ClassSerializerInterceptor,
   UseInterceptors,
+  HttpException,
+  InternalServerErrorException,
+  Req,
 } from "@nestjs/common";
 import { CommunityService } from "./community.service";
 import {
@@ -35,6 +38,7 @@ import {
   UpdateCommunityDto,
   mocks,
 } from "@edifice.io/community-client-rest";
+import { FastifyRequest } from "fastify";
 
 @ApiTags("Communities")
 @Controller("api/communities")
@@ -71,9 +75,21 @@ export class CommunityController {
     type: CommunityResponseDto,
   })
   async create(
+    @Req() request: FastifyRequest,
     @Body() createCommunityDto: CreateCommunityDto,
   ): Promise<CommunityResponseDto> {
-    throw new Error("Not implemented");
+    try {
+      const session = request.raw.entSession;
+      return await this.communityService.createCommunity(
+        createCommunityDto,
+        session!,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.create.error");
+    }
   }
 
   @Get(":id")

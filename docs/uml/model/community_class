@@ -52,10 +52,13 @@ class Community {
 
 class User {
   +Long id
+  +String entId
+  +String displayName
 }
 
 class Invitation {
   +ZonedDateTime invitationDate
+  +ZonedDateTime modificationDate
   +InvitationStatus status
 }
 
@@ -153,6 +156,7 @@ User "1" -- "*" Community : < archiver
 
 Community "1" -- "*" Invitation : < community
 User "1" -- "*" Invitation : < user
+User "1" -- "*" Invitation : < inviter
 
 Community "1" -- "*" Membership : < community
 User "1" -- "*" Membership : < user
