@@ -1,4 +1,4 @@
-import { ENTUserSession } from "./session.types";
+import { ENTUserSession } from "../session";
 
 declare module "http" {
   interface IncomingMessage {

@@ -3,7 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { IncomingMessage } from "http";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
-import { ENTUserBookPersonReponse, ENTUserSession } from "./session.types";
+import { EntNatsServiceClient } from "@edifice.io/edifice-ent-client";
+import { SessionDto } from "@edifice.io/edifice-ent-client/dist/nats/ent-nats-service.types";
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {
@@ -13,6 +14,7 @@ export class SessionMiddleware implements NestMiddleware {
     configService: ConfigService,
     @InjectPinoLogger(SessionMiddleware.name)
     private readonly logger: PinoLogger,
+    private readonly natsClient: EntNatsServiceClient,
   ) {
     this.entBaseUrl = configService.get<string>(
       "ent.baseUrl",
@@ -25,29 +27,29 @@ export class SessionMiddleware implements NestMiddleware {
     res: FastifyReply["raw"],
     next: () => void,
   ) {
-    const oneSessionId =
-      this.getOnSessionIdFromHeaders(req) ||
-      <string>req.headers["oneSessionId"];
-
-    if (!oneSessionId) {
+    try {
+      const session = await this.natsClient.sessionFind({
+        cookies: req.headers.cookie,
+      });
+      if (session?.session) {
+        this.setSession(session.session, req);
+        next();
+      } else {
+        res.statusCode = 401;
+        res.end(JSON.stringify({ message: "invalid.session" }));
+      }
+    } catch (e) {
       res.statusCode = 401;
-      res.end(JSON.stringify({ message: "not.authenticated" }));
-      return;
-    }
-
-    // Fetch the session
-    const session = await this.getSessionById(oneSessionId);
-
-    if (session) {
-      this.setSession(session, req);
-      next();
-    } else {
-      res.statusCode = 401;
-      res.end(JSON.stringify({ message: "invalid.session" }));
+      res.end(
+        JSON.stringify({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          message: e.message,
+        }),
+      );
     }
   }
 
-  setSession(session: ENTUserSession, req: IncomingMessage) {
+  setSession(session: SessionDto, req: IncomingMessage) {
     req.entSession = session;
   }
 
@@ -63,40 +65,5 @@ export class SessionMiddleware implements NestMiddleware {
         }
       }
     }
-  }
-
-  private async getSessionById(
-    sessionId: string,
-  ): Promise<ENTUserSession | undefined> {
-    const headers = {
-      Cookie: `oneSessionId=${sessionId}`,
-    };
-    let session: ENTUserSession | undefined;
-    try {
-      const response = await fetch(`${this.entBaseUrl}/auth/oauth2/userinfo`, {
-        method: "GET",
-        redirect: "manual",
-        headers,
-      });
-      if (response.ok) {
-        const apiPersonResponse =
-          (await response.json()) as ENTUserBookPersonReponse;
-        if (apiPersonResponse) {
-          session = {
-            userId: apiPersonResponse.userId,
-            email: apiPersonResponse.email,
-            login: apiPersonResponse.login,
-            username: apiPersonResponse.username,
-          };
-        }
-      } else {
-        this.logger.warn("Could not fetch session : " + response.status);
-      }
-    } catch (error) {
-      this.logger.warn(
-        "An error occurred while fetching oneSessionId : " + error,
-      );
-    }
-    return session;
   }
 }
