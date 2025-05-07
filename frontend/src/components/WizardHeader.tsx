@@ -5,12 +5,12 @@ export default function WizardHeader({
   subTitle,
 }: {
   title: string;
-  subTitle: string;
+  subTitle?: string;
 }) {
   return (
-    <>
+    <div className="mb-24">
       <Heading>{title}</Heading>
-      <p className="text-gray-700 mb-48">{subTitle}</p>
-    </>
+      {subTitle && <p className="text-gray-700">{subTitle}</p>}
+    </div>
   );
 }

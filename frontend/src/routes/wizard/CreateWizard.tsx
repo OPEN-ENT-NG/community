@@ -8,6 +8,9 @@ import { useMemo } from "react";
 import useWizard from "~/hooks/useWizard";
 import SideImage from "./SideImage";
 import { WIZARD_STEPS } from "~/config/constants";
+import StepInvitations from "./StepInvitations";
+import InvitationTable from "./InvitationTable";
+import { Flex } from "@edifice.io/react";
 
 function CreateWizard() {
   const { wizardData, updateWizardData, resetWizardData } = useWizard();
@@ -18,7 +21,7 @@ function CreateWizard() {
       updateWizardData,
       resetWizardData,
     }),
-    [wizardData, updateWizardData, resetWizardData],
+    [wizardData, updateWizardData, resetWizardData]
   );
 
   return (
@@ -48,7 +51,21 @@ function CreateWizard() {
             </WizardLayout>
           }
         />
-        <Route path="step-invitations" element={<p>members</p>} />
+        <Route
+          path={WIZARD_STEPS[3]}
+          element={
+            <WizardLayout
+              sideElement={
+                <Flex direction="column" className="h-100">
+                  <InvitationTable />
+                </Flex>
+              }
+              lastStep
+            >
+              <StepInvitations />
+            </WizardLayout>
+          }
+        />
       </Routes>
     </WizardContext.Provider>
   );

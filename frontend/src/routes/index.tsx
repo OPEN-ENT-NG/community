@@ -5,6 +5,7 @@ import { NotFound } from "./errors/not-found";
 import { PageError } from "./errors/page-error";
 import { Index } from "./communities";
 import CreateWizard from "./wizard/CreateWizard";
+import "./index.css";
 
 const routes = (_: QueryClient): RouteObject[] => [
   /* Main route */

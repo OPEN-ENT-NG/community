@@ -1,0 +1,39 @@
+/* WIZARD */
+.wizard-side {
+  height: 80vh;
+}
+
+.underline-custom {
+  display: inline-block;
+  position: relative;
+}
+
+.underline-custom::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  border-radius: 3px;
+  height: 2px;
+  background-color: #2a9cc8;
+}
+
+#invitation-table .table-responsive {
+  position: relative;
+  z-index: 1;
+}
+
+#invitation-table .table {
+  border: 1px solid #e4e4e4 !important;
+  border-radius: 8px 8px 0 0;
+}
+
+#invitation-table .placeholder-table {
+  border: 1px solid #e4e4e4;
+  border-top: none;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
