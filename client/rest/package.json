@@ -13,7 +13,8 @@
   "dependencies": {
     "@nestjs/swagger": "^11.0.6",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1"
+    "class-validator": "^0.14.1",
+    "uuid": "^11.1.0"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -37,6 +38,7 @@
     "pnpm": ">=8"
   },
   "devDependencies": {
+    "@types/uuid": "^10.0.0",
     "typescript": "^5.8.2"
   }
 }

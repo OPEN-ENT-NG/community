@@ -4,16 +4,18 @@ import {
   Enum,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   type Opt,
   PrimaryKey,
   Property,
 } from "@mikro-orm/core";
 import { Course } from "@app/wiki/entities/course.entity";
 import { Users } from "@app/common/entities/users.entity";
+import { Membership } from "@app/membership/entities/membership.entity";
 
 @Entity({ schema: "community" })
 export class Community {
-  @PrimaryKey()
+  @PrimaryKey({ autoincrement: true })
   id!: bigint;
 
   @Property({ nullable: true })
@@ -64,6 +66,9 @@ export class Community {
     inverseJoinColumn: "course_id",
   })
   course = new Collection<Course>(this);
+
+  @OneToMany(() => Membership, (membership) => membership.community)
+  memberships = new Collection<Membership>(this);
 }
 
 export enum CommunityType {

@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { LoggerModule as PinoLoggerModule } from "nestjs-pino";
@@ -11,6 +16,8 @@ import { SessionMiddleware } from "./session/session.middleware";
 import { DatabaseModule } from "./database/database.module";
 import { FrontendController } from "./frontend.controller";
 import { NatsModule } from "./nats";
+import { PermissionGuard } from "./permission/permission.guard";
+import { APP_GUARD } from "@nestjs/core";
 
 @Module({
   imports: [
@@ -44,7 +51,13 @@ import { NatsModule } from "./nats";
     LoggerModule,
   ],
   controllers: [FrontendController],
-  providers: [],
+  providers: [
+    // Apply guard globally
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
+    },
+  ],
   exports: [
     ConfigModule,
     PinoLoggerModule,
@@ -53,7 +66,11 @@ import { NatsModule } from "./nats";
     NatsModule,
   ],
 })
-export class CoreModule {
+export class CoreModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Use utility method from CoreModule
+    CoreModule.configureSessionMiddleware(consumer);
+  }
   // Utility method to configure session middleware
   static configureSessionMiddleware(consumer: MiddlewareConsumer) {
     consumer
