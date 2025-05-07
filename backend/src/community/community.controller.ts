@@ -1,6 +1,3 @@
-//TODO remove eslint-disable comments
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -12,7 +9,6 @@ import {
   Patch,
   Post,
   Query,
-  ValidationPipe,
   ClassSerializerInterceptor,
   UseInterceptors,
   HttpException,
@@ -36,9 +32,10 @@ import {
   SearchCommunityRequestDto,
   SearchCommunityResponseDto,
   UpdateCommunityDto,
-  mocks,
 } from "@edifice.io/community-client-rest";
 import { FastifyRequest } from "fastify";
+import { RequirePermission } from "@app/core";
+import { RequireCommunityRole } from "@app/common";
 
 @ApiTags("Communities")
 @Controller("api/communities")
@@ -53,18 +50,24 @@ export class CommunityController {
     description: "List of communities with pagination",
     type: SearchCommunityResponseDto,
   })
+  @RequirePermission("community.access")
+  @RequireCommunityRole("SKIP")
   async findAll(
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    )
-    query: SearchCommunityRequestDto,
+    @Req() request: FastifyRequest,
+    @Query() query: SearchCommunityRequestDto,
   ): Promise<SearchCommunityResponseDto> {
-    return Promise.resolve<SearchCommunityResponseDto>(
-      mocks.createMockSearchCommunityResponse(10),
-    );
+    try {
+      const session = request.raw.entSession;
+      return await this.communityService.findCommunitiesByMembership(
+        query,
+        session!,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.search.error");
+    }
   }
 
   @Post()
@@ -74,6 +77,8 @@ export class CommunityController {
     description: "Community created successfully",
     type: CommunityResponseDto,
   })
+  @RequirePermission("community.create")
+  @RequireCommunityRole("SKIP")
   async create(
     @Req() request: FastifyRequest,
     @Body() createCommunityDto: CreateCommunityDto,
@@ -106,11 +111,21 @@ export class CommunityController {
     type: CommunityResponseDto,
   })
   @SerializeOptions({ groups: ["default"] })
+  @RequirePermission("community.access")
+  @RequireCommunityRole("MEMBER")
   async findOne(
+    @Req() request: FastifyRequest,
     @Param("id", ParseIntPipe) id: number,
-    @Query("fields") fields?: string,
+    @Query("fields") _fields?: string,
   ): Promise<CommunityResponseDto> {
-    throw new Error("Not implemented");
+    try {
+      return await this.communityService.findCommunityById(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.get.error");
+    }
   }
 
   @Get(":id/secret-code")
@@ -122,10 +137,19 @@ export class CommunityController {
     type: CommunitySecretCodeDto,
   })
   @SerializeOptions({ groups: ["admin", "secretCode"] })
+  @RequirePermission("community.access")
+  @RequireCommunityRole("ADMIN")
   async getSecretCode(
     @Param("id", ParseIntPipe) id: number,
   ): Promise<CommunitySecretCodeDto> {
-    throw new Error("Not implemented");
+    try {
+      return await this.communityService.getSecretCode(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.secretCode.error");
+    }
   }
 
   @Patch(":id")
@@ -136,11 +160,26 @@ export class CommunityController {
     description: "Community updated",
     type: CommunityResponseDto,
   })
+  @RequirePermission("community.access")
+  @RequireCommunityRole("ADMIN")
   async update(
+    @Req() request: FastifyRequest,
     @Param("id", ParseIntPipe) id: number,
     @Body() updateCommunityDto: UpdateCommunityDto,
   ): Promise<CommunityResponseDto> {
-    throw new Error("Not implemented");
+    try {
+      const session = request.raw.entSession;
+      return await this.communityService.updateCommunity(
+        id,
+        updateCommunityDto,
+        session!,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.update.error");
+    }
   }
 
   @Delete(":id")
@@ -151,8 +190,17 @@ export class CommunityController {
     status: 204,
     description: "Community deleted",
   })
+  @RequirePermission("community.access")
+  @RequireCommunityRole("ADMIN")
   async remove(@Param("id", ParseIntPipe) id: number): Promise<void> {
-    throw new Error("Not implemented");
+    try {
+      await this.communityService.deleteCommunity(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.delete.error");
+    }
   }
 
   @Patch(":id/welcome-note")
@@ -163,11 +211,32 @@ export class CommunityController {
     description: "Welcome note updated",
     type: CommunityResponseDto,
   })
+  @RequirePermission("community.access")
+  @RequireCommunityRole("ADMIN")
   async updateWelcomeNote(
+    @Req() request: FastifyRequest,
     @Param("id", ParseIntPipe) id: number,
     @Body("welcomeNote") welcomeNote: string,
   ): Promise<CommunityResponseDto> {
-    throw new Error("Not implemented");
+    try {
+      const session = request.raw.entSession;
+      // Reuse the existing updateCommunity method with just the welcomeNote
+      return await this.communityService.updateCommunity(
+        id,
+        {
+          welcomeNote,
+          title: undefined!,
+          type: undefined!,
+          discussionEnabled: undefined!,
+        }, // Pass only the welcomeNote property
+        session!,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.welcomeNote.error");
+    }
   }
 
   @Get(":id/stats")
@@ -178,9 +247,18 @@ export class CommunityController {
     description: "Community statistics",
     type: CommunityStatsDto,
   })
+  @RequirePermission("community.access")
+  @RequireCommunityRole("MEMBER")
   async getStats(
     @Param("id", ParseIntPipe) id: number,
   ): Promise<CommunityStatsDto> {
-    throw new Error("Not implemented");
+    try {
+      return await this.communityService.getCommunityStats(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("community.stats.error");
+    }
   }
 }

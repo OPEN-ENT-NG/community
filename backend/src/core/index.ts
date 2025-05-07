@@ -4,5 +4,6 @@ export * from "./core.module";
 export * from "./database";
 export * from "./logger";
 export * from "./nats";
+export * from "./permission/permission.decorator";
 export * from "./session";
 export * from "./utils";

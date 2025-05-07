@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CoreModule } from "./core";
@@ -29,9 +29,4 @@ import { DiscussionsModule } from "./discussions/discussions.module";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    // Use utility method from CoreModule
-    CoreModule.configureSessionMiddleware(consumer);
-  }
-}
+export class AppModule {}

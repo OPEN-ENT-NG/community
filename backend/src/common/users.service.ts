@@ -23,16 +23,16 @@ export class UserService {
    * @returns User entity
    */
   async getCurrentUser(session: ENTUserSession): Promise<Users> {
-    if (!session) {
+    if (!session?.userId) {
       throw new UnauthorizedException("user.session.missing");
     }
-
-    const user = await this.usersRepository.findOne({ entId: session.userId });
+    const users = await this.findOrCreateUsersByEntIds([session.userId], {
+      [session.userId]: session.username ?? "",
+    });
+    const user = users.get(session.userId);
     if (!user) {
-      this.logger.warn(`User with entId ${session.userId} not found`);
-      throw new NotFoundException(`user.not.found`);
+      throw new NotFoundException("user.not_found");
     }
-
     return user;
   }
 

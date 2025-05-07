@@ -1,13 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { PinoLogger } from "nestjs-pino";
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
-import { Logger } from "@nestjs/common";
 import { Transactional } from "@mikro-orm/core";
 import { Community } from "../community/entities/community.entity";
 import { Invitation, InvitationStatus } from "./entities/invitation.entity";
 import { Users } from "../common/entities/users.entity";
 import { UserService } from "../common/users.service";
-import { InjectPinoLogger } from "nestjs-pino";
 
 @Injectable()
 export class InvitationService {
@@ -15,9 +14,10 @@ export class InvitationService {
     @InjectRepository(Invitation)
     private readonly invitationRepository: EntityRepository<Invitation>,
     private readonly userService: UserService,
-    @InjectPinoLogger(InvitationService.name)
-    private readonly logger: Logger,
-  ) {}
+    private readonly logger: PinoLogger,
+  ) {
+    this.logger.setContext(InvitationService.name);
+  }
 
   /**
    * Creates invitations for multiple users to join a community
@@ -58,7 +58,7 @@ export class InvitationService {
     // Persist all invitations in a single operation
     if (invitations.length) {
       await this.invitationRepository.upsertMany(invitations);
-      this.logger.log(
+      this.logger.info(
         `Created ${invitations.length} invitations for community ${community.id}`,
       );
     }

@@ -16,7 +16,10 @@ export class Invitation {
   @Enum(() => InvitationStatus)
   status!: InvitationStatus;
 
-  @ManyToOne(() => Community)
+  @ManyToOne(() => Community, {
+    deleteRule: "cascade",
+    joinColumn: "community_id",
+  })
   community!: Community;
 
   @ManyToOne(() => Users)
