@@ -34,7 +34,7 @@ const SkeletonContainer = ({
 
 export const SideSkeleton = () => {
   const { wizardData } = useWizardContext();
-  const coverColor = "115deg, #E5F5FF 0.32%, #46AFE6 100%";
+  const coverColor = wizardData.communityCover.color;
 
   return (
     <Flex

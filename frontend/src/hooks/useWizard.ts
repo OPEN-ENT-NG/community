@@ -18,6 +18,10 @@ const defaultData: WizardData = {
     startYear: "",
     endYear: "",
   },
+  communityCover: {
+    color: "",
+    image: "",
+  },
 };
 
 const useWizard = () => {
