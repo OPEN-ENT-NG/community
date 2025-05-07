@@ -54,6 +54,7 @@ export class MigrationService {
         this.logger.log("No migrations were executed.");
       }
     } catch (error) {
+      console.error("Error while running migrations:", error);
       this.logger.error("Failed to run migrations:", error);
       // Throw the error to let the caller decide how to handle it
       throw new Error(`Migration execution failed: ${error}`);

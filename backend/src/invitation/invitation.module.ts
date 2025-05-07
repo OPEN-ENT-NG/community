@@ -7,7 +7,7 @@ import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { CommonModule } from "@app/common/common.module";
 
 @Module({
-  imports: [CoreModule, MikroOrmModule.forFeature([Invitation]), CommonModule],
+  imports: [CoreModule, CommonModule, MikroOrmModule.forFeature([Invitation])],
   providers: [InvitationService],
   controllers: [InvitationController],
   exports: [InvitationService],

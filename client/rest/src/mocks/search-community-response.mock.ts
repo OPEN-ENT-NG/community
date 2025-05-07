@@ -81,12 +81,6 @@ export function createMockCommunity(id: number): CommunityResponseDto {
     community.welcomeNote = `Welcome to Community ${id}! We're glad to have you here.`;
   }
 
-  if (Math.random() > 0.8) {
-    community.secretCode = `secret-${id}-${Math.random()
-      .toString(36)
-      .substring(2, 8)}`;
-  }
-
   if (Math.random() > 0.9) {
     const archiveDate = new Date(now);
     archiveDate.setDate(now.getDate() - 15);

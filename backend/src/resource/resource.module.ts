@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
-import { LoggerModule } from "@core/index";
+import { CoreModule } from "@core/index";
 import { ResourceService } from "./resource.service";
 import { ResourceController } from "./resource.controller";
 
 @Module({
-  imports: [LoggerModule],
+  imports: [CoreModule],
   providers: [ResourceService],
   controllers: [ResourceController],
 })

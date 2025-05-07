@@ -2,7 +2,7 @@ import { Entity, Enum, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
 import { Users } from "@app/common/entities/users.entity";
 
-@Entity({ tableName: "invitation" })
+@Entity({ schema: "community", tableName: "invitation" })
 export class Invitation {
   @PrimaryKey()
   id!: bigint;
@@ -16,7 +16,10 @@ export class Invitation {
   @Enum(() => InvitationStatus)
   status!: InvitationStatus;
 
-  @ManyToOne(() => Community)
+  @ManyToOne(() => Community, {
+    deleteRule: "cascade",
+    joinColumn: "community_id",
+  })
   community!: Community;
 
   @ManyToOne(() => Users)

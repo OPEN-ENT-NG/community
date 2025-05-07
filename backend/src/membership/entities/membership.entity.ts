@@ -25,10 +25,13 @@ export class Membership {
   @Property({ nullable: true })
   lastVisitDiscussionsDate?: Date;
 
-  @ManyToOne({ entity: () => Community, index: "idx_membership_community_id" })
+  @ManyToOne(() => Community, {
+    deleteRule: "cascade",
+    joinColumn: "community_id",
+  })
   community!: Community;
 
-  @ManyToOne({ entity: () => Users, index: "idx_membership_user_id" })
+  @ManyToOne(() => Users, { joinColumn: "user_id" })
   user!: Users;
 
   @ManyToOne({ entity: () => Users, nullable: true })

@@ -269,10 +269,6 @@ export class CommunityResponseDto {
   @ApiPropertyOptional()
   archivedDate?: Date;
 
-  // Secret code is excluded by default
-  @Exclude()
-  secretCode?: string;
-
   @ApiProperty()
   creator: UserDto;
 
@@ -284,13 +280,6 @@ export class CommunityResponseDto {
 
   @ApiPropertyOptional()
   stats?: CommunityStatsDto;
-
-  // Expose secret code only when explicitly requested
-  @Expose({ groups: ['admin', 'secretCode'] })
-  @ApiPropertyOptional({ description: 'Secret code to join the community' })
-  getSecretCode(): string | null {
-    return this.secretCode || null;
-  }
 }
 
 export class CommunitySecretCodeDto {
