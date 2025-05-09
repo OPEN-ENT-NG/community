@@ -71,11 +71,7 @@ export const SideSkeleton = () => {
   }
 
   return (
-    <Flex
-      className="w-100 bg-gray-300"
-      style={{ height: "700px" }}
-      direction="column"
-    >
+    <Flex className="w-100 bg-gray-300 h-100" direction="column">
       <div className="w-100" style={{ height: "225px" }}>
         <Cover />
       </div>

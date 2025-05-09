@@ -1,5 +1,4 @@
 import ButtonFooter from "./ButtonFooter";
-import WizardHeader from "~/components/WizardHeader";
 import { useWizardContext } from "./WizardContext";
 import { Flex, Radio, useBreakpoint, useMediaLibrary } from "@edifice.io/react";
 import { BACKGROUND_COLORS } from "~/config/constants";
@@ -48,11 +47,6 @@ export const StepCover = () => {
 
   return (
     <>
-      <WizardHeader
-        title={wizardData.communityParams.title}
-        subTitle="Choisir une bannière"
-      />
-
       {!lg && <SideSkeleton />}
 
       <RadioCardCover value="color" label="Choisir un thème">
