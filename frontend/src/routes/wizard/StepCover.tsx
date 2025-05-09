@@ -1,10 +1,11 @@
 import ButtonFooter from "./ButtonFooter";
 import WizardHeader from "~/components/WizardHeader";
 import { useWizardContext } from "./WizardContext";
-import { Flex, Radio, useMediaLibrary } from "@edifice.io/react";
+import { Flex, Radio, useBreakpoint, useMediaLibrary } from "@edifice.io/react";
 import { BACKGROUND_COLORS } from "~/config/constants";
 import { ImagePicker, MediaLibrary } from "@edifice.io/react/multimedia";
 import clsx from "clsx";
+import SideSkeleton from "./SideSkeleton";
 
 const RadioCardCover = ({
   children,
@@ -18,14 +19,14 @@ const RadioCardCover = ({
   const { wizardData } = useWizardContext();
   const colorBoxlassName = clsx(
     "border border-2 rounded p-24 mb-24",
-    wizardData.communityCover.color && "border-primary",
+    wizardData.communityCover[value] && "border-primary",
   );
   const checked = wizardData.communityCover[value] ? true : false;
   return (
     <Flex gap="24" direction="column" className={colorBoxlassName}>
       <Flex justify="between">
         <span className="h4">{label}</span>
-        <Radio model="cover" value={value} checked={checked} />
+        <Radio model="cover" value={value} defaultChecked={checked} />
       </Flex>
       {children}
     </Flex>
@@ -37,6 +38,7 @@ export const StepCover = () => {
   const selectColor = (color: string) => {
     updateWizardData({ communityCover: { color } });
   };
+  const { lg } = useBreakpoint();
 
   const {
     ref: mediaLibraryRef,
@@ -50,6 +52,9 @@ export const StepCover = () => {
         title={wizardData.communityParams.title}
         subTitle="Choisir une bannière"
       />
+
+      {!lg && <SideSkeleton />}
+
       <RadioCardCover value="color" label="Choisir un thème">
         <Flex gap="8">
           {BACKGROUND_COLORS.map((color, index) => {
@@ -80,9 +85,10 @@ export const StepCover = () => {
           })}
         </Flex>
       </RadioCardCover>
+
       <RadioCardCover value="image" label="Importer une image">
         <ImagePicker
-          appCode="community"
+          appCode="blog"
           addButtonLabel="Add image"
           libraryMedia={libraryMedia}
           mediaLibraryRef={mediaLibraryRef}
@@ -91,12 +97,14 @@ export const StepCover = () => {
           onUploadImage={() => {}}
         />
       </RadioCardCover>
+
       <MediaLibrary
         {...MediaLibraryHandlers}
-        appCode="community"
+        appCode="blog"
         visibility="protected"
         ref={mediaLibraryRef}
       />
+
       <ButtonFooter />
     </>
   );

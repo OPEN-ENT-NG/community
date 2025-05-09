@@ -1,4 +1,4 @@
-import { Flex, Image } from "@edifice.io/react";
+import { Flex, Image, useBreakpoint } from "@edifice.io/react";
 import clsx from "clsx";
 import { IconCommunity } from "@edifice.io/react/icons/nav";
 import { useWizardContext } from "./WizardContext";
@@ -18,7 +18,7 @@ const SkeletonContainer = ({
   };
   const style = {
     height: heights[size],
-    maxWidth: 170,
+    maxWidth: 160,
   };
   const styleTitle = {
     width: size === "full" ? 100 : "100%",
@@ -32,9 +32,43 @@ const SkeletonContainer = ({
   );
 };
 
-export const SideSkeleton = () => {
+const Cover = () => {
   const { wizardData } = useWizardContext();
   const coverColor = wizardData.communityCover.color;
+  return (
+    <>
+      {coverColor ? (
+        <div
+          className="w-100 h-100"
+          style={{ background: `linear-gradient(${coverColor})` }}
+        />
+      ) : (
+        <Image
+          className="object-fit-cover w-100 h-100"
+          alt="type"
+          src={"image.png"}
+        />
+      )}
+    </>
+  );
+};
+
+export const SideSkeleton = () => {
+  const { wizardData } = useWizardContext();
+  const { lg } = useBreakpoint();
+
+  if (!lg) {
+    return (
+      <div
+        className="mb-24 w-100 rounded overflow-hidden"
+        style={{
+          height: 104,
+        }}
+      >
+        <Cover />
+      </div>
+    );
+  }
 
   return (
     <Flex
@@ -43,18 +77,7 @@ export const SideSkeleton = () => {
       direction="column"
     >
       <div className="w-100" style={{ height: "225px" }}>
-        {coverColor ? (
-          <div
-            className="w-100 h-100"
-            style={{ background: `linear-gradient(${coverColor})` }}
-          />
-        ) : (
-          <Image
-            className="object-fit-cover w-100 h-100"
-            alt="type"
-            src={"image.png"}
-          />
-        )}
+        <Cover />
       </div>
       <header
         className="px-24 w-100"
