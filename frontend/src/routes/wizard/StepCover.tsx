@@ -25,7 +25,12 @@ const RadioCardCover = ({
     <Flex gap="24" direction="column" className={colorBoxlassName}>
       <Flex justify="between">
         <span className="h4">{label}</span>
-        <Radio model="cover" value={value} defaultChecked={checked} />
+        <Radio
+          className="pe-none"
+          model="cover"
+          value={value}
+          defaultChecked={checked}
+        />
       </Flex>
       {children}
     </Flex>
