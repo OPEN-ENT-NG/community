@@ -11,6 +11,7 @@ import { WIZARD_STEPS } from "~/config/constants";
 import StepInvitations from "./StepInvitations";
 import InvitationTable from "./InvitationTable";
 import { Flex } from "@edifice.io/react";
+import SideSkeleton from "./SideSkeleton";
 
 function CreateWizard() {
   const { wizardData, updateWizardData, resetWizardData } = useWizard();
@@ -46,7 +47,7 @@ function CreateWizard() {
         <Route
           path={WIZARD_STEPS[2]}
           element={
-            <WizardLayout sideElement={<SideImage />}>
+            <WizardLayout sideElement={<SideSkeleton />}>
               <StepCover />
             </WizardLayout>
           }

@@ -15,12 +15,12 @@ import {
 } from "~/config/constants";
 import { IconCalendarLight } from "@edifice.io/react/icons";
 import { CommunityParams } from "~/models/community";
+import { useWizardContext } from "./WizardContext";
 import useStepNavigation from "~/hooks/useStepNavigations";
 import ButtonFooter from "./ButtonFooter";
 import useDataListYears from "~/hooks/useDataListYears";
 import { useEffect } from "react";
 import SideImage from "./SideImage";
-import { useWizardContext } from "./WizardContext";
 
 export const StepParams = () => {
   const { wizardData, updateWizardData } = useWizardContext();
