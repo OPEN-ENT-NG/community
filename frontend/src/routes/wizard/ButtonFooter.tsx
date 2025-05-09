@@ -5,8 +5,10 @@ import useStepNavigation from "~/hooks/useStepNavigations";
 
 export const ButtonFooter = ({
   isSubmitStep = false,
+  isValidForm = false,
 }: {
   isSubmitStep?: boolean;
+  isValidForm?: boolean;
 }) => {
   const { currentStep, nextStep, backStep } = useStepNavigation();
 
@@ -19,14 +21,14 @@ export const ButtonFooter = ({
         disabled={currentStep <= 0}
         onClick={backStep}
       >
-        Retour
+        Précédent
       </Button>
       {isSubmitStep ? (
         <Button
           type="submit"
           form="formCommunity"
           rightIcon={<IconRafterRight />}
-          disabled={currentStep >= WIZARD_STEPS.length - 1}
+          disabled={currentStep >= WIZARD_STEPS.length - 1 || !isValidForm}
         >
           Suivant
         </Button>

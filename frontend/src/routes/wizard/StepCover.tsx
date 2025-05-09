@@ -1,10 +1,15 @@
-import { Heading } from "@edifice.io/react";
 import ButtonFooter from "./ButtonFooter";
+import WizardHeader from "~/components/WizardHeader";
+import { useWizardContext } from "./WizardContext";
 
 export const StepCover = () => {
+  const { wizardData } = useWizardContext();
   return (
     <>
-      <Heading>Step Cover</Heading>
+      <WizardHeader
+        title={wizardData.communityParams.title}
+        subTitle="Choisir une bannière"
+      />
       <ButtonFooter />
     </>
   );

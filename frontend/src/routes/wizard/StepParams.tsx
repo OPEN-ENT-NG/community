@@ -15,24 +15,28 @@ import {
 } from "~/config/constants";
 import { IconCalendarLight } from "@edifice.io/react/icons";
 import { CommunityParams } from "~/models/community";
-import useWizard from "~/hooks/useWizard";
+import { useWizardContext } from "./WizardContext";
 import useStepNavigation from "~/hooks/useStepNavigations";
-import { flushSync } from "react-dom";
 import ButtonFooter from "./ButtonFooter";
 import useDataListYears from "~/hooks/useDataListYears";
 import { useEffect } from "react";
-import WizardHeader from "~/components/WizardHeader";
 import SideImage from "./SideImage";
 
 export const StepParams = () => {
-  const { wizardData, updateWizardData } = useWizard();
+  const { wizardData, updateWizardData } = useWizardContext();
   const { nextStep } = useStepNavigation();
   const { lg } = useBreakpoint();
 
-  const { watch, register, control, setValue, handleSubmit } =
-    useForm<CommunityParams>({
-      defaultValues: wizardData.communityParams,
-    });
+  const {
+    watch,
+    register,
+    control,
+    setValue,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<CommunityParams>({
+    defaultValues: wizardData.communityParams,
+  });
 
   const { startYears, endYears, startYear, endYear } = useDataListYears({
     watch,
@@ -40,9 +44,7 @@ export const StepParams = () => {
   });
 
   const onSubmit = (data: CommunityParams) => {
-    flushSync(() => {
-      updateWizardData({ communityParams: data });
-    });
+    updateWizardData({ communityParams: data });
     nextStep();
   };
 
@@ -55,10 +57,6 @@ export const StepParams = () => {
 
   return (
     <>
-      <WizardHeader
-        title="Nouvelle communauté"
-        subTitle="Paramètres de la communauté"
-      />
       {!lg && <SideImage />}
       <Form id="formCommunity" role="form" onSubmit={handleSubmit(onSubmit)}>
         <FormControl id="inputForm" className="mb-24" isRequired>
@@ -150,7 +148,7 @@ export const StepParams = () => {
           </Flex>
         </FormControl>
       </Form>
-      <ButtonFooter isSubmitStep />
+      <ButtonFooter isSubmitStep isValidForm={isValid} />
     </>
   );
 };
