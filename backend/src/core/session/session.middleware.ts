@@ -14,7 +14,7 @@ export class SessionMiddleware implements NestMiddleware {
     configService: ConfigService,
     @InjectPinoLogger(SessionMiddleware.name)
     private readonly logger: PinoLogger,
-    private readonly natsClient: EntNatsServiceClient,
+    private readonly entServiceClient: EntNatsServiceClient,
   ) {
     this.entBaseUrl = configService.get<string>(
       "ent.baseUrl",
@@ -28,7 +28,7 @@ export class SessionMiddleware implements NestMiddleware {
     next: () => void,
   ) {
     try {
-      const session = await this.natsClient.sessionFind({
+      const session = await this.entServiceClient.sessionFind({
         cookies: req.headers.cookie,
       });
       if (session?.session) {

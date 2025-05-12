@@ -10,8 +10,8 @@ import { ClientProxy } from "@nestjs/microservices";
     NatsClientProvider,
     {
       provide: EntNatsServiceClient,
-      useFactory: (natsClient: ClientProxy) => {
-        return new EntNatsServiceClient(natsClient, "directory");
+      useFactory: (clientProxy: ClientProxy) => {
+        return new EntNatsServiceClient(clientProxy, "portal");
       },
       inject: ["NATS_CLIENT"],
     },
