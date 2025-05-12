@@ -12,10 +12,8 @@ import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { getStaticAssetsPath } from "./utils/static-assets.utils";
 import { EntNatsServiceClient } from "@edifice.io/edifice-ent-client";
-import { ClientProxy } from "@nestjs/microservices";
 import { Logger } from "nestjs-pino";
 import { ConfigService } from "@nestjs/config";
-import { NATS_CLIENT } from "./nats";
 
 /**
  * Controller responsible for serving the frontend application
@@ -24,16 +22,13 @@ import { NATS_CLIENT } from "./nats";
 @Controller()
 export class FrontendController implements OnModuleInit {
   private indexHtmlContent: string;
-  private readonly natsClient: EntNatsServiceClient;
   private appName: string;
   constructor(
     @Inject() private readonly config: ConfigService,
     @Inject() private readonly logger: Logger,
-    @Inject(NATS_CLIENT) readonly clientProxy: ClientProxy,
-  ) {
-    // Initialize the NATS client for communication with the backend
-    this.natsClient = new EntNatsServiceClient(clientProxy, "portal");
-  }
+    @Inject() readonly entServiceClient: EntNatsServiceClient,
+  ) {}
+
   async onModuleInit() {
     // Read the frontend index file at startup and cache its content
     const indexPath = join(getStaticAssetsPath(), "..", "index.html");
@@ -62,8 +57,7 @@ export class FrontendController implements OnModuleInit {
         translationsByLanguage[file] = translations;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      await this.natsClient.i18nByApplicationRegister({
+      await this.entServiceClient.i18nByApplicationRegister({
         application: this.appName,
         translationsByLanguage,
       });
@@ -72,7 +66,7 @@ export class FrontendController implements OnModuleInit {
         `Successfully registered ${Object.keys(translationsByLanguage).length} language files`,
       );
     } catch (error) {
-      console.error("Failed to register i18n translations:", error);
+      this.logger.error("Failed to register i18n translations:", error);
     }
   }
 
@@ -91,12 +85,10 @@ export class FrontendController implements OnModuleInit {
       }
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    const result = await this.natsClient.i18nByApplicationFetch({
+    const result = await this.entServiceClient.i18nByApplicationFetch({
       headers: formattedHeaders,
       application: this.appName,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return (result.translations ?? {}) as Record<string, string>;
   }
 
