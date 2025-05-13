@@ -7,7 +7,6 @@ import {
 import { Transactional } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityManager, EntityRepository } from "@mikro-orm/postgresql";
-import { EntNatsServiceClient } from "@edifice.io/edifice-ent-client";
 import { Logger } from "nestjs-pino";
 import { v4 as uuidv4 } from "uuid";
 
@@ -29,19 +28,21 @@ import { ENTUserSession } from "@app/core";
 import { CommunityMapper } from "./community.mapper";
 import { CommunityStats } from "./entities/community-stats.entity";
 import { CommunityActivityStats } from "./entities/community-activity-stats.entity";
+import { DirectoryIntegrationService } from "./directory-integration.service";
 
 @Injectable()
 export class CommunityService {
+  private readonly TYPE = "COMMUNITY";
   constructor(
     @InjectRepository(Community)
     private readonly communityRepository: EntityRepository<Community>,
     private readonly userService: UserService,
     private readonly invitationService: InvitationService,
     private readonly membershipService: MembershipService,
-    private readonly natsClient: EntNatsServiceClient,
     private readonly logger: Logger,
     private readonly communityMapper: CommunityMapper,
     private readonly em: EntityManager,
+    private readonly directoryService: DirectoryIntegrationService,
   ) {}
 
   @Transactional()
@@ -99,26 +100,11 @@ export class CommunityService {
   }
 
   private async createDirectoryGroup(community: Community): Promise<void> {
-    try {
-      // Call the NATS service to create a group in the directory
-      const response = await this.natsClient.directoryGroupManualCreate({
-        externalId: community.id.toString(),
-        name: community.title,
-      });
-
-      if (!response.id) {
-        throw new Error("community.create.directory.error");
-      }
-
-      this.logger.log(
-        `Directory group created successfully for community ${community.id}`,
-      );
-    } catch (error) {
-      this.logger.error(`Error creating directory group: `, error);
-      throw new InternalServerErrorException(
-        "community.create.directory.error",
-      );
-    }
+    const externalId = this.directoryService.generateExternalId(
+      this.TYPE,
+      community.id,
+    );
+    await this.directoryService.createGroup(externalId, community.title);
   }
 
   private generateSecretCode(): string {
@@ -334,21 +320,11 @@ export class CommunityService {
    * @param community Community to update the directory group for
    */
   private async updateDirectoryGroup(community: Community): Promise<void> {
-    try {
-      // Call the NATS service to update the group in the directory
-      await this.natsClient.directoryGroupManualUpdate({
-        externalId: community.id.toString(),
-        name: community.title,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Error updating directory group for community ${community.id}:`,
-        error,
-      );
-      throw new InternalServerErrorException(
-        "community.update.directory.error",
-      );
-    }
+    const externalId = this.directoryService.generateExternalId(
+      this.TYPE,
+      community.id,
+    );
+    await this.directoryService.updateGroup(externalId, community.title);
   }
 
   /**
@@ -389,18 +365,11 @@ export class CommunityService {
    * @param community Community to delete the directory group for
    */
   private async deleteDirectoryGroup(community: Community): Promise<void> {
-    try {
-      // Call the NATS service to delete the group from directory
-      await this.natsClient.directoryGroupManualDelete({
-        externalId: community.id.toString(),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Error deleting directory group for community ${community.id}:`,
-        error,
-      );
-      // Non-blocking error, we just log it
-    }
+    const externalId = this.directoryService.generateExternalId(
+      this.TYPE,
+      community.id,
+    );
+    await this.directoryService.deleteGroup(externalId, true); // suppressErrors=true pour conserver le comportement actuel
   }
 
   /**

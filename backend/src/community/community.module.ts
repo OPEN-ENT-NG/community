@@ -10,6 +10,7 @@ import { CommunityMapper } from "./community.mapper";
 import { MembershipModule } from "@app/membership/membership.module";
 import { CommunityStats } from "./entities/community-stats.entity";
 import { CommunityActivityStats } from "./entities/community-activity-stats.entity";
+import { DirectoryIntegrationService } from "./directory-integration.service";
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { CommunityActivityStats } from "./entities/community-activity-stats.enti
     InvitationModule,
     MembershipModule,
   ],
-  providers: [CommunityService, CommunityMapper],
+  providers: [CommunityService, CommunityMapper, DirectoryIntegrationService],
   exports: [CommunityService],
   controllers: [CommunityController],
 })
