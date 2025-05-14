@@ -7,8 +7,8 @@ CREATE TYPE community.invitation_status AS ENUM ('PENDING', 'ACCEPTED', 'REJECTE
 CREATE TYPE community.membership_role AS ENUM ('ADMIN', 'MEMBER');
 CREATE TYPE community.resource_type AS ENUM ('IMAGE', 'VIDEO', 'SOUND', 'ENT', 'EXTERNAL_LINK');
 
--- Table users
-CREATE TABLE IF NOT EXISTS community.users (
+-- Table user
+CREATE TABLE IF NOT EXISTS community.user (
     id BIGSERIAL PRIMARY KEY
 );
 
@@ -26,9 +26,9 @@ CREATE TABLE community.community (
     discussion_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     archived_date TIMESTAMP WITH TIME ZONE,
     secret_code VARCHAR(64),
-    creator_id BIGINT NOT NULL REFERENCES community.users(id),
-    modifier_id BIGINT REFERENCES community.users(id),
-    archiver_id BIGINT REFERENCES community.users(id)
+    creator_id BIGINT NOT NULL REFERENCES community.user(id),
+    modifier_id BIGINT REFERENCES community.user(id),
+    archiver_id BIGINT REFERENCES community.user(id)
 );
 
 -- Table invitation
@@ -38,7 +38,7 @@ CREATE TABLE community.invitation (
     modification_date TIMESTAMP WITH TIME ZONE,
     status community.invitation_status NOT NULL,
     community_id BIGINT NOT NULL REFERENCES community.community(id),
-    user_id BIGINT NOT NULL REFERENCES community.users(id)
+    user_id BIGINT NOT NULL REFERENCES community.user(id)
 );
 
 -- Table membership
@@ -51,8 +51,8 @@ CREATE TABLE community.membership (
     last_visit_wiki_date TIMESTAMP WITH TIME ZONE,
     last_visit_discussions_date TIMESTAMP WITH TIME ZONE,
     community_id BIGINT NOT NULL REFERENCES community.community(id),
-    user_id BIGINT NOT NULL REFERENCES community.users(id),
-    inviter_id BIGINT REFERENCES community.users(id)
+    user_id BIGINT NOT NULL REFERENCES community.user(id),
+    inviter_id BIGINT REFERENCES community.user(id)
 );
 
 -- Table message
@@ -60,7 +60,7 @@ CREATE TABLE community.message (
     id BIGSERIAL PRIMARY KEY,
     content TEXT NOT NULL,
     publication_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    author_id BIGINT NOT NULL REFERENCES community.users(id),
+    author_id BIGINT NOT NULL REFERENCES community.user(id),
     community_id BIGINT NOT NULL REFERENCES community.community(id)
 );
 
@@ -70,7 +70,7 @@ CREATE TABLE community.announcement (
     content TEXT NOT NULL,
     publication_date TIMESTAMP WITH TIME ZONE NOT NULL,
     modification_date TIMESTAMP WITH TIME ZONE,
-    author_id BIGINT NOT NULL REFERENCES community.users(id),
+    author_id BIGINT NOT NULL REFERENCES community.user(id),
     community_id BIGINT NOT NULL REFERENCES community.community(id)
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE community.resource (
     added_date TIMESTAMP WITH TIME ZONE NOT NULL,
     open_in_new_tab BOOLEAN NOT NULL DEFAULT FALSE,
     app_name VARCHAR(128),
-    author_id BIGINT NOT NULL REFERENCES community.users(id),
+    author_id BIGINT NOT NULL REFERENCES community.user(id),
     community_id BIGINT NOT NULL REFERENCES community.community(id)
 );
 
@@ -99,8 +99,8 @@ CREATE TABLE community.folder (
     creation_date TIMESTAMP WITH TIME ZONE NOT NULL,
     modification_date TIMESTAMP WITH TIME ZONE,
     is_root BOOLEAN NOT NULL DEFAULT FALSE,
-    creator_id BIGINT NOT NULL REFERENCES community.users(id),
-    modifier_id BIGINT REFERENCES community.users(id),
+    creator_id BIGINT NOT NULL REFERENCES community.user(id),
+    modifier_id BIGINT REFERENCES community.user(id),
     parent_id BIGINT REFERENCES community.folder(id),
     community_id BIGINT NOT NULL REFERENCES community.community(id)
 );
@@ -113,7 +113,7 @@ CREATE TABLE community.topic (
     locked BOOLEAN NOT NULL DEFAULT FALSE,
     hidden BOOLEAN NOT NULL DEFAULT FALSE,
     theme VARCHAR(128),
-    creator_id BIGINT NOT NULL REFERENCES community.users(id),
+    creator_id BIGINT NOT NULL REFERENCES community.user(id),
     community_id BIGINT NOT NULL REFERENCES community.community(id)
 );
 
@@ -123,7 +123,7 @@ CREATE TABLE community.topic_message (
     content TEXT NOT NULL,
     publication_date TIMESTAMP WITH TIME ZONE NOT NULL,
     modification_date TIMESTAMP WITH TIME ZONE,
-    author_id BIGINT NOT NULL REFERENCES community.users(id),
+    author_id BIGINT NOT NULL REFERENCES community.user(id),
     topic_id BIGINT NOT NULL REFERENCES community.topic(id)
 );
 

@@ -1,6 +1,6 @@
 import { Entity, Enum, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Entity({ schema: "community" })
 export class Membership {
@@ -31,11 +31,11 @@ export class Membership {
   })
   community!: Community;
 
-  @ManyToOne(() => Users, { joinColumn: "user_id" })
-  user!: Users;
+  @ManyToOne(() => User, { joinColumn: "user_id" })
+  user!: User;
 
-  @ManyToOne({ entity: () => Users, nullable: true })
-  inviter?: Users;
+  @ManyToOne({ entity: () => User, nullable: true })
+  inviter?: User;
 }
 
 export enum MembershipRole {

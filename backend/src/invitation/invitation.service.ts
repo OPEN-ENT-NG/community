@@ -5,8 +5,8 @@ import { InjectRepository } from "@mikro-orm/nestjs";
 import { Transactional } from "@mikro-orm/core";
 import { Community } from "../community/entities/community.entity";
 import { Invitation, InvitationStatus } from "./entities/invitation.entity";
-import { Users } from "../common/entities/users.entity";
-import { UserService } from "../common/users.service";
+import { User } from "../common/entities/user.entity";
+import { UserService } from "../common/user.service";
 
 @Injectable()
 export class InvitationService {
@@ -30,7 +30,7 @@ export class InvitationService {
   async createInvitations(
     community: Community,
     userIds: string[],
-    inviter: Users,
+    inviter: User,
   ): Promise<Invitation[]> {
     if (!userIds.length) {
       return [];

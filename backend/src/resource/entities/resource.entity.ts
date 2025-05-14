@@ -10,7 +10,7 @@ import {
 } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
 import { Folder } from "@app/folder/entities/folder.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Entity({ schema: "community" })
 export class Resource {
@@ -35,8 +35,8 @@ export class Resource {
   @Property({ length: 128, nullable: true })
   appName?: string;
 
-  @ManyToOne({ entity: () => Users })
-  author!: Users;
+  @ManyToOne({ entity: () => User })
+  author!: User;
 
   @ManyToOne({ entity: () => Community, index: "idx_resource_community_id" })
   community!: Community;

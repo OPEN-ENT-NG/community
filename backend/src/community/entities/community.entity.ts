@@ -10,7 +10,7 @@ import {
   Property,
 } from "@mikro-orm/core";
 import { Course } from "@app/wiki/entities/course.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 import { Membership } from "@app/membership/entities/membership.entity";
 
 @Entity({ schema: "community" })
@@ -51,14 +51,14 @@ export class Community {
   @Property({ length: 64, nullable: true })
   secretCode?: string;
 
-  @ManyToOne({ entity: () => Users })
-  creator!: Users;
+  @ManyToOne({ entity: () => User })
+  creator!: User;
 
-  @ManyToOne({ entity: () => Users, nullable: true })
-  modifier?: Users;
+  @ManyToOne({ entity: () => User, nullable: true })
+  modifier?: User;
 
-  @ManyToOne({ entity: () => Users, nullable: true })
-  archiver?: Users;
+  @ManyToOne({ entity: () => User, nullable: true })
+  archiver?: User;
 
   @ManyToMany({
     entity: () => Course,

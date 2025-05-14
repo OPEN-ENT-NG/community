@@ -7,13 +7,13 @@ import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository } from "@mikro-orm/postgresql";
 import { Logger } from "nestjs-pino";
 import { ENTUserSession } from "@app/core";
-import { Users } from "./entities/users.entity";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(Users)
-    private readonly usersRepository: EntityRepository<Users>,
+    @InjectRepository(User)
+    private readonly usersRepository: EntityRepository<User>,
     private readonly logger: Logger,
   ) {}
 
@@ -22,7 +22,7 @@ export class UserService {
    * @param session Current user session
    * @returns User entity
    */
-  async getCurrentUser(session: ENTUserSession): Promise<Users> {
+  async getCurrentUser(session: ENTUserSession): Promise<User> {
     if (!session?.userId) {
       throw new UnauthorizedException("user.session.missing");
     }
@@ -41,7 +41,7 @@ export class UserService {
    * @param entIds Array of user ENT IDs
    * @returns Map of entId to User entity
    */
-  async findUsersByEntIds(entIds: string[]): Promise<Map<string, Users>> {
+  async findUsersByEntIds(entIds: string[]): Promise<Map<string, User>> {
     if (!entIds.length) {
       return new Map();
     }
@@ -68,7 +68,7 @@ export class UserService {
   async findOrCreateUsersByEntIds(
     entIds: string[],
     defaultDisplayNames: Record<string, string> = {},
-  ): Promise<Map<string, Users>> {
+  ): Promise<Map<string, User>> {
     if (!entIds.length) {
       return new Map();
     }
@@ -85,7 +85,7 @@ export class UserService {
         `Creating ${missingEntIds.length} new users from ENT IDs`,
       );
 
-      const newUsers: Users[] = [];
+      const newUsers: User[] = [];
       for (const entId of missingEntIds) {
         const newUser = this.usersRepository.create({
           entId,

@@ -1,6 +1,6 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Entity({ schema: "community" })
 export class Message {
@@ -13,8 +13,8 @@ export class Message {
   @Property()
   publicationDate!: Date;
 
-  @ManyToOne({ entity: () => Users })
-  author!: Users;
+  @ManyToOne({ entity: () => User })
+  author!: User;
 
   @ManyToOne({ entity: () => Community })
   community!: Community;

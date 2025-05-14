@@ -6,7 +6,7 @@ import {
   Property,
 } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Entity({ schema: "community" })
 export class Folder {
@@ -25,11 +25,11 @@ export class Folder {
   @Property({ type: "boolean" })
   isRoot: boolean & Opt = false;
 
-  @ManyToOne({ entity: () => Users })
-  creator!: Users;
+  @ManyToOne({ entity: () => User })
+  creator!: User;
 
-  @ManyToOne({ entity: () => Users, nullable: true })
-  modifier?: Users;
+  @ManyToOne({ entity: () => User, nullable: true })
+  modifier?: User;
 
   @ManyToOne({
     entity: () => Folder,

@@ -12,7 +12,7 @@ import {
   Membership,
   MembershipRole,
 } from "@app/membership/entities/membership.entity";
-import { UserService } from "@app/common/users.service";
+import { UserService } from "@app/common/user.service";
 import { FastifyRequest } from "fastify";
 import { EntityRepository } from "@mikro-orm/postgresql";
 import { InjectRepository } from "@mikro-orm/nestjs";
@@ -63,7 +63,7 @@ export class CommunityRoleGuard implements CanActivate {
 
     // Get community ID from request parameters
     const params = request.params as { id: string };
-    const communityId = parseInt(params.id, 10);
+    const communityId = parseInt(params.id);
     if (!communityId) {
       this.logger.warn("Community ID parameter missing or invalid");
       throw new ForbiddenException("Invalid community ID");
@@ -80,7 +80,7 @@ export class CommunityRoleGuard implements CanActivate {
     try {
       // Find the user's membership in this community
       const membership = await this.findMembershipByUserAndCommunity(
-        Number(user.id),
+        user.id,
         communityId,
       );
 
@@ -130,7 +130,7 @@ export class CommunityRoleGuard implements CanActivate {
     }
   }
   async findMembershipByUserAndCommunity(
-    userId: number,
+    userId: bigint,
     communityId: number,
   ): Promise<Membership | null> {
     try {

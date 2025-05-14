@@ -20,7 +20,7 @@ import {
   UpdateCommunityDto,
   CommunityStatsDto,
 } from "@edifice.io/community-client-rest";
-import { UserService } from "@app/common/users.service";
+import { UserService } from "@app/common/user.service";
 import { InvitationService } from "@app/invitation/invitation.service";
 import { MembershipService } from "@app/membership/membership.service";
 import { MembershipRole } from "@app/membership/entities/membership.entity";
@@ -28,7 +28,7 @@ import { ENTUserSession } from "@app/core";
 import { CommunityMapper } from "./community.mapper";
 import { CommunityStats } from "./entities/community-stats.entity";
 import { CommunityActivityStats } from "./entities/community-activity-stats.entity";
-import { DirectoryIntegrationService } from "./directory-integration.service";
+import { DirectoryIntegrationService } from "../common/directory-integration.service";
 
 @Injectable()
 export class CommunityService {

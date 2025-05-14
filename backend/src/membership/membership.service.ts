@@ -6,7 +6,7 @@ import { Transactional } from "@mikro-orm/core";
 
 import { Membership, MembershipRole } from "./entities/membership.entity";
 import { Community } from "@app/community/entities/community.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Injectable()
 export class MembershipService {
@@ -26,7 +26,7 @@ export class MembershipService {
   @Transactional()
   async createMembership(params: {
     community: Community;
-    user: Users;
+    user: User;
     role: MembershipRole;
   }): Promise<Membership> {
     try {

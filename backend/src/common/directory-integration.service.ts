@@ -8,7 +8,7 @@ import { Logger } from "nestjs-pino";
 @Injectable()
 export class DirectoryIntegrationService {
   constructor(
-    private readonly natsClient: EntNatsServiceClient,
+    private readonly entServiceClient: EntNatsServiceClient,
     private readonly logger: Logger,
   ) {}
 
@@ -34,7 +34,7 @@ export class DirectoryIntegrationService {
   public async createGroup(externalId: string, name: string): Promise<string> {
     try {
       // Call the NATS service to create a group in the directory
-      const response = await this.natsClient.directoryGroupManualCreate({
+      const response = await this.entServiceClient.directoryGroupManualCreate({
         externalId,
         name,
       });
@@ -59,7 +59,7 @@ export class DirectoryIntegrationService {
   public async updateGroup(externalId: string, name: string): Promise<void> {
     try {
       // Call the NATS service to update the group in the directory
-      await this.natsClient.directoryGroupManualUpdate({
+      await this.entServiceClient.directoryGroupManualUpdate({
         externalId,
         name,
       });
@@ -82,7 +82,7 @@ export class DirectoryIntegrationService {
   ): Promise<void> {
     try {
       // Call the NATS service to delete the group from directory
-      await this.natsClient.directoryGroupManualDelete({
+      await this.entServiceClient.directoryGroupManualDelete({
         externalId,
       });
 

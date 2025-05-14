@@ -1,6 +1,6 @@
 import { Entity, Enum, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Entity({ schema: "community", tableName: "invitation" })
 export class Invitation {
@@ -22,11 +22,11 @@ export class Invitation {
   })
   community!: Community;
 
-  @ManyToOne(() => Users)
-  user!: Users;
+  @ManyToOne(() => User)
+  user!: User;
 
-  @ManyToOne(() => Users)
-  inviter!: Users;
+  @ManyToOne(() => User)
+  inviter!: User;
 }
 
 export enum InvitationStatus {

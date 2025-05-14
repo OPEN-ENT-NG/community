@@ -1,8 +1,8 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { ApiProperty } from "@nestjs/swagger";
 
-@Entity({ tableName: "users", schema: "community" })
-export class Users {
+@Entity({ tableName: "user", schema: "community" })
+export class User {
   @PrimaryKey()
   id!: bigint;
 

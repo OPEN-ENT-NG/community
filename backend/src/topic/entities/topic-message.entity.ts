@@ -1,6 +1,6 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Topic } from "@app/topic/entities/topic.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Entity({ schema: "community" })
 export class TopicMessage {
@@ -16,8 +16,8 @@ export class TopicMessage {
   @Property({ nullable: true })
   modificationDate?: Date;
 
-  @ManyToOne({ entity: () => Users })
-  author!: Users;
+  @ManyToOne({ entity: () => User })
+  author!: User;
 
   @ManyToOne({ entity: () => Topic, index: "idx_topic_message_topic_id" })
   topic!: Topic;

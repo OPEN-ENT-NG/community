@@ -6,7 +6,7 @@ import {
   Property,
 } from "@mikro-orm/core";
 import { Community } from "@app/community/entities/community.entity";
-import { Users } from "@app/common/entities/users.entity";
+import { User } from "@app/common/entities/user.entity";
 
 @Entity({ schema: "community" })
 export class Topic {
@@ -28,8 +28,8 @@ export class Topic {
   @Property({ length: 128, nullable: true })
   theme?: string;
 
-  @ManyToOne({ entity: () => Users })
-  creator!: Users;
+  @ManyToOne({ entity: () => User })
+  creator!: User;
 
   @ManyToOne({ entity: () => Community, index: "idx_topic_community_id" })
   community!: Community;
