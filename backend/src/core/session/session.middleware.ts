@@ -23,8 +23,8 @@ export class SessionMiddleware implements NestMiddleware {
   }
 
   async use(
-    req: FastifyRequest["raw"],
-    res: FastifyReply["raw"],
+    req: FastifyRequest,
+    res: FastifyReply,
     next: () => void,
   ) {
     try {
@@ -67,12 +67,12 @@ export class SessionMiddleware implements NestMiddleware {
       } else {
         this.logger.debug("Session validation failed");
         res.statusCode = 401;
-        res.end(JSON.stringify({ message: "invalid.session" }));
+        res.send(JSON.stringify({ message: "invalid.session" }));
       }
     } catch (e) {
       this.logger.error("Session validation error", e);
       res.statusCode = 401;
-      res.end(
+      res.send(
         JSON.stringify({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           message: e.message,
@@ -81,7 +81,7 @@ export class SessionMiddleware implements NestMiddleware {
     }
   }
 
-  setSession(session: SessionDto, req: IncomingMessage) {
+  setSession(session: SessionDto, req: FastifyRequest) {
     req.entSession = session;
   }
 

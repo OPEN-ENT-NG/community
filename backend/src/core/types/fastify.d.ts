@@ -5,3 +5,9 @@ declare module "http" {
     entSession?: ENTUserSession;
   }
 }
+
+declare module "fastify" {
+  interface FastifyRequest {
+    entSession?: SessionDto;
+  }
+}
