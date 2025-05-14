@@ -29,7 +29,30 @@ export class SessionMiddleware implements NestMiddleware {
   ) {
     try {
       // Extract query parameters from the URL
-      const queryParams: Record<string, string> = {};
+    // Extract query parameters directly from Fastify's parsed query
+    const queryParams = req.query as Record<string, string>;
+    
+    // Convert request headers to a simple object format
+    const headers: Record<string, string> = {};
+    Object.keys(req.headers).forEach((key) => {
+      // Handle potential array headers by taking the first value
+      const headerValue = req.headers[key];
+      headers[key] = Array.isArray(headerValue)
+        ? headerValue[0]
+        : (headerValue as string);
+    });
+
+    // Get the path directly from Fastify
+    const pathPrefix = req.url.split("/")[0] || "";
+
+    // Call the session service with all authentication data
+    const session = await this.entServiceClient.sessionFind({
+      cookies: req.headers.cookie,
+      headers,
+      params: queryParams,
+      pathPrefix,
+      path: req.url,
+    });
       const urlObj = new URL(
         req.url || "",
         `http://${req.headers.host || "localhost"}`,
