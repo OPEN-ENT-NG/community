@@ -12,15 +12,6 @@
         "ssl" : $ssl,
         "auto-redeploy": false,
         "userbook-host": "${host}",
-        "mode" : "${mode}",
-        "publicConf": {
-          <% if ("true".equals(xitiSwitch)) { %>
-            "xiti": {
-              "ID_SERVICE": {
-                "default": 2
-              }
-            }
-          <% } %>
-        }
+        "mode" : "${mode}"
       }
     }
