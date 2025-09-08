@@ -19,6 +19,7 @@
 
 package net.atos.entng.community;
 
+import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import net.atos.entng.community.controllers.CommunityController;
 import net.atos.entng.community.controllers.PagesController;
@@ -35,20 +36,37 @@ public class Community extends BaseServer {
 
 	@Override
 	public void start(Promise<Void> startPromise) throws Exception {
-		super.start(startPromise);
-
-		MongoDbConf.getInstance().setCollection("communityPages");
-		TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.config);
-
-		// Set RepositoryEvents implementation used to process events published for transition
-		setRepositoryEvents(new CommunityRepositoryEvents(vertx.eventBus(),vertx));
-
-		setDefaultResourceFilter(new ManagerFilter());
-		CommunityController communityController = new CommunityController(timeline);
-		communityController.setCommunityService(new DefaultCommunityService());
-		addController(communityController);
-
-		addController(new PagesController());
+        final Promise<Void> promise = Promise.promise();
+		super.start(promise);
+        promise.future()
+            .compose(e -> this.init())
+            .onSuccess(x -> startPromise.complete())
+            .onFailure(th -> {
+                log.error("An error occurred while starting Community");
+                promise.tryFail(th);
+            });
 	}
+
+    private Future<Void> init() {
+        Future<Void> future;
+        try {
+            MongoDbConf.getInstance().setCollection("communityPages");
+            TimelineHelper timeline = new TimelineHelper(vertx, vertx.eventBus(), this.config);
+
+            // Set RepositoryEvents implementation used to process events published for transition
+            setRepositoryEvents(new CommunityRepositoryEvents(vertx.eventBus(), vertx));
+
+            setDefaultResourceFilter(new ManagerFilter());
+            CommunityController communityController = new CommunityController(timeline);
+            communityController.setCommunityService(new DefaultCommunityService());
+            addController(communityController);
+
+            addController(new PagesController());
+            future = Future.succeededFuture();
+        } catch(Exception e) {
+            future = Future.failedFuture(e);
+        }
+        return future;
+    }
 
 }
