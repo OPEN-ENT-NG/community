@@ -1,4 +1,29 @@
-﻿<div ng-controller="LibraryController">
+﻿<style>
+    .arrow-btn:hover .arrow-icon {
+        color: #FFF;
+    }
+    .arrow-icon {
+        color: #FF8D2E; /* initial color */
+    }
+</style>
+
+<div ng-controller="LibraryController">
+    <div class="flex align-items-center gap-16 bg-white px-24 py-12 mb-24 radius-12" style="border: 1px solid #ff8500;">
+        <div style="flex: 0 0 48px;"><img src="/community/public/assets/img/idea.svg" width="48" height="48" /></div>
+        <div>
+            <h4 class="m-0" style="color: #ff8500;"><i18n>community.new.app.info.title</i18n></h4>
+            <span><i18n>community.new.app.info.txt</i18n></span>
+        </div>
+        <div style="flex: 0 0 220px;">
+            <button class="flat-button arrow-btn flex gap-8 mb-0" ng-click="openNewApp()">
+                <i18n>community.new.app.info.button</i18n>
+                <svg class="arrow-icon" width="21" height="20" viewBox="0 0 21 20" fill="orange" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3.8335 9.99935C3.8335 9.53911 4.20659 9.16602 4.66683 9.16602H16.3335C16.7937 9.16602 17.1668 9.53911 17.1668 9.99935C17.1668 10.4596 16.7937 10.8327 16.3335 10.8327H4.66683C4.20659 10.8327 3.8335 10.4596 3.8335 9.99935Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.91058 3.57806C10.236 3.25263 10.7637 3.25263 11.0891 3.57806L16.9224 9.4114C17.2479 9.73683 17.2479 10.2645 16.9224 10.5899L11.0891 16.4232C10.7637 16.7487 10.236 16.7487 9.91058 16.4232C9.58514 16.0978 9.58514 15.5702 9.91058 15.2447L15.1547 10.0007L9.91058 4.75657C9.58514 4.43114 9.58514 3.9035 9.91058 3.57806Z" fill="currentColor"/>
+                </svg>
+            </button>
+        </div>
+    </div>
     <div class="twelve cell">
         <div class="eight cell">
             <h1><i18n>community.title</i18n></h1>
