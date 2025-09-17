@@ -34,6 +34,10 @@ export let library = ng.controller('LibraryController', [
             $scope.display.wizard = true;
         };
 
+        $scope.openNewApp = () => {
+            document.location = "/communities";
+        };
+
         $scope.finishCreateWizard = async () => {
             if(!$scope.creationFlag) {
                 $scope.creationFlag = true;
