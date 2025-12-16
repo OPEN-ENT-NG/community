@@ -1,0 +1,19 @@
+{
+  "name": "net.atos~community",
+  "config": {
+    "main": "net.atos.entng.community.Community",
+    "port": 8078,
+    "csrf-token": {{ csrfToken | default('true') }},
+    "mongodb": true,
+    "app-name": "Community",
+    "app-address": "/community",
+    "app-icon": "community-large",
+    "app-type" : "END_USER",
+    "host": "https://{{ host }}",
+    "ssl": true,
+    {% if overrideTheme %} "override-theme": {{ override2d }}, {% endif %}
+    "auto-redeploy": false,
+    "userbook-host": "https://{{ host }}",
+    "mode": "prod"
+  }
+}
