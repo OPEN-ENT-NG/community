@@ -55,9 +55,9 @@ public class DefaultCommunityService implements CommunityService {
 	public void create(JsonObject data, UserInfos user, Handler<Either<String, JsonObject>> handler) {
 		String query =
 				"CREATE (c:Community {props}), " +
-				"c<-[:DEPENDS]-(cr:CommunityGroup:Group:Visible {name : c.name + '-read', type : 'read', displayNameSearchField: {dnsf}}), " +
-				"c<-[:DEPENDS]-(cc:CommunityGroup:Group:Visible {name : c.name + '-contrib', type : 'contrib', users : '', displayNameSearchField: {dnsf}}), " +
-				"c<-[:DEPENDS]-(cm:CommunityGroup:Group:Visible {name : c.name + '-manager', type : 'manager', users : '', displayNameSearchField: {dnsf}}) " +
+				"c<-[:DEPENDS]-(cr:CommunityGroup:Group:Visible {name : c.name + '-read', type : 'read', displayNameSearchField: {dnsf}, filter : 'CommunityRead'}), " +
+				"c<-[:DEPENDS]-(cc:CommunityGroup:Group:Visible {name : c.name + '-contrib', type : 'contrib', users : '', displayNameSearchField: {dnsf}, filter : 'CommunityContrib'}), " +
+				"c<-[:DEPENDS]-(cm:CommunityGroup:Group:Visible {name : c.name + '-manager', type : 'manager', users : '', displayNameSearchField: {dnsf}, filter : 'CommunityManager'}) " +
 				"SET cr.id = id(cr)+'-'+timestamp(), " +
 				"cc.id = id(cc)+'-'+timestamp(), cm.id = id(cm)+'-'+timestamp(), cc.communiqueWith = [cm.id,cr.id], cm.communiqueWith = [cc.id,cr.id] " +
 				"WITH c, cm, cr, cc " +
