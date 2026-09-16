@@ -1,6 +1,5 @@
 ﻿import { Selectable } from 'entcore-toolkit';
 import { Source } from './apps';
-import http from 'axios';
 import { Mix } from 'entcore-toolkit';
 import { services } from './community';
 
