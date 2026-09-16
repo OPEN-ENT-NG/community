@@ -1,11 +1,9 @@
-﻿import { Selection, Selectable, Mix, Provider } from 'entcore-toolkit';
+﻿import { Selection, Selectable, Mix, Provider, http } from 'entcore-toolkit';
 import { Rights, Shareable, model, notify } from 'entcore';
 import { Page } from './page';
 import { Website } from './website';
 import { User, Group, Bookmark } from './dictionary';
 import { _ } from 'entcore';
-
-import http from 'axios';
 
 export interface Service {
     name: string;

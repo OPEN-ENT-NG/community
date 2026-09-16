@@ -1,6 +1,6 @@
 import { Behaviours } from 'entcore';
 import { _ } from 'entcore';
-import http from 'axios';
+import { http } from 'entcore-toolkit';
 
 console.log('community behaviours loaded');
 
