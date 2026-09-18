@@ -1,11 +1,9 @@
 import { Page } from './page';
 import { Community, Service } from './community';
-import { Mix } from 'entcore-toolkit';
+import { Mix, http } from 'entcore-toolkit';
 import { Behaviours, sniplets, Rights, Shareable, idiom, cleanJSON } from 'entcore';
 import { _ } from 'entcore';
 import { AppGenerator } from './apps';
-
-import http from 'axios';
 
 export class Website implements Shareable {
     _id: string;
