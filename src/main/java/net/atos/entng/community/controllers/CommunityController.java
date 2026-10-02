@@ -40,6 +40,7 @@ import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
 import org.entcore.common.user.UserInfos;
 import org.entcore.common.user.UserUtils;
+import org.entcore.common.user.dto.VisibleIdentityRequest;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
@@ -402,29 +403,38 @@ public class CommunityController extends BaseController {
 		getUserInfos(eb, request, new Handler<UserInfos>() {
 			@Override
 			public void handle(final UserInfos user) {
-				final JsonObject visibles = new JsonObject();
-				UserUtils.findVisibleUsers(eb, user.getUserId(), false, new Handler<JsonArray>() {
-					@Override
-					public void handle(JsonArray users) {
-						if (users != null) {
-							visibles.put("users", users);
-						}
-						UserUtils.findVisibleProfilsGroups(eb, user.getUserId(), new Handler<JsonArray>() {
-							@Override
-							public void handle(JsonArray groups) {
-								if (groups != null) {
-									for (Object g : groups) {
-										if (!(g instanceof JsonObject)) continue;
-										JsonObject group = (JsonObject) g;
-										UserUtils.groupDisplayName(group, acceptLanguage);
-									}
-									visibles.put("groups", groups);
+				final JsonObject empty = new JsonObject().put("users", new JsonArray()).put("groups", new JsonArray());
+				UserUtils.findVisibleIdentities(eb, new VisibleIdentityRequest().setUserId(user.getUserId()))
+						.onSuccess(visibles -> {
+							final JsonArray userIds = new JsonArray();
+							final JsonArray groupIds = new JsonArray();
+							for (Object o : visibles) {
+								if (!(o instanceof JsonObject)) continue;
+								final JsonObject visible = (JsonObject) o;
+								if (Boolean.TRUE.equals(visible.getBoolean("isUser"))) {
+									userIds.add(visible.getString("id"));
+								} else {
+									groupIds.add(visible.getString("id"));
 								}
-								handler.handle(visibles);
 							}
+							communityService.listIdentities(userIds, groupIds, identities -> {
+								if (identities.isLeft()) {
+									log.error("[CommunityController.listVisible] failed to load visibles : " + identities.left().getValue());
+									handler.handle(empty);
+									return;
+								}
+								final JsonObject result = identities.right().getValue();
+								for (Object g : result.getJsonArray("groups")) {
+									if (!(g instanceof JsonObject)) continue;
+									UserUtils.groupDisplayName((JsonObject) g, acceptLanguage);
+								}
+								handler.handle(result);
+							});
+						})
+						.onFailure(e -> {
+							log.error("[CommunityController.listVisible] failed to fetch the visibles of " + user.getUserId(), e);
+							handler.handle(empty);
 						});
-					}
-				});
 			}
 		});
 	}
