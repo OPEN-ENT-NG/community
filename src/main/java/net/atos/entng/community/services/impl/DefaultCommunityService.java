@@ -42,6 +42,7 @@ import java.util.*;
 import static com.mongodb.client.model.Filters.eq;
 import static org.entcore.common.neo4j.Neo4jResult.validEmptyHandler;
 import static org.entcore.common.neo4j.Neo4jResult.validResultHandler;
+import static org.entcore.common.neo4j.Neo4jResult.validResultsHandler;
 import static org.entcore.common.neo4j.Neo4jResult.validUniqueResultHandler;
 import static org.entcore.common.neo4j.Neo4jUtils.nodeSetPropertiesFromJson;
 
@@ -227,6 +228,28 @@ public class DefaultCommunityService implements CommunityService {
 		MongoUpdateBuilder updateQuery = new MongoUpdateBuilder().set("shared", shared);
 		final Bson query = eq("_id", pageId);
 		mongo.update(conf.getCollection(), MongoQueryBuilder.build(query), updateQuery.build(), MongoDbResult.validActionResultHandler(handler));
+	}
+
+	@Override
+	public void listIdentities(JsonArray userIds, JsonArray groupIds, Handler<Either<String, JsonObject>> handler) {
+		final StatementsBuilder statements = new StatementsBuilder()
+				.add("MATCH (u:User) WHERE u.id IN {userIds} " +
+						"RETURN distinct u.id as id, u.displayName as username, u.lastName as lastName, " +
+						"u.firstName as firstName, u.profiles as profiles " +
+						"ORDER BY username ", new JsonObject().put("userIds", userIds))
+				.add("MATCH (g:Group) WHERE g.id IN {groupIds} " +
+						"OPTIONAL MATCH (g)-[:DEPENDS*0..1]->(pg:ProfileGroup)-[:HAS_PROFILE]->(profile:Profile) " +
+						"RETURN distinct g.id as id, g.name as name, profile.name as type, g.groupDisplayName as groupDisplayName " +
+						"ORDER BY type DESC, name ", new JsonObject().put("groupIds", groupIds));
+		neo4j.executeTransaction(statements.build(), null, true, validResultsHandler(results -> {
+			if (results.isRight()) {
+				handler.handle(new Either.Right<>(new JsonObject()
+						.put("users", results.right().getValue().getJsonArray(0))
+						.put("groups", results.right().getValue().getJsonArray(1))));
+			} else {
+				handler.handle(new Either.Left<>(results.left().getValue()));
+			}
+		}));
 	}
 
 }
