@@ -45,4 +45,11 @@ public interface CommunityService {
 
 	void updateShare(String pageId, String userId, final JsonObject value, final  Handler<Either<String, JsonObject>> handler);
 
+	/**
+	 * Details of the given users and groups, without any visibility check : the caller is expected to pass ids
+	 * it has already checked.
+	 * @return { users: [{id, username, lastName, firstName, profiles}], groups: [{id, name, type, groupDisplayName}] }
+	 */
+	void listIdentities(JsonArray userIds, JsonArray groupIds, Handler<Either<String, JsonObject>> handler);
+
 }
