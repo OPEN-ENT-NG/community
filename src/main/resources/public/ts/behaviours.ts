@@ -7,6 +7,7 @@ console.log('community behaviours loaded');
 Behaviours.register('community', {
 	rights: {
 		workflow: {
+			accessV2: 'community.access',
 			create: 'net.atos.entng.community.controllers.CommunityController|create',
 			listAllPages: 'net.atos.entng.community.controllers.CommunityController|listAllPages',
 			view: 'net.atos.entng.community.controllers.CommunityController|view'
